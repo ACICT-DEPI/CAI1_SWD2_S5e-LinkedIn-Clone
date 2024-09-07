@@ -4,20 +4,15 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",],
   theme: {
     extend: {
-      'linkedin-blue': '#0073b1',
-      'linkedin-light-blue': '#00a0dc',
-      'linkedin-dark-blue': '#004182',
-      'linkedin-dark-gray': '#333333',
-      'linkedin-bg-gray': '#f3f6f8',
-      'linkedin-border-gray': '#e1e9ee',
-      'linkedin-white': '#ffffff',
-      'linkedin-black': '#000000',
-      'linkedin-hover-blue': '#005582',
-      'linkedin-button-hover': '#006097',
-      'linkedin-success-green': '#00bfa5',
-      'linkedin-error-red': '#d93025',
-      'linkedin-warning-orange': '#f39c12',
-      'linkedin-highlight-yellow': '#ffeb3b',
+      colors: {
+        'linkedinBlue': '#0077B5',   // Primary LinkedIn color
+        'linkedinDarkBlue': '#004182',
+        'linkedin-lighthover-blue': '##F0F7FE',  //border button hover
+        'Link Hover Blue':'#005582',
+        'linkedinLightGray': '#F3F2EF', // Background color
+        'linkedinGray': '#86888A',     // Text color
+        'linkedinWhite': '#FFFFFF',
+      },
     },
   },
   plugins: [],
