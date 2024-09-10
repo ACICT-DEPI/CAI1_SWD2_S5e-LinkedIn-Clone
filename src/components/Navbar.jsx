@@ -167,17 +167,17 @@ export default function Navbar() {
 
               {/* Dropdown User Menu */}
               {isUserMenuOpen && (
-                <div className="absolute right-0 bg-white shadow-lg rounded-md mt-2">
+                <div className="absolute right-0 bg-white shadow-lg rounded-md mt-6">
                   <div className="flex flex-col p-2">
                     <Link
                       to="/profile"
-                      className="flex items-center hover:bg-gray-200 px-3 py-2 rounded-md"
+                      className="items-center hover:bg-gray-200 px-3 py-2 rounded-md"
                     >
                       Profile
                     </Link>
                     <Link
                       to="/signin"
-                      className="flex items-center hover:bg-gray-200 px-3 py-2 rounded-md"
+                      className="items-center hover:bg-gray-200 px-3 py-2 rounded-md whitespace-nowrap"
                     >
                       Sign Out
                     </Link>
@@ -191,15 +191,15 @@ export default function Navbar() {
         {/* Ellipsis Icon */}
         {!isSearchFocused && (
           <div
-            className="relative items-center hover:bg-gray-200 text-gray-500 hover:text-black px-3 py-2 rounded-md text-xs font-medium lg:hidden"
+            className="relative items-center hover:bg-gray-200 px-3 py-2 rounded-md font-medium lg:hidden"
             onClick={toggleDropdown}
           >
             <img
               src={ellipsisIcon}
               alt="ellipsis icon"
-              className="h-5 w-5 icon"
+              className="h-5 w-5 icon "
             />
-            {/* Dropdown Menu */}
+            {/*Ellipsis Dropdown Menu */}
             {isDropdownOpen && (
               <div className="absolute right-0 bg-white shadow-lg rounded-md mt-2">
                 <div className="flex flex-col p-2">
