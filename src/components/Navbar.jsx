@@ -10,6 +10,7 @@ import userIcon from "../assets/images/nav/user.svg";
 import searchIcon from "../assets/images/nav/search-icon.svg";
 import ellipsisIcon from "../assets/images/ellipsis.svg";
 
+//global
 const icons = [
   { src: feedIcon, alt: "feed", label: "Home" },
   { src: networkIcon, alt: "networks", label: "My Networks" },
@@ -19,13 +20,18 @@ const icons = [
 ];
 
 export default function Navbar() {
+  //states
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [visibleIcons, setVisibleIcons] = useState(icons.length);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
+  //ref
   const navbarRef = useRef(null);
+  const ellipsesDropdown = useRef(null);
+  const userDropdown = useRef(null);
 
+  //handle
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
@@ -49,6 +55,7 @@ export default function Navbar() {
     }
   };
 
+  //use effects
   useEffect(() => {
     updateVisibleIcons();
     window.addEventListener("resize", updateVisibleIcons);
@@ -57,21 +64,30 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        navbarRef.current &&
-        !navbarRef.current.contains(event.target) // Check if click is outside the entire Navbar
-      ) {
+      if (navbarRef.current && !navbarRef.current.contains(event.target)) {
         setIsSearchFocused(false);
       }
+      if (
+        userDropdown.current &&
+        !userDropdown.current.contains(event.target)
+      ) {
+        setIsUserMenuOpen(false);
+      }
+      if (
+        ellipsesDropdown.current &&
+        !ellipsesDropdown.current.contains(event.target)
+      ) {
+        setDropdownOpen(false);
+      }
     };
-    console.log("here");
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [navbarRef]);
+  }, [navbarRef, userDropdown, ellipsesDropdown]);
 
+  // rendering
   return (
     <div
       ref={navbarRef}
@@ -146,6 +162,7 @@ export default function Navbar() {
               <div
                 onClick={toggleUserMenu}
                 className="flex flex-col items-center text-gray-500 hover:text-black px-3 py-2 rounded-md text-xs font-medium cursor-pointer"
+                ref={userDropdown}
               >
                 <img
                   src={userIcon}
@@ -193,6 +210,7 @@ export default function Navbar() {
           <div
             className="relative items-center hover:bg-gray-200 px-3 py-2 rounded-md font-medium lg:hidden"
             onClick={toggleDropdown}
+            ref={ellipsesDropdown}
           >
             <img
               src={ellipsisIcon}
