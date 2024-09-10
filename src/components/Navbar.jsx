@@ -219,7 +219,7 @@ export default function Navbar() {
             />
             {/*Ellipsis Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 bg-white shadow-lg rounded-md mt-2">
+              <div className="absolute right-0 bg-white shadow-lg rounded-md mt-8">
                 <div className="flex flex-col p-2">
                   {icons.slice(visibleIcons).map((icon, index) => (
                     <Link

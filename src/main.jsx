@@ -7,7 +7,5 @@ import routes from "./routes/routes.jsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
-  <>
-    <RouterProvider router={routes} />;{/* <App /> */}
-  </>
+  <RouterProvider router={routes} />
 );
