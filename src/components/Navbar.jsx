@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React,{ useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import homeIcon from "../assets/images/nav/home-logo.svg";
 import feedIcon from "../assets/images/nav/nav-home.svg";
