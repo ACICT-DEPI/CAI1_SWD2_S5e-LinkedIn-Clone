@@ -15,21 +15,23 @@ import {
 
 
 function App() {
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <>
-        <Route path="/" element={<WelcomePage />} />
-        <Route path="sign-up" element={<SignUpLayout />}>
-          <Route index element={<SignUpPage />} /> 
-          <Route path="details" element={<SignUpDetailsPage />} />
-        </Route>
-        <Route path="login" element={<LoginPage />} />
-    </>
-    )
-  );
+  // const router = createBrowserRouter(
+  //   createRoutesFromElements(
+  //     <>
+  //       <Route path="/" element={<WelcomePage />} />
+  //       <Route path="sign-up" element={<SignUpLayout />}>
+  //         <Route index element={<SignUpPage />} /> 
+  //         <Route path="details" element={<SignUpDetailsPage />} />
+  //       </Route>
+  //       <Route path="login" element={<LoginPage />} />
+  //   </>
+  //   )
+  // );
   
   return (
-    <RouterProvider router={router} />
+    <>
+    </>
+    // <RouterProvider router={router} />
   )
 }
 
