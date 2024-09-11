@@ -7,7 +7,7 @@ const Button = ({
   className = ''
 }) => {
 
-  const baseStyle = "flex items-center justify-center px-4 py-2 rounded-full border hover:shadow-md transition-shadow duration-200 ease-in-out";
+  const baseStyles = "flex items-center justify-center px-4 py-2 rounded-full border hover:shadow-md transition-shadow duration-200 ease-in-out";
   
   const styleTypes = {
     default: "border-gray-400 text-black hover:border-gray-500",

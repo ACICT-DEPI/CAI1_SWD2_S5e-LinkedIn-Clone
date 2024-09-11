@@ -1,11 +1,13 @@
 import React from 'react'
+import ActivitySection from '../components/ActivitySection';
 
 function User() {
   return (
-    <div>
-      user
-    </div>
-  )
+    <>
+      <ActivitySection/>
+      <div>user</div>
+    </>
+  );
 }
 
 export default User
