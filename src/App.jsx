@@ -1,15 +1,16 @@
-
 import './App.css'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { Outlet } from "react-router-dom";
+
+import Navbar from "./components/Navbar.jsx";
 
 function App() {
   
   return (
-    <RouterProvider router={router} />
-  )
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  );
 }
 
 export default App
