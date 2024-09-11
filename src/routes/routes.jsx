@@ -8,6 +8,7 @@ import SignUpLayout from "../layouts/SignUpLayout";
 import SignUpPage from "../pages/SignUpPage"
 import SignUpDetailsPage from "../pages/SignUpDetailsPage"
 import LoginPage from "../pages/LoginPage"
+import AllActivitys from "../components/AllActivitys"
 
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
