@@ -4,6 +4,7 @@ import Reacts from "./Reacts";
 import ReactsInteraction from "./ReactsInteraction";
 import AddComment from "./AddComment";
 import PostUserInfo from "./PostUserInfo";
+import Comment from "./Comment";
 
 function PostFullView() {
   const [showMore, setShowMore] = useState(false);
@@ -183,6 +184,9 @@ hashtag#frontend hashtag#css hashtag#html hashtag#javascript hashtag#developer h
           <Reacts />
           <ReactsInteraction />
           <AddComment />
+          <Comment />
+          <Comment />
+          <Comment />
         </div>
       </div>
     </div>
