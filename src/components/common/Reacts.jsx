@@ -21,13 +21,13 @@ function Reacts() {
             className="w-[17px] h-[17px] bg-green-600 rounded-full p-[2px] relative right-2 border-[1px]"
           />
         </div>
-        <p className="text-linkedinGray hover:text-linkedinBlue hover:underline">
-          %%REACTS%%
+        <p className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer">
+          1243
         </p>
       </div>
       <div>
-        <p className="text-linkedinGray hover:text-linkedinBlue hover:underline">
-          %COMMENTS% comments
+        <p className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer">
+          10 comments
         </p>
       </div>
     </div>

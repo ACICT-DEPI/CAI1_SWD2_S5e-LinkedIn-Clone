@@ -25,7 +25,7 @@ function PostShortView() {
       <div className="cursor-pointer">
         {/* auther and date */}
         <div>
-          <p className="text-linkedinGray">%AUTHER% posted this . %MONTH%mo</p>
+          <p className="text-linkedinGray">Meefr posted this . 6 mo</p>
         </div>
         {/* image - title - description */}
         <div className="py-1">

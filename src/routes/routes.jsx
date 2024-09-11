@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import App from "../App";
 import { lazy, Suspense } from "react";
 import ErrorPage from "../pages/ErrorPage";
+import AllActivitys from "../components/AllActivitys";
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
 const Messaging = lazy(() => import("../pages/Messaging"));
@@ -38,6 +39,14 @@ const routes = createBrowserRouter([
         ),
       },
       {
+        path: "user/allActivity",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <AllActivitys />
+          </Suspense>
+        ),
+      },
+      {
         path: "feed",
         element: (
           <Suspense fallback={<h1>loading... </h1>}>
@@ -45,7 +54,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      
       {
         path: "networks",
         element: (
@@ -54,7 +62,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      
       {
         path: "jobs",
         element: (
@@ -63,7 +70,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      
       {
         path: "messaging",
         element: (
@@ -72,7 +78,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      
       {
         path: "notifications",
         element: (
