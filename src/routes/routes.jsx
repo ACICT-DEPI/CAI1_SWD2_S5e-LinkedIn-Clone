@@ -9,6 +9,7 @@ const Messaging = lazy(() => import("../pages/Messaging"));
 const Networks = lazy(() => import("../pages/Networks"));
 const Notifications = lazy(() => import("../pages/Notifications"));
 const User = lazy(() => import("../pages/User"));
+const Profile = lazy(() => import("../pages/Profile"));
 
 const routes = createBrowserRouter([
   {
@@ -77,6 +78,14 @@ const routes = createBrowserRouter([
         element: (
           <Suspense fallback={<h1>loading... </h1>}>
             <Notifications />
+          </Suspense>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <Profile />
           </Suspense>
         ),
       },

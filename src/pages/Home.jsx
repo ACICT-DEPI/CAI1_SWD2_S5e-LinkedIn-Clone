@@ -3,7 +3,7 @@ import Leftside from "../components/Leftside";
 import Main from "../components/Main";
 import Rightside from "../components/Rightside";
 
-const Home = (props) => {
+const Home = () => {
   return (
     <Container>
       <Section>
@@ -25,19 +25,18 @@ const Home = (props) => {
 };
 const Container = styled.div`
   padding-top: 52px;
-  max-width: 80%;
+  max-width: 70%;
   margin:auto;
   justify-content: center;
   align-items: center;
   text-align: center;
-  
 `;
 
-const Content = styled.div`
-  max-width: 1128px;
-  margin-left: auto;
-  margin-right: auto;
-`;
+// const Content = styled.div`
+//   max-width: 1128px;
+//   margin-left: auto;
+//   margin-right: auto;
+// `;
 
 
 const Section = styled.section`
