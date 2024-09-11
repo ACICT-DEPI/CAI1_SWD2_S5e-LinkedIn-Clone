@@ -4,7 +4,7 @@ import Button from "./common/Button";
 import editIcon from "../assets/images/comment-icon.svg";
 function ActivitySection() {
   return (
-    <div className="mx-auto w-[80%] cursor-default border-gray-100 rounded-lg shadow-sm border-2 ">
+    <div className="mx-auto w-[80%] cursor-default border-gray-100 rounded-lg shadow-sm border-2 my-3">
       <div className="my-3 p-4 pb-0 ">
         {/* Section title and create new post button with edit button */}
         <div>

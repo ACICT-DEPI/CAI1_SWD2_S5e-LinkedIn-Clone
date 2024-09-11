@@ -36,9 +36,9 @@ function PostShortView() {
               className="w-[70px] h-[70px] rounded-lg"
             />
             <p>
-              {description.length > 90 ? (
+              {description.length > 210 ? (
                 <>
-                  {description.substring(0, 90) + "..."}
+                  {description.substring(0, 210) + "..."}
                   <br />
                   <div className="flex justify-end">
                     <p>...</p>
