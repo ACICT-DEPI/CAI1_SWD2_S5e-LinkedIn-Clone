@@ -5,7 +5,7 @@ import likeIcon from "../../assets/images/like-icon.svg";
 
 function ReactsInteraction() {
   return (
-    <div className="flex justify-between py-4">
+    <div className="flex justify-around py-4 flex-wrap">
       {/* Like */}
       <Button
         label={"Like"}
