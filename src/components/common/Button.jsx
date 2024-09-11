@@ -7,7 +7,7 @@ const Button = ({
   className = ''
 }) => {
 
-  const baseStyle = "flex items-center justify-center px-4 py-3 rounded-full border hover:shadow-md transition duration-200 ease-in-out";
+  const baseStyles = "flex items-center justify-center px-4 py-2 rounded-full border hover:shadow-md transition-shadow duration-200 ease-in-out";
   
   const styleTypes = {
     default: "border-linkedinGray text-black hover:bg-linkedin-lighthover-gray",

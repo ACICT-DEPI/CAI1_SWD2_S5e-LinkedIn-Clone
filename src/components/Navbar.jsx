@@ -98,10 +98,10 @@ export default function Navbar() {
         <img src={homeIcon} alt="logo" />
       </Link>
 
-      <div className="flex space-x-4 ml-6 flex-shrink-0">
+      <div className="flex space-x-4  flex-shrink-0">
         {/* Search Icon on Small Screens */}
         <div
-          className={`cursor-pointer flex flex-col items-center hover:bg-gray-200 text-gray-500 hover:text-black px-3 py-2 rounded-md text-xs font-medium lg:hidden ${
+          className={` cursor-pointer flex flex-col items-center hover:bg-gray-200 text-gray-500 hover:text-black px-3 py-2 rounded-md text-xs font-medium lg:hidden ${
             isSearchFocused ? "hidden" : "block"
           }`}
           onClick={() => setIsSearchFocused(true)}
@@ -115,7 +115,7 @@ export default function Navbar() {
         </div>
 
         {/* Search Bar on Large Screens */}
-        <div className="relative hidden lg:flex flex-grow">
+        <div className="relative hidden lg:flex flex-grow ">
           <input
             type="text"
             placeholder="Search"
@@ -184,7 +184,7 @@ export default function Navbar() {
 
               {/* Dropdown User Menu */}
               {isUserMenuOpen && (
-                <div className="absolute right-0 bg-white shadow-lg rounded-md mt-6">
+                <div className="absolute right-0 bg-white shadow-lg rounded-md mt-6 z-20">
                   <div className="flex flex-col p-2">
                     <Link
                       to="/profile"

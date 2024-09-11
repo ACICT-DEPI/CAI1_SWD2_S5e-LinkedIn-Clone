@@ -15,6 +15,7 @@ const Messaging = lazy(() => import("../pages/Messaging"));
 const Networks = lazy(() => import("../pages/Networks"));
 const Notifications = lazy(() => import("../pages/Notifications"));
 const User = lazy(() => import("../pages/User"));
+const Profile = lazy(() => import("../pages/Profile"));
 
 const routes = createBrowserRouter([
   {
@@ -39,6 +40,14 @@ const routes = createBrowserRouter([
         ),
       },
       {
+        path: "user/allActivity",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <AllActivitys />
+          </Suspense>
+        ),
+      },
+      {
         path: "feed",
         element: (
           <Suspense fallback={<h1>loading... </h1>}>
@@ -46,7 +55,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      ,
       {
         path: "networks",
         element: (
@@ -55,7 +63,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      ,
       {
         path: "jobs",
         element: (
@@ -64,7 +71,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      ,
       {
         path: "messaging",
         element: (
@@ -73,12 +79,19 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      ,
       {
         path: "notifications",
         element: (
           <Suspense fallback={<h1>loading... </h1>}>
             <Notifications />
+          </Suspense>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <Profile />
           </Suspense>
         ),
       },
