@@ -44,7 +44,7 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      ,
+      
       {
         path: "networks",
         element: (
@@ -53,7 +53,7 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      ,
+      
       {
         path: "jobs",
         element: (
@@ -62,7 +62,7 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      ,
+      
       {
         path: "messaging",
         element: (
@@ -71,7 +71,7 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      ,
+      
       {
         path: "notifications",
         element: (
