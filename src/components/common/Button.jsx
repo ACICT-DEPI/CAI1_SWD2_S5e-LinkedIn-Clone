@@ -7,17 +7,17 @@ const Button = ({
   className = ''
 }) => {
 
-  const baseStyle = "flex items-center justify-center px-4 py-2 rounded-full border hover:shadow-md transition-shadow duration-200 ease-in-out";
+  const baseStyle = "flex items-center justify-center px-4 py-3 rounded-full border hover:shadow-md transition duration-200 ease-in-out";
   
   const styleTypes = {
-    default: "border-gray-400 text-black hover:border-gray-500",
-    primary: "bg-linkedin-blue text-white hover:bg-linkedin-dark-blue",
-    secondary: "bg-gray-200 text-gray-700 hover:bg-gray-300",
-    outline: "border border-gray-300 text-gray-700 hover:bg-gray-50",
+    default: "border-linkedinGray text-black hover:bg-linkedin-lighthover-gray",
+    primary: "bg-linkedinBlue text-white hover:bg-linkedinDarkBlue",
+    // secondary: "bg-gray-200 text-gray-700 hover:bg-gray-300",
+    outline: "border-linkedinBlue text-linkedinBlue hover:bg-linkedin-lighthover-blue",
   };
 
   // Combine all styles
-  const finalClassNames = `${baseStyles} ${styleTypes[styleType]} ${className}`;
+  const finalClassNames = `${baseStyle} ${styleTypes[styleType]} ${className}`;
 
   return (
     <button onClick={onClick} className={finalClassNames}>
@@ -27,4 +27,4 @@ const Button = ({
   );
 }
 
-export default Button
+export default Button;
