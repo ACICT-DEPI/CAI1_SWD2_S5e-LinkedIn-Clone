@@ -5,9 +5,9 @@ import ReactsInteraction from "./ReactsInteraction";
 import AddComment from "./AddComment";
 import PostUserInfo from "./PostUserInfo";
 import Comment from "./Comment";
+import LargeText from "./LargeText";
 
 function PostFullView() {
-  const [showMore, setShowMore] = useState(false);
   const description = `
 Introducing 𝐅𝐀𝐑 𝐀𝐖𝐀𝐘: My Latest React Project 🥳
 
@@ -63,27 +63,7 @@ hashtag#frontend hashtag#css hashtag#html hashtag#javascript hashtag#developer h
         </div>
         {/* Description */}
         <div>
-          {showMore ? (
-            <p>
-              {description}
-              <span
-                className="text-linkedinGray hover:text-linkedinBlue cursor-pointer"
-                onClick={() => setShowMore(false)}
-              >
-                less
-              </span>
-            </p>
-          ) : (
-            <p>
-              {description.substring(0, description.length / 4)}
-              <span
-                className="text-linkedinGray hover:text-linkedinBlue cursor-pointer"
-                onClick={() => setShowMore(true)}
-              >
-                ...more
-              </span>
-            </p>
-          )}
+         <LargeText description={description}/>
         </div>
         {/* Photos -videos */}
         <div

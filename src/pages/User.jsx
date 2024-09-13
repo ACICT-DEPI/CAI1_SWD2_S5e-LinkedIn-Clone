@@ -1,14 +1,16 @@
-import React from 'react'
-import ActivitySection from '../components/userComponents/ActivitySection';
-import { Outlet } from 'react-router-dom';
+import React from "react";
+import ActivitySection from "../components/userComponents/ActivitySection";
+import { Outlet } from "react-router-dom";
+import AboutSection from "../components/userComponents/AboutSection";
 
 function User() {
   return (
     <>
-      <ActivitySection/>
+      <AboutSection />
+      <ActivitySection />
       <div>user</div>
     </>
   );
 }
 
-export default User
+export default User;
