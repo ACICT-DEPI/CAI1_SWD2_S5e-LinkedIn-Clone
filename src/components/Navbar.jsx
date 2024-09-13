@@ -193,7 +193,7 @@ export default function Navbar() {
                       Profile
                     </Link>
                     <Link
-                      to="/signin"
+                      to="/home"
                       className="items-center hover:bg-gray-200 px-3 py-2 rounded-md whitespace-nowrap"
                     >
                       Sign Out

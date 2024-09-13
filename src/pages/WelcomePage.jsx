@@ -14,7 +14,7 @@ const WelcomePage = () => {
         <img src={logo} alt="LinkedIn Logo" className="h-8 pe-5 max-w-sm" />
         <div className="flex items-center space-x-4">
           <Button label="Sign in" styleType="outline"  onClick={() => navigate('/login')} />
-          <Button label="Join now" styleType="primary"  onClick={() => navigate('/sign-up')} />
+          <Button label="Join now" styleType="primary"  onClick={() => navigate('/signup')} />
         </div>
         </nav>
         
@@ -62,7 +62,7 @@ const WelcomePage = () => {
             <div className="mt-6 text-center w-3/4">
               <p className="text-sm text-gray-600">
                 New to LinkedIn?{' '}
-                <Link to="/sign-up" className="text-linkedinBlue hover:underline">
+                <Link to="/signup" className="text-linkedinBlue hover:underline">
                   Join now
                 </Link>
               </p>
