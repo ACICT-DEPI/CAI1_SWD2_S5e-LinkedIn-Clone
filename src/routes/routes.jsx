@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import App from "../App";
 import { lazy, Suspense } from "react";
 import ErrorPage from "../pages/ErrorPage";
-import AllActivitys from "../components/AllActivitys";
+import AllActivitys from "../components/userComponents/AllActivitys";
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
 const Messaging = lazy(() => import("../pages/Messaging"));

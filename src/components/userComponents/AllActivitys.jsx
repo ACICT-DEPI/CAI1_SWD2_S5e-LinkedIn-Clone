@@ -1,9 +1,9 @@
 import React from "react";
-import Section from "./common/section";
-import Button from "./common/Button";
-import PostFullView from "./common/PostFullView";
-import UserInfoCart from "./common/UserInfoCart";
-import RecommendCard from "./common/RecommendCard";
+import Section from "../common/section";
+import Button from "../common/Button";
+import PostFullView from "../common/PostFullView";
+import UserInfoCart from "../common/UserInfoCart";
+import RecommendCard from "../common/RecommendCard";
 function AllActivitys() {
   return (
     <div className="max-w-[75%] mx-auto grid grid-cols-1 md:grid-cols-12 gap-4">

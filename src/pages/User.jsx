@@ -1,5 +1,5 @@
 import React from 'react'
-import ActivitySection from '../components/ActivitySection';
+import ActivitySection from '../components/userComponents/ActivitySection';
 import { Outlet } from 'react-router-dom';
 
 function User() {
