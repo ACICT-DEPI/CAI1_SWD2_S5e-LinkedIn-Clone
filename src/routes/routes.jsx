@@ -9,6 +9,8 @@ import SignUpPage from "../pages/SignUpPage"
 import SignUpDetailsPage from "../pages/SignUpDetailsPage"
 import LoginPage from "../pages/LoginPage"
 import AllActivitys from "../components/AllActivitys"
+import AnalyticsPage from '../pages/Profile/AnalyticsPage'
+import ResourcePage from '../pages/Profile/ResourcesPage'
 
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
@@ -16,7 +18,7 @@ const Messaging = lazy(() => import("../pages/Messaging"));
 const Networks = lazy(() => import("../pages/Networks"));
 const Notifications = lazy(() => import("../pages/Notifications"));
 const User = lazy(() => import("../pages/User"));
-const Profile = lazy(() => import("../pages/Profile"));
+const Profile = lazy(() => import("../pages/Profile/Profile"));
 
 const routes = createBrowserRouter([
   {
@@ -96,6 +98,22 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "/dashboard",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <AnalyticsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/resources",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <ResourcePage />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -142,6 +160,7 @@ const routes = createBrowserRouter([
       </Suspense>
     ),
   },
+
 ]);
 
 export default routes;

@@ -14,6 +14,7 @@ export default {
         'linkedinLightGray': '#F3F2EF', // Background color
         'linkedinGray': '#86888A',     // Text color light gray
         'linkedinsecondGray':'#526A6E',
+        'linkedinDarkGray':'#404040',
         'linkedinWhite': '#FFFFFF',
         'linkedinGreen': '#01754f',
       },
