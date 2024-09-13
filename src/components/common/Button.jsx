@@ -19,7 +19,7 @@ const Button = ({
   };
 
   // Combine all styles
-  const finalClassNames = `${baseStyles} ${styleTypes[styleType]} ${className}`;
+  const finalClassNames = `${baseStyle} ${styleTypes[styleType]} ${className}`;
 
   return (
     <button onClick={onClick} className={finalClassNames}>
