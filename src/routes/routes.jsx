@@ -99,7 +99,7 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "/dashboard",
+        path: "dashboard",
         element: (
           <Suspense fallback={<h1>loading... </h1>}>
             <AnalyticsPage />
@@ -107,13 +107,14 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "/resources",
+        path: "resources",
         element: (
           <Suspense fallback={<h1>loading... </h1>}>
             <ResourcePage />
           </Suspense>
         ),
       },
+    
     ],
   },
   {

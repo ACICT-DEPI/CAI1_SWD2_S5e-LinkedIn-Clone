@@ -23,8 +23,8 @@ const ResourcesSection = () => {
         <div className='flex gap-5 px-5'>
           <BsPeopleFill className='text-2xl text-linkedinDarkGray'/>
           <div>
-          <h3 class="text-base font-semibold md:block text-linkedinDarkGray">My network</h3>
-              <p class="text-linkedinDarkGray">
+          <h3 className="text-base font-semibold md:block text-linkedinDarkGray">My network</h3>
+              <p className="text-linkedinDarkGray">
               See and manage your connections and interests.
               </p>
           </div>
@@ -33,8 +33,8 @@ const ResourcesSection = () => {
         <div className='flex gap-5 px-5'>
           <img src={saveIcon} alt="saved items" className='h-5'/>
           <div>
-          <h3 class="text-base font-semibold md:block text-linkedinDarkGray">Saved itemsSaved items</h3>
-              <p class="text-linkedinDarkGray">
+          <h3 className="text-base font-semibold md:block text-linkedinDarkGray">Saved items</h3>
+              <p className="text-linkedinDarkGray">
                 Keep track of your jobs, courses, and articles.
               </p>
           </div>
