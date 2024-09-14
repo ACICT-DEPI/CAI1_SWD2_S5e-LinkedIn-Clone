@@ -1,9 +1,11 @@
 import React from 'react';
+import PostFullView from './Post/PostFullView';
 
 const Main = () => {
   return (
     <div>
-      {`Main`}
+      <PostFullView />
+      <PostFullView />
     </div>
   );
 }

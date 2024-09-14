@@ -1,20 +1,29 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Navigate } from "react-router-dom";
-import App from "../App";
 import { lazy, Suspense } from "react";
 import ErrorPage from "../pages/ErrorPage";
+import MainLayout from "../layouts/MainLayout";
+import WelcomePage from "../pages/WelcomePage"
+import SignUpLayout from "../layouts/SignUpLayout";
+import SignUpPage from "../pages/SignUpPage"
+import SignUpDetailsPage from "../pages/SignUpDetailsPage"
+import LoginPage from "../pages/LoginPage"
+import AllActivitysPage from "../pages/Profile/AllActivitysPage";
+import AnalyticsPage from '../pages/Profile/AnalyticsPage'
+import ResourcePage from '../pages/Profile/ResourcesPage'
+
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
 const Messaging = lazy(() => import("../pages/Messaging"));
 const Networks = lazy(() => import("../pages/Networks"));
 const Notifications = lazy(() => import("../pages/Notifications"));
 const User = lazy(() => import("../pages/User"));
-const Profile = lazy(() => import("../pages/Profile"));
+const Profile = lazy(() => import("../pages/Profile/Profile"));
 
 const routes = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <MainLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -22,10 +31,6 @@ const routes = createBrowserRouter([
         element: <Navigate to="/feed" replace />,
         // The replace prop ensures that the redirect does not leave a history entry,
         //which means users won’t navigate back to the root path using the browser's back button.
-      },
-      {
-        path: "home",
-        element: <Navigate to="/feed" replace />,
       },
       {
         path: "user",
@@ -38,6 +43,14 @@ const routes = createBrowserRouter([
         ),
       },
       {
+        path: "profile/allActivity",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <AllActivitysPage />
+          </Suspense>
+        ),
+      },
+      {
         path: "feed",
         element: (
           <Suspense fallback={<h1>loading... </h1>}>
@@ -45,7 +58,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      
       {
         path: "networks",
         element: (
@@ -54,7 +66,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      
       {
         path: "jobs",
         element: (
@@ -63,7 +74,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      
       {
         path: "messaging",
         element: (
@@ -72,7 +82,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      
       {
         path: "notifications",
         element: (
@@ -89,34 +98,68 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "dashboard",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <AnalyticsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "resources",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <ResourcePage />
+          </Suspense>
+        ),
+      },
     ],
   },
-  // {
-  //   path: "/auth",
-  //   element: (
-  //     // <AuthProtectedRoute>
-  //       <Layout />
-  //     // </AuthProtectedRoute>
-  //   ),
-  //   children: [
-  //     {
-  //       path: "",
-  //       element: (
-  //         <Suspense fallback={<h1>loading... </h1>}>
-  //           <Signin />
-  //         </Suspense>
-  //       ),
-  //     },
-  //     {
-  //       path: "signup",
-  //       element: (
-  //         <Suspense fallback={<h1>loading... </h1>}>
-  //           <Signup />
-  //         </Suspense>
-  //       ),
-  //     },
-  //   ],
-  // },
+  {
+    path: "/home",
+    element: (
+      <Suspense fallback={<h1>loading... </h1>}>
+        <WelcomePage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/signup",
+    element: (
+      // <AuthProtectedRoute>
+      <Suspense fallback={<h1>loading... </h1>}>
+        <SignUpLayout />
+      </Suspense>
+      // </AuthProtectedRoute>
+    ),
+    children: [
+      {
+        path: "",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <SignUpPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "SignUpDetailsPage",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <SignUpDetailsPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: (
+      <Suspense fallback={<h1>loading... </h1>}>
+        <LoginPage />
+      </Suspense>
+    ),
+  },
 ]);
 
 export default routes;

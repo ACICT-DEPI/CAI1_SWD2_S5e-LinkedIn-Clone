@@ -3,8 +3,8 @@ import "../assets/style/profile.css"
 import Button from "../components/common/Button"
 const ProfileHeader = () => {
   return (
-    <div>
-      <main>
+    <>
+      <main className='bg-white rounded-lg w-1/2 mx-auto'>
   <div className="hero">
     <div className="hero-banner">
       <img src="src/assets/images/card-bg.svg" alt="" />
@@ -27,7 +27,7 @@ const ProfileHeader = () => {
   </div>
 </main>
 
-    </div>
+    </>
   );
 }
 

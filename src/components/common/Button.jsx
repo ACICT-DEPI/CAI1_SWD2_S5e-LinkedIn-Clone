@@ -1,19 +1,21 @@
-import React from 'react'
+import React from "react";
 
 const Button = ({
-  label, icon,
+  label,
+  icon,
   onClick,
   styleType = "default",
-  className = ''
+  className = "",
 }) => {
+  const baseStyle =
+    "flex items-center justify-center px-4 py-2 rounded-full border hover:shadow-md transition-shadow duration-200 ease-in-out";
 
-  const baseStyle = "flex items-center justify-center px-4 py-3 rounded-full border hover:shadow-md transition duration-200 ease-in-out";
-  
   const styleTypes = {
     default: "border-linkedinGray text-black hover:bg-linkedin-lighthover-gray",
     primary: "bg-linkedinBlue text-white hover:bg-linkedinDarkBlue",
     // secondary: "bg-gray-200 text-gray-700 hover:bg-gray-300",
-    outline: "border-linkedinBlue text-linkedinBlue hover:bg-linkedin-lighthover-blue",
+    outline:
+      "border-linkedinBlue text-linkedinBlue hover:bg-linkedin-lighthover-blue",
   };
 
   // Combine all styles
@@ -25,6 +27,6 @@ const Button = ({
       {label}
     </button>
   );
-}
+};
 
 export default Button;

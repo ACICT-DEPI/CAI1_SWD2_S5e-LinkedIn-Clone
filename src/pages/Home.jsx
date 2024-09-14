@@ -15,7 +15,7 @@ const Home = () => {
           moving.
         </p>
       </Section>
-      <Layout>
+      <Layout >
         <Leftside />
         <Main />
         <Rightside />
