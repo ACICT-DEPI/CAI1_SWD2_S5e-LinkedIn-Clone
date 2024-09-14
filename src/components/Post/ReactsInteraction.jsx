@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from './Button'
+import Button from '../common/Button'
 import commentIcon from "../../assets/images/comment-icon.svg";
 import likeIcon from "../../assets/images/like-icon.svg";
 

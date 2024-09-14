@@ -1,9 +1,9 @@
 import React from "react";
-import PostShortView from "../common/PostShortView";
-import Button from "../common/Button";
-import editIcon from "../../assets/images/comment-icon.svg";
+import PostShortView from "../../../components/Post/PostShortView";
+import Button from "../../../components/common/Button";
+import editIcon from "../../../assets/images/comment-icon.svg";
 import { Link } from "react-router-dom";
-import Section from "../common/Section";
+import Section from "../../../components/common/Section";
 function ActivitySection() {
   return (
     <>

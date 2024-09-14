@@ -8,7 +8,7 @@ import SignUpLayout from "../layouts/SignUpLayout";
 import SignUpPage from "../pages/SignUpPage"
 import SignUpDetailsPage from "../pages/SignUpDetailsPage"
 import LoginPage from "../pages/LoginPage"
-// import AllActivitys from "../components/AllActivitys"
+import AllActivitysPage from "../pages/Profile/AllActivitysPage";
 import AnalyticsPage from '../pages/Profile/AnalyticsPage'
 import ResourcePage from '../pages/Profile/ResourcesPage'
 
@@ -42,14 +42,14 @@ const routes = createBrowserRouter([
           // </UserProtectedRoute>
         ),
       },
-      // {
-      //   path: "user/allActivity",
-      //   element: (
-      //     <Suspense fallback={<h1>loading... </h1>}>
-      //       <AllActivitys />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "profile/allActivity",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <AllActivitysPage />
+          </Suspense>
+        ),
+      },
       {
         path: "feed",
         element: (
@@ -114,7 +114,6 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-    
     ],
   },
   {
@@ -130,27 +129,27 @@ const routes = createBrowserRouter([
     element: (
       // <AuthProtectedRoute>
       <Suspense fallback={<h1>loading... </h1>}>
-      <SignUpLayout  />
+        <SignUpLayout />
       </Suspense>
       // </AuthProtectedRoute>
     ),
     children: [
-        { path: "",
-          element: (
-            <Suspense fallback={<h1>loading... </h1>}>
-              <SignUpPage />
-            </Suspense>
-          ),
-        },
-        {
-          path: "SignUpDetailsPage",
-          element: (
-            <Suspense fallback={<h1>loading... </h1>}>
-              <SignUpDetailsPage />
-            </Suspense>
-          ),
+      {
+        path: "",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <SignUpPage />
+          </Suspense>
+        ),
       },
-      
+      {
+        path: "SignUpDetailsPage",
+        element: (
+          <Suspense fallback={<h1>loading... </h1>}>
+            <SignUpDetailsPage />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -161,7 +160,6 @@ const routes = createBrowserRouter([
       </Suspense>
     ),
   },
-
 ]);
 
 export default routes;

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import Section from "../common/section";
-import Button from "../common/Button";
-import EditIcon from "../Icons/editIcon";
-import LargeText from "../common/LargeText";
+import Section from "../../../components/common/section";
+import Button from "../../../components/common/Button";
+import EditIcon from "../../../components/Icons/editIcon";
+import LargeText from "../../../components/common/LargeText";
 
 function AboutSection() {
   const [about, setAbout] = useState(""); // Store the about text

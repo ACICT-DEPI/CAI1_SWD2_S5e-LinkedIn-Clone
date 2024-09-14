@@ -1,13 +1,12 @@
 import React from "react";
-import ActivitySection from "../components/userComponents/ActivitySection";
+import ActivitySection from "./Profile/componenets/ActivitySection";
 import { Outlet } from "react-router-dom";
-import AboutSection from "../components/userComponents/AboutSection";
+import AboutSection from "./Profile/componenets/AboutSection";
 
 function User() {
   return (
     <>
-      <AboutSection />
-      <ActivitySection />
+      
       <div>user</div>
     </>
   );

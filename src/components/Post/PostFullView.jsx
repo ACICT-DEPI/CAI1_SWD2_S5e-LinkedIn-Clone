@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import Section from "./section";
+import Section from "../common/section";
 import Reacts from "./Reacts";
 import ReactsInteraction from "./ReactsInteraction";
 import AddComment from "./AddComment";
 import PostUserInfo from "./PostUserInfo";
 import Comment from "./Comment";
-import LargeText from "./LargeText";
+import LargeText from "../common/LargeText";
 
 function PostFullView() {
   const description = `
