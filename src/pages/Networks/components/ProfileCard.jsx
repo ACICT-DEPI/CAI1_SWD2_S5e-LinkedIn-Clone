@@ -1,9 +1,15 @@
-import React from 'react';
-import { IoPersonAdd } from "react-icons/io5";
+import React, { useState } from 'react';
 import { TiDelete } from "react-icons/ti";
+import { IoPersonAdd, IoHourglassOutline } from "react-icons/io5";
 import Button from '../../../components/common/Button';
 
 const ProfileCard = ({ profile, handleIgnore }) => {
+    const [isPending, setIsPending] = useState(false);
+
+    const handleConnect = () => {
+      setIsPending(!isPending); 
+    };
+    
   return (
     <div className='border rounded-lg shadow-md'>
       <div className='relative'>
@@ -19,10 +25,12 @@ const ProfileCard = ({ profile, handleIgnore }) => {
       <h3 className='text-lg font-semibold px-4 mt-4 text-linkedinDarkGray text-center'>{profile.name}</h3>
       <p className='text-sm text-linkedinGray px-4 text-center'>{profile.desc}</p>
       <Button
-        label="Connect"
-        icon={<IoPersonAdd />}
-        styleType="outline"
-        className=" w-3/4 mx-auto my-5 py-1"
+        // Change text and icon based on connection status
+        label={isPending ? "Pending" : "Connect"}
+        icon={isPending ? <IoHourglassOutline /> : <IoPersonAdd />}
+        styleType={isPending ? "default" : "outline"}
+        className="w-3/4 mx-auto my-5 py-1"
+        onClick={handleConnect} // Handle button click
       />
     </div>
   );
