@@ -15,7 +15,7 @@ import ResourcePage from '../pages/Profile/ResourcesPage'
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
 const Messaging = lazy(() => import("../pages/Messaging"));
-const Networks = lazy(() => import("../pages/Networks"));
+const Networks = lazy(() => import("../pages/Networks/NetworksPage"));
 const Notifications = lazy(() => import("../pages/Notifications"));
 const User = lazy(() => import("../pages/User"));
 const Profile = lazy(() => import("../pages/Profile/Profile"));
