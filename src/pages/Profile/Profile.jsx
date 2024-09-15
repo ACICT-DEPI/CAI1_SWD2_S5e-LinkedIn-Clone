@@ -1,5 +1,5 @@
 import React from 'react';
-import ProfileHeader from '../../components/ProfileHeader';
+import ProfileHeader from './componenets/ProfileHeader';
 import AnalyticsSection from './componenets/AnalyticsSection'
 import ResourcesSection from './componenets/ResourcesSection'
 import AboutSection from './componenets/AboutSection';
