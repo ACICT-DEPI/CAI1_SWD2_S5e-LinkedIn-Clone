@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import homeIcon from "../assets/images/nav/home-logo.svg";
 import feedIcon from "../assets/images/nav/nav-home.svg";
 import jobsIcon from "../assets/images/nav/nav-jobs.svg";
@@ -30,30 +30,7 @@ export default function Navbar() {
   const navbarRef = useRef(null);
   const ellipsesDropdown = useRef(null);
   const userDropdown = useRef(null);
-
-  //handle
-  const toggleDropdown = () => {
-    setDropdownOpen(!isDropdownOpen);
-  };
-
-  const toggleUserMenu = () => {
-    setIsUserMenuOpen(!isUserMenuOpen);
-  };
-
-  const updateVisibleIcons = () => {
-    const width = window.innerWidth;
-    if (width >= 1024) {
-      setVisibleIcons(icons.length);
-    } else if (width >= 768) {
-      setVisibleIcons(icons.length - 1);
-    } else if (width >= 500) {
-      setVisibleIcons(icons.length - 2);
-    } else if (width >= 200) {
-      setVisibleIcons(icons.length - 3);
-    } else {
-      setVisibleIcons(icons.length - 4);
-    }
-  };
+  const dropdownItemsRef = useRef([]); // Ref for dropdown items
 
   //use effects
   useEffect(() => {
@@ -61,11 +38,19 @@ export default function Navbar() {
     window.addEventListener("resize", updateVisibleIcons);
     return () => window.removeEventListener("resize", updateVisibleIcons);
   }, []);
-
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (navbarRef.current && !navbarRef.current.contains(event.target)) {
         setIsSearchFocused(false);
+      }
+      const isClickInsideDropdownItems = dropdownItemsRef.current.some(item =>
+        item && item.contains(event.target)
+      );
+      
+      if (isClickInsideDropdownItems) {
+        // If the click is inside dropdown items, do not close the menu
+        return;
       }
       if (
         userDropdown.current &&
@@ -80,18 +65,44 @@ export default function Navbar() {
         setDropdownOpen(false);
       }
     };
-
+    
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [navbarRef, userDropdown, ellipsesDropdown]);
+  
+  
+    //handle
+    const toggleDropdown = () => {
+      setDropdownOpen(!isDropdownOpen);
+    };
+  
+    const toggleUserMenu = () => {
+      setIsUserMenuOpen(!isUserMenuOpen);
+    };
+  
+    const updateVisibleIcons = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        setVisibleIcons(icons.length);
+      } else if (width >= 768) {
+        setVisibleIcons(icons.length - 1);
+      } else if (width >= 500) {
+        setVisibleIcons(icons.length - 2);
+      } else if (width >= 200) {
+        setVisibleIcons(icons.length - 3);
+      } else {
+        setVisibleIcons(icons.length - 4);
+      }
+    };
+        
 
   // rendering
   return (
     <div
       ref={navbarRef}
-      className="flex justify-center items-center h-16 bg-white shadow max-w-full content-center  px-4 sm:px-6 lg:px-8"
+      className="fixed top-0 left-0 right-0 flex justify-center items-center h-16 bg-white shadow max-w-full content-center  px-4 sm:px-6 lg:px-8 z-50"
     >
       {/* logo */}
       <Link to="home" className="flex-shrink-0">
@@ -101,7 +112,7 @@ export default function Navbar() {
       <div className="flex space-x-4  flex-shrink-0">
         {/* Search Icon on Small Screens */}
         <div
-          className={` cursor-pointer flex flex-col items-center hover:bg-gray-200 text-gray-500 hover:text-black px-3 py-2 rounded-md text-xs font-medium lg:hidden ${
+          className={` cursor-pointer flex flex-col items-center hover:bg-gray-200 text-gray-500 hover:text-black ml-2 px-3 py-2 rounded-md text-xs font-medium lg:hidden ${
             isSearchFocused ? "hidden" : "block"
           }`}
           onClick={() => setIsSearchFocused(true)}
@@ -184,16 +195,19 @@ export default function Navbar() {
 
               {/* Dropdown User Menu */}
               {isUserMenuOpen && (
-                <div className="absolute right-0 bg-white shadow-lg rounded-md mt-6 z-20">
+                <div className="absolute right-0 bg-white shadow-lg rounded-md mt-3 z-50">
                   <div className="flex flex-col p-2">
                     <Link
                       to="/profile"
                       className="items-center hover:bg-gray-200 px-3 py-2 rounded-md"
+                      onClick={toggleUserMenu}
+                      ref={(el) => (dropdownItemsRef.current[0] = el)} // Save reference to first item
                     >
                       Profile
                     </Link>
                     <Link
                       to="/home"
+                      ref={(el) => (dropdownItemsRef.current[2] = el)} // Save reference to first item
                       className="items-center hover:bg-gray-200 px-3 py-2 rounded-md whitespace-nowrap"
                     >
                       Sign Out
@@ -219,7 +233,7 @@ export default function Navbar() {
             />
             {/*Ellipsis Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 bg-white shadow-lg rounded-md mt-8">
+              <div className="absolute right-0 bg-white shadow-lg rounded-md mt-8 z-50">
                 <div className="flex flex-col p-2">
                   {icons.slice(visibleIcons).map((icon, index) => (
                     <Link
