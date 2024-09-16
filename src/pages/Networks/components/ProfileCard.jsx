@@ -25,12 +25,11 @@ const ProfileCard = ({ profile, handleIgnore }) => {
       <h3 className='text-lg font-semibold px-4 mt-4 text-linkedinDarkGray text-center'>{profile.name}</h3>
       <p className='text-sm text-linkedinGray px-4 text-center'>{profile.desc}</p>
       <Button
-        // Change text and icon based on connection status
         label={isPending ? "Pending" : "Connect"}
         icon={isPending ? <IoHourglassOutline /> : <IoPersonAdd />}
         styleType={isPending ? "default" : "outline"}
         className="w-3/4 mx-auto my-5 py-1"
-        onClick={handleConnect} // Handle button click
+        onClick={handleConnect}
       />
     </div>
   );
