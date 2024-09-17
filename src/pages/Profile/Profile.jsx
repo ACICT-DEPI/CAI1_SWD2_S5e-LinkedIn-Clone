@@ -9,7 +9,7 @@ import ActivitySection from './componenets/ActivitySection';
 const Profile = () => {
   return (
     
-    <div className="bg-linkedinLightGray min-h-screen py-3">
+    <div className="bg-linkedinLightGray min-h-screen py-3 mt-16">
       <ProfileHeader />
       <AnalyticsSection />
       <ResourcesSection />

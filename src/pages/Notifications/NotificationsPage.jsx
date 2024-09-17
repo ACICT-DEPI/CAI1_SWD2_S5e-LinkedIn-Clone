@@ -16,6 +16,7 @@
 // export default Notifications;
 import React, { useState } from "react";
 import FilterOptions from "./components/FilterOptions";
+import Section from "../../components/common/Section";
 
 const NotificationPage = () => {
   const [filter, setFilter] = useState("all");
@@ -26,9 +27,12 @@ const NotificationPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-linkedinLightGray">
-      <h1 className="text-2xl font-semibold mb-4">Notifications</h1>
-      <FilterOptions onFilterChange={handleFilterChange} />
+    <div className=" min-h-screen py-3 mx-auto p-4 bg-linkedinLightGray mt-16 ">
+      <main className="w-1/2 mx-auto">
+        <Section>
+          <FilterOptions onFilterChange={handleFilterChange} />
+        </Section>
+      </main>
       {/* Other components like NotificationList go here */}
     </div>
   );

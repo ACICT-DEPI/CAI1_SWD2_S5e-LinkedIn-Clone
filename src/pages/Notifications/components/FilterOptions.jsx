@@ -47,9 +47,9 @@ const FilterOptions = ({ onFilterChange }) => {
           return (
             <div key={filter.value} className="relative">
               <button
-                className={`border-2 flex items-center px-4 py-2 rounded-full transition duration-200 ${
+                className={`border-2 border-gray-300 flex items-center px-4 py-2 rounded-full transition duration-200 ${
                   selectedFilter === filter.value
-                    ? "bg-linkedinGreen text-white border-0"
+                    ? "bg-linkedinGreen text-white border-0 hover:bg-green-900"
                     : "bg-white text-gray-700 hover:bg-gray-200 hover:border-gray-500"
                 }`}
                 onClick={() => handleFilterChange(filter.value)}
@@ -61,17 +61,12 @@ const FilterOptions = ({ onFilterChange }) => {
                     }`}
                 {isIcon && (
                   <svg
-                    className="ml-1 h-4 w-4"
                     xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
+                    width="16"
+                    height="16"
+                    className="ml-1 hidden sm:inline fill-current"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.23 7.21a.75.75 0 011.06 0L10 10.293l3.71-3.08a.75.75 0 011.04 1.08l-4.25 3.5a.75.75 0 01-1.04 0l-4.25-3.5a.75.75 0 010-1.08z"
-                      clipRule="evenodd"
-                    />
+                    <path d="M8.8 10.66L14 5.12a.07.07 0 00-.07-.12H2.07a.07.07 0 00-.07.12l5.2 5.54a1.1 1.1 0 001.6 0z"></path>
                   </svg>
                 )}
               </button>
@@ -106,10 +101,10 @@ const FilterOptions = ({ onFilterChange }) => {
         return (
           <button
             key={filter.value}
-            className={`border-2 px-4 py-2 rounded-full transition duration-200 ${
+            className={`border-2 border-gray-300 px-4 py-2 rounded-full transition duration-200 ${
               selectedFilter === filter.value
-                ? "bg-linkedinGreen text-white border-0"
-                : "bg-white text-gray-700 hover:bg-gray-200 hover:border-gray-500"
+                ? "bg-linkedinGreen text-white border-0 hover:bg-green-900"
+                : "bg-white text-gray-800 hover:bg-gray-200 hover:border-gray-500"
             }`}
             onClick={() => handleFilterChange(filter.value)}
           >
