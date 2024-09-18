@@ -28,7 +28,7 @@ const NotificationPage = () => {
 
   return (
     <div className=" min-h-screen py-3 mx-auto p-4 bg-linkedinLightGray mt-16 ">
-      <main className="w-1/2 mx-auto">
+      <main className="w-full max-w-2xl mx-auto">
         <Section>
           <FilterOptions onFilterChange={handleFilterChange} />
         </Section>

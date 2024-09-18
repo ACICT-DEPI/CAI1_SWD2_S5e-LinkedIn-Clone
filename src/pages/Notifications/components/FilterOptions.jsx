@@ -4,7 +4,6 @@ const FilterOptions = ({ onFilterChange }) => {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isIcon, setIcon] = useState(false);
-
   const [postFilter, setPostFilter] = useState("all");
 
   const filters = [
@@ -41,13 +40,13 @@ const FilterOptions = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="border flex justify-center space-x-4 p-4 bg-linkedinWhite rounded-lg">
+    <div className="border flex flex-wrap justify-center space-x-4 p-4 bg-linkedinWhite rounded-lg">
       {filters.map((filter) => {
         if (filter.value === "posts") {
           return (
             <div key={filter.value} className="relative">
               <button
-                className={`border-2 border-gray-300 flex items-center px-4 py-2 rounded-full transition duration-200 ${
+                className={`border-2 border-gray-300 flex items-center px-4 py-2 rounded-full transition duration-200 sm:w-auto flex-shrink-0 flex-grow-0 ${
                   selectedFilter === filter.value
                     ? "bg-linkedinGreen text-white border-0 hover:bg-green-900"
                     : "bg-white text-gray-700 hover:bg-gray-200 hover:border-gray-500"
@@ -101,7 +100,7 @@ const FilterOptions = ({ onFilterChange }) => {
         return (
           <button
             key={filter.value}
-            className={`border-2 border-gray-300 px-4 py-2 rounded-full transition duration-200 ${
+            className={`border-2 border-gray-300 flex px-4 py-2 rounded-full transition duration-200  sm:w-auto flex-shrink-0 flex-grow-0 ${
               selectedFilter === filter.value
                 ? "bg-linkedinGreen text-white border-0 hover:bg-green-900"
                 : "bg-white text-gray-800 hover:bg-gray-200 hover:border-gray-500"
