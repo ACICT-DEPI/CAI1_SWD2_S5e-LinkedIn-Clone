@@ -94,7 +94,7 @@ const ExperienceSection = () => {
               <IoMdClose />
             </button>
           </div>
-          <p className="text-linkedinGray">
+          <p className="text-sm text-linkedinGray">
             Showcase your accomplishments and get up to 2X as many profile views and connections
           </p>
     

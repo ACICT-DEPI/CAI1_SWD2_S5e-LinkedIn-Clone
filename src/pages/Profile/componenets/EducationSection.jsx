@@ -86,8 +86,8 @@ const EducationSection = () => {
               <IoMdClose />
             </button>
           </div>
-          <p className="text-linkedinGray">
-            Add your educational background to highlight your academic achievements.
+          <p className="text-sm text-linkedinGray">
+            Show your qualifications and be up to 2X more likely to receive a recruiter InMail
           </p>
     
           <div className="flex items-center space-x-4 my-4">
