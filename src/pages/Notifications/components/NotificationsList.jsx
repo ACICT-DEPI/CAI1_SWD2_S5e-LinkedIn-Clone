@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CommentNotification from "./CommentNotification";
+// import CommentNotification from "./CommentNotification";
 import Section from "../../../components/common/Section";
 import GenericNotification from "./GenericNotification";
 
