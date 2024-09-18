@@ -11,10 +11,11 @@ const Profile = () => {
     
     <div className="bg-linkedinLightGray min-h-screen py-3 mt-16">
       <ProfileHeader />
+      <AboutSection />
       <AnalyticsSection />
       <ResourcesSection />
-      <AboutSection />
       <ActivitySection />
+      
     </div>
   );
 }
