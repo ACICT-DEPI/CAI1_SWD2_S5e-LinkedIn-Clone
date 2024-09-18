@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import Section from "../../../components/common/section";
+import Section from "../../../components/common/Section";
 import Button from "../../../components/common/Button";
 import EditIcon from "../../../components/Icons/editIcon";
 import LargeText from "../../../components/common/LargeText";

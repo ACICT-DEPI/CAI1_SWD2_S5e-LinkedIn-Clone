@@ -100,10 +100,10 @@ const FilterOptions = ({ onFilterChange }) => {
         return (
           <button
             key={filter.value}
-            className={`border-2 border-gray-300 flex px-4 py-2 rounded-full transition duration-200  sm:w-auto flex-shrink-0 flex-grow-0 ${
+            className={`border-gray-300 flex px-4 py-2 rounded-full transition duration-200  sm:w-auto flex-shrink-0 flex-grow-0 ${
               selectedFilter === filter.value
                 ? "bg-linkedinGreen text-white border-0 hover:bg-green-900"
-                : "bg-white text-gray-800 hover:bg-gray-200 hover:border-gray-500"
+                : "bg-white text-gray-800 hover:bg-gray-200 hover:border-gray-500 border-2"
             }`}
             onClick={() => handleFilterChange(filter.value)}
           >
