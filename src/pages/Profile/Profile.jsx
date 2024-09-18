@@ -5,6 +5,7 @@ import ResourcesSection from './componenets/ResourcesSection'
 import AboutSection from './componenets/AboutSection';
 import ActivitySection from './componenets/ActivitySection';
 import ExperienceSection from './componenets/ExperienceSection';
+import EducationSection from './componenets/EducationSection';
 
 
 const Profile = () => {
@@ -17,6 +18,7 @@ const Profile = () => {
       <ResourcesSection />
       <ActivitySection />
       <ExperienceSection />
+      <EducationSection  />
     </div>
   );
 }
