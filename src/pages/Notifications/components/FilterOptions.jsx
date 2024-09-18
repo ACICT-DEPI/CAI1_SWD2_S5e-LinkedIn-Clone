@@ -40,7 +40,7 @@ const FilterOptions = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="border flex flex-wrap justify-center space-x-4 p-4 bg-linkedinWhite rounded-lg">
+    <div className="border flex flex-wrap justify-start space-x-4 p-4 bg-linkedinWhite rounded-lg">
       {filters.map((filter) => {
         if (filter.value === "posts") {
           return (
