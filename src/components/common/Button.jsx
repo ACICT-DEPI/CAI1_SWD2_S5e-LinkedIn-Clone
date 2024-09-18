@@ -6,6 +6,7 @@ const Button = ({
   onClick,
   styleType = "default",
   className = "",
+  type =''
 }) => {
   const baseStyle =
     "flex items-center justify-center px-4 py-2 rounded-full border hover:shadow-md transition-shadow duration-200 ease-in-out";
@@ -22,7 +23,7 @@ const Button = ({
   const finalClassNames = `${baseStyle} ${styleTypes[styleType]} ${className}`;
 
   return (
-    <button onClick={onClick} className={finalClassNames}>
+    <button onClick={onClick} className={finalClassNames} type={type}>
       {icon && <span className="mr-2">{icon}</span>}
       {label}
     </button>

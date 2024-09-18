@@ -14,7 +14,7 @@ const ResourcesPage = () => {
 
   return (
     <div className='bg-linkedinLightGray min-h-screen py-3'>
-      <div className='bg-white rounded-lg mt-3 w-1/2 mx-auto p-5'> 
+      <div className='bg-white rounded-lg mt-24 w-1/2 mx-auto p-5'> 
         <div className='flex items-center gap-3'>
           <button
           onClick={handleDoBack}
