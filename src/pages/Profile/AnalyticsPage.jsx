@@ -5,7 +5,7 @@ import { RiArrowRightSLine } from "react-icons/ri";
 const AnalyticsPage = () => {
   return (
     <div className='bg-linkedinLightGray min-h-screen py-3'>
-      <div className='bg-white rounded-lg mt-3 w-1/2 mx-auto p-5'>
+      <div className='bg-white rounded-lg mt-24 w-1/2 mx-auto p-5'>
         <div className='flex items-center gap-2 '>
         <img src="src/assets/images/user.svg" alt="use photo" className='w-12 h-12 rounded-full'/>
           <div>
@@ -49,8 +49,8 @@ const AnalyticsPage = () => {
         <div className='text-sm text-linkedinsecondGray flex justify-between mb-3'>
           <p>LinkedIn Live</p>
           <div className='flex'>
-          <a href="">Learn More</a>
-          <RiArrowRightSLine className='text-lg' />
+            <a href="">Learn More</a>
+            <RiArrowRightSLine className='text-lg' />
           </div>
         </div>
         <hr />

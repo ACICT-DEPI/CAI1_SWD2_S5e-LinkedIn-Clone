@@ -1,6 +1,6 @@
 import React from 'react';
-import "../assets/style/profile.css"
-import Button from "../components/common/Button"
+import "../../../assets/style/profile.css"
+import Button from "../../../components/common/Button"
 const ProfileHeader = () => {
   return (
     <>

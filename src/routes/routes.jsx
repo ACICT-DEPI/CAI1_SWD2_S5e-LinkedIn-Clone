@@ -15,9 +15,8 @@ import ResourcePage from '../pages/Profile/ResourcesPage'
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
 const Messaging = lazy(() => import("../pages/Messaging"));
-const Networks = lazy(() => import("../pages/Networks"));
-const Notifications = lazy(() => import("../pages/Notifications"));
-const User = lazy(() => import("../pages/User"));
+const Networks = lazy(() => import("../pages/Networks/NetworksPage"));
+const Notifications = lazy(() => import("../pages/Notifications/NotificationsPage"));
 const Profile = lazy(() => import("../pages/Profile/Profile"));
 
 const routes = createBrowserRouter([
@@ -32,16 +31,7 @@ const routes = createBrowserRouter([
         // The replace prop ensures that the redirect does not leave a history entry,
         //which means users won’t navigate back to the root path using the browser's back button.
       },
-      {
-        path: "user",
-        element: (
-          // <UserProtectedRoute>
-          <Suspense fallback={<h1>loading... </h1>}>
-            <User />
-          </Suspense>
-          // </UserProtectedRoute>
-        ),
-      },
+      
       {
         path: "profile/allActivity",
         element: (
