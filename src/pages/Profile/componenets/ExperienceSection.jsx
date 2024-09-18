@@ -101,7 +101,6 @@ const ExperienceSection = () => {
           </p>
     
           <div className="flex items-center space-x-4 my-4">
-            <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8"/>
             <div className="text-gray-500">
               <p className="font-medium">Job Title</p>
               <p>Organization</p>
@@ -116,20 +115,21 @@ const ExperienceSection = () => {
             <h2 className="text-lg font-semibold text-linkedinDarkGray">Experience</h2>
               <button className="text-xl" onClick={() => setShowModal(true)}><IoAddOutline /></button>
           </div>
-
           {experience.map((exp, index) => (
             <div key={index} className="mb-4 border-b border-gray-200 pb-2">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-medium">{exp.title}</h3>
-                  <p>{exp.company}</p>
-                  <p>{exp.date}</p>
-                  <p>{exp.location}</p>
-                  <p>{exp.skills}</p>
+              <div className="flex justify-between items-start  mt-8">
+                <div className="flex items-center space-x-4">
+                  <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8"/>
+                  <div>
+                    <h3 className="font-semibold">{exp.title}</h3>
+                    <p className="text-sm text-linkedinGray">{exp.company}</p>
+                    <p className="text-sm text-linkedinGray">{exp.date}</p>
+                    <p className="text-sm text-linkedinGray">{exp.location}</p>
+                  </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="text-xl" onClick={() => setShowModal(true)}><MdOutlineEdit /></button>
-                  <button className="text-xl" onClick={() => handleDelete(index)}><IoMdClose /></button>
+                  <button className="text-xl text-linkedinDarkGray" onClick={() => handleEdit(index)}><MdOutlineEdit /></button>
+                  <button className="text-xl text-linkedinDarkGray" onClick={() => handleDelete(index)}><IoMdClose /></button>
                 </div>
               </div>
             </div>
