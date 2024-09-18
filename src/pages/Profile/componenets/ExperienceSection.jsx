@@ -121,7 +121,7 @@ const ExperienceSection = () => {
                   <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8"/>
                   <div>
                     <h3 className="font-semibold text-linkedinDarkGray">{exp.title}</h3>
-                    <p className="text-sm text-linkedinGray">{exp.company}</p>
+                    <p className="font-medium text-linkedinGray">{exp.company}</p>
                     <p className="text-sm text-linkedinGray">
                       {exp.startMonth} {exp.startYear} -{" "}
                       {exp.currentlyWorking ? "Present" : `${exp.endMonth} ${exp.endYear}`}
