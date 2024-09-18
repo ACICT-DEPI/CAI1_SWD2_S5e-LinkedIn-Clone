@@ -49,16 +49,14 @@ const ExperienceSection = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (editingIndex !== null) {
-      // Update the existing experience entry
+      // update
       const updatedExperiences = [...experience];
       updatedExperiences[editingIndex] = formData;
       setExperience(updatedExperiences);
     } else {
-      // Add a new experience entry
+      // add new
       setExperience([...experience, formData]);
     }
-  
-    // Reset form and close modal
     resetForm();
   };
 
@@ -80,7 +78,7 @@ const ExperienceSection = () => {
     setShowModal(false);
   };
 
-  // Handle experience deletion
+  // delete
   const handleDelete = (index) => {
     const updatedExperience = experience.filter((_, i) => i !== index);
     setExperience(updatedExperience);
@@ -101,6 +99,7 @@ const ExperienceSection = () => {
           </p>
     
           <div className="flex items-center space-x-4 my-4">
+          <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8"/>
             <div className="text-gray-500">
               <p className="font-medium">Job Title</p>
               <p>Organization</p>
@@ -113,17 +112,20 @@ const ExperienceSection = () => {
         <>
           <div className="flex justify-between mb-2">
             <h2 className="text-lg font-semibold text-linkedinDarkGray">Experience</h2>
-              <button className="text-xl" onClick={() => setShowModal(true)}><IoAddOutline /></button>
+            <button className="text-xl" onClick={() => setShowModal(true)}><IoAddOutline /></button>
           </div>
           {experience.map((exp, index) => (
             <div key={index} className="mb-4 border-b border-gray-200 pb-2">
-              <div className="flex justify-between items-start  mt-8">
+              <div className="flex justify-between items-start mt-8">
                 <div className="flex items-center space-x-4">
                   <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8"/>
                   <div>
-                    <h3 className="font-semibold">{exp.title}</h3>
+                    <h3 className="font-semibold text-linkedinDarkGray">{exp.title}</h3>
                     <p className="text-sm text-linkedinGray">{exp.company}</p>
-                    <p className="text-sm text-linkedinGray">{exp.date}</p>
+                    <p className="text-sm text-linkedinGray">
+                      {exp.startMonth} {exp.startYear} -{" "}
+                      {exp.currentlyWorking ? "Present" : `${exp.endMonth} ${exp.endYear}`}
+                    </p>
                     <p className="text-sm text-linkedinGray">{exp.location}</p>
                   </div>
                 </div>
@@ -140,8 +142,13 @@ const ExperienceSection = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/2 h-3/4 overflow-y-auto">
+          <div className="bg-white px-6 rounded-lg shadow-lg w-1/2 h-3/4 overflow-y-auto">
+          <div className="sticky top-0 py-4 bg-white z-10 flex justify-between">
             <h2 className="text-lg font-semibold text-linkedinDarkGray mb-4" >Add Experience</h2>
+            <button className="text-3xl text-linkedinGray" onClick={() => setShowModal(false)}>
+              <IoMdClose />
+            </button>
+          </div>
             <form onSubmit={handleSubmit}>
               <label className="block mb-2">Title*</label>
               <input
@@ -205,6 +212,17 @@ const ExperienceSection = () => {
                 <option value="Online">Online</option>
               </select>
 
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name="currentlyWorking"
+                  checked={formData.currentlyWorking}
+                  onChange={handleCheckboxChange}
+                  className="mr-2"
+                />
+                <label>I am currently working in this role</label>
+              </div>
+
               <label className="block mb-2">Start Date*</label>
               <div className="flex space-x-4 mb-4">
                 <select
@@ -261,17 +279,7 @@ const ExperienceSection = () => {
                 </select>
               </div>
 
-              <div className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  name="currentlyWorking"
-                  checked={formData.currentlyWorking}
-                  onChange={handleCheckboxChange}
-                  className="mr-2"
-                />
-                <label>I am currently working in this role</label>
-              </div>
-
+            
               <label className="block mb-2">Description</label>
               <textarea
                 name="description"
@@ -281,7 +289,7 @@ const ExperienceSection = () => {
                 onChange={handleChange}
                 rows="4"
               ></textarea>
-              <div className="flex space-x-4 justify-end">
+              <div className="flex space-x-4 justify-end pb-6">
                 <Button
                   label="Save" 
                   styleType="primary" type="submit"
