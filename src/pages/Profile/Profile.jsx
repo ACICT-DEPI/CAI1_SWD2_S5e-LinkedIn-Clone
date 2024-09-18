@@ -15,7 +15,6 @@ const Profile = () => {
       <AnalyticsSection />
       <ResourcesSection />
       <ActivitySection />
-      
     </div>
   );
 }
