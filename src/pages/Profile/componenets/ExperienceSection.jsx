@@ -90,7 +90,7 @@ const ExperienceSection = () => {
         <div className="border-2 border-dashed border-linkedinBlue p-4 rounded-lg">
           <div className="flex justify-between mb-2">
             <h2 className="text-lg font-semibold text-linkedinDarkGray">Experience</h2>
-            <button className="text-2xl text-linkedinDarkGray" onClick={() => setShowModal(false)}>
+            <button className="text-2xl text-linkedinDarkGray">
               <IoMdClose />
             </button>
           </div>
@@ -149,13 +149,13 @@ const ExperienceSection = () => {
               <IoMdClose />
             </button>
           </div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="text-linkedinGray text-sm">
               <label className="block mb-2">Title*</label>
               <input
                 type="text"
                 name="title"
                 placeholder="Job Title"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-linkedinDarkGray"
                 value={formData.title}
                 onChange={handleChange}
                 required
@@ -164,7 +164,7 @@ const ExperienceSection = () => {
               <label className="block mb-2">Employment Type*</label>
               <select
                 name="employmentType"
-                className="border p-2 w-full mb-4 "
+                className="border p-2 w-full mb-4  text-linkedinDarkGray"
                 value={formData.employmentType}
                 onChange={handleChange}
                 required
@@ -182,7 +182,7 @@ const ExperienceSection = () => {
                 type="text"
                 name="company"
                 placeholder="Company"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-linkedinDarkGray"
                 value={formData.company}
                 onChange={handleChange}
                 required
@@ -193,7 +193,7 @@ const ExperienceSection = () => {
                 type="text"
                 name="location"
                 placeholder="Location"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-linkedinDarkGray"
                 value={formData.location}
                 onChange={handleChange}
                 required
@@ -202,7 +202,7 @@ const ExperienceSection = () => {
               <label className="block mb-2">Location Type</label>
               <select
                 name="locationType"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-linkedinDarkGray"
                 value={formData.locationType}
                 onChange={handleChange}
               >
@@ -212,7 +212,7 @@ const ExperienceSection = () => {
                 <option value="Online">Online</option>
               </select>
 
-              <div className="flex items-center mb-4">
+              <div className="flex items-center mb-4 text-linkedinDarkGray">
                 <input
                   type="checkbox"
                   name="currentlyWorking"
@@ -224,10 +224,10 @@ const ExperienceSection = () => {
               </div>
 
               <label className="block mb-2">Start Date*</label>
-              <div className="flex space-x-4 mb-4">
+              <div className="flex space-x-4 mb-4 ">
                 <select
                   name="startMonth"
-                  className="border p-2 w-full"
+                  className="border p-2 w-full text-linkedinDarkGray"
                   value={formData.startMonth}
                   onChange={handleChange}
                   required
@@ -239,7 +239,7 @@ const ExperienceSection = () => {
                 </select>
                 <select
                   name="startYear"
-                  className="border p-2 w-full"
+                  className="border p-2 w-full text-linkedinDarkGray"
                   value={formData.startYear}
                   onChange={handleChange}
                   required
@@ -255,7 +255,7 @@ const ExperienceSection = () => {
               <div className="flex space-x-4 mb-4">
                 <select
                   name="endMonth"
-                  className="border p-2 w-full"
+                  className="border p-2 w-full text-linkedinDarkGray"
                   value={formData.endMonth}
                   onChange={handleChange}
                   disabled={formData.currentlyWorking}
@@ -267,7 +267,7 @@ const ExperienceSection = () => {
                 </select>
                 <select
                   name="endYear"
-                  className="border p-2 w-full"
+                  className="border p-2 w-full text-linkedinDarkGray"
                   value={formData.endYear}
                   onChange={handleChange}
                   disabled={formData.currentlyWorking}
@@ -284,22 +284,22 @@ const ExperienceSection = () => {
               <textarea
                 name="description"
                 placeholder="Description"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-linkedinDarkGray"
                 value={formData.description}
                 onChange={handleChange}
                 rows="4"
               ></textarea>
               <div className="flex space-x-4 justify-end pb-6">
                 <Button
-                  label="Save" 
-                  styleType="primary" type="submit"
-                />
-                <Button
                   label="Cancel"
                   styleType="default"
                   className=""
                   onClick={() => setShowModal(false)}
                   />
+                <Button
+                  label="Save" 
+                  styleType="primary" type="submit"
+                />
               </div>
             </form>
           </div>

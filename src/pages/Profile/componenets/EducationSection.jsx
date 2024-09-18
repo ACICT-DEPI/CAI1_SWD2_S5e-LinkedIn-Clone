@@ -82,7 +82,7 @@ const EducationSection = () => {
         <div className="border-2 border-dashed border-linkedinBlue p-4 rounded-lg">
           <div className="flex justify-between mb-2">
             <h2 className="text-lg font-semibold text-linkedinDarkGray">Education</h2>
-            <button className="text-2xl text-linkedinDarkGray" onClick={() => setShowModal(false)}>
+            <button className="text-2xl text-linkedinDarkGray">
               <IoMdClose />
             </button>
           </div>
@@ -104,7 +104,7 @@ const EducationSection = () => {
         <>
           <div className="flex justify-between mb-2">
             <h2 className="text-lg font-semibold text-linkedinDarkGray">Education</h2>
-            <button className="text-xl" onClick={() => setShowModal(true)}><IoAddOutline /></button>
+            <button className="text-xl"><IoAddOutline /></button>
           </div>
           {education.map((edu, index) => (
             <div key={index} className="mb-4 border-b border-gray-200 pb-2">
@@ -113,7 +113,7 @@ const EducationSection = () => {
                   <img src={EducationIcon} alt="EducationIcon" className="w-8"/>
                   <div>
                     <h3 className="font-semibold text-linkedinDarkGray">{edu.school}</h3>
-                    <p className="text-sm text-linkedinGray">{edu.degree}, {edu.fieldOfStudy}</p>
+                    <p className="font-medium text-linkedinGray">{edu.degree}, {edu.fieldOfStudy}</p>
                     <p className="text-sm text-linkedinGray">
                       {edu.startMonth} {edu.startYear} - {edu.endMonth} {edu.endYear}
                     </p>
@@ -139,13 +139,13 @@ const EducationSection = () => {
                 <IoMdClose />
               </button>
             </div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="text-linkedinGray text-sm">
               <label className="block mb-2">School*</label>
               <input
                 type="text"
                 name="school"
                 placeholder="School Name"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-linkedinDarkGray"
                 value={formData.school}
                 onChange={handleChange}
                 required
@@ -156,7 +156,7 @@ const EducationSection = () => {
                 type="text"
                 name="degree"
                 placeholder="Degree"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-linkedinDarkGray"
                 value={formData.degree}
                 onChange={handleChange}
                 required
@@ -167,7 +167,7 @@ const EducationSection = () => {
                 type="text"
                 name="fieldOfStudy"
                 placeholder="Field of Study"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4  text-linkedinDarkGray"
                 value={formData.fieldOfStudy}
                 onChange={handleChange}
                 required
@@ -177,7 +177,7 @@ const EducationSection = () => {
               <div className="flex space-x-4 mb-4">
                 <select
                   name="startMonth"
-                  className="border p-2 w-full"
+                  className="border p-2 w-full  text-linkedinDarkGray"
                   value={formData.startMonth}
                   onChange={handleChange}
                   required
@@ -189,7 +189,7 @@ const EducationSection = () => {
                 </select>
                 <select
                   name="startYear"
-                  className="border p-2 w-full"
+                  className="border p-2 w-full text-linkedinDarkGray"
                   value={formData.startYear}
                   onChange={handleChange}
                   required
@@ -205,7 +205,7 @@ const EducationSection = () => {
               <div className="flex space-x-4 mb-4">
                 <select
                   name="endMonth"
-                  className="border p-2 w-full"
+                  className="border p-2 w-full text-linkedinDarkGray"
                   value={formData.endMonth}
                   onChange={handleChange}
                 >
@@ -216,7 +216,7 @@ const EducationSection = () => {
                 </select>
                 <select
                   name="endYear"
-                  className="border p-2 w-full"
+                  className="border p-2 w-full text-linkedinDarkGray"
                   value={formData.endYear}
                   onChange={handleChange}
                 >
@@ -232,7 +232,7 @@ const EducationSection = () => {
                 type="text"
                 name="grade"
                 placeholder="Grade"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-linkedinDarkGray"
                 value={formData.school}
                 onChange={handleChange}
               />
@@ -241,7 +241,7 @@ const EducationSection = () => {
               <textarea
                 name="Activities"
                 placeholder="Activities and societies"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-linkedinDarkGray"
                 value={formData.grade}
                 onChange={handleChange}
                 rows="2"
@@ -251,7 +251,7 @@ const EducationSection = () => {
               <textarea
                 name="description"
                 placeholder="Description"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-linkedinDarkGray"
                 value={formData.description}
                 onChange={handleChange}
                 rows="4"
