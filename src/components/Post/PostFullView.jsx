@@ -54,43 +54,38 @@ hashtag#frontend hashtag#css hashtag#html hashtag#javascript hashtag#developer h
   }, []);
 
   return (
-    <>
-      <Section>
-        {/* title with profile picture */}
-        <div className="flex gap-2 justify-between items-start pb-3">
-          <PostUserInfo />
-          <div>{/* more icon */}</div>
+    <div className="bg-gray-100 p-3 rounded my-2">
+      {/* title with profile picture */}
+      <div className="flex gap-2 justify-between items-start pb-3 ">
+        <PostUserInfo />
+        <div>{/* more icon */}</div>
+      </div>
+      {/* Description */}
+      <div>
+        <LargeText description={description} />
+      </div>
+      {/* Photos -videos */}
+      <div className="relative group cursor-pointer" onClick={handleImageClick}>
+        <img
+          src="https://picsum.photos/2000/2000"
+          alt=""
+          className="w-[100vw] rounded-xl my-3 object-cover"
+        />
+        <div className="absolute bottom-5 right-5 bg-[rgba(255,255,255,0.6)] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          1
         </div>
-        {/* Description */}
-        <div>
-         <LargeText description={description}/>
-        </div>
-        {/* Photos -videos */}
-        <div
-          className="relative group cursor-pointer"
-          onClick={handleImageClick}
-        >
-          <img
-            src="https://picsum.photos/2000/2000"
-            alt=""
-            className="w-[100vw] rounded-xl my-3 object-cover"
-          />
-          <div className="absolute bottom-5 right-5 bg-[rgba(255,255,255,0.6)] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            1
-          </div>
-        </div>
+      </div>
 
-        {/* Reacts */}
-        <Reacts />
-        <hr />
-        <ReactsInteraction />
-      </Section>
+      {/* Reacts */}
+      <Reacts />
+      <hr />
+      <ReactsInteraction />
       {isVisible && (
         <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
           <PostFocus props={componentRef} />
         </div>
       )}
-    </>
+    </div>
   );
 }
 

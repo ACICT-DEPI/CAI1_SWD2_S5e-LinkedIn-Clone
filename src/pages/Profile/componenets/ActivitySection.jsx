@@ -9,7 +9,7 @@ function ActivitySection() {
     <>
       <Section>
         {/* Section title and create new post button with edit button */}
-        <div>
+        <div className="w-1/2">
           <div className="flex gap-2 justify-between">
             <div>
               <p className="font-bold text-xl">Activity</p>

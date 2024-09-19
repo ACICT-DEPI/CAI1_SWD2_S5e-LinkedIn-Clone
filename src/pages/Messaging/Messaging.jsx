@@ -10,7 +10,7 @@ function Messaging() {
   return (
     <div className="max-w-[100%] mx-auto grid grid-cols-1 md:grid-cols-12 gap-4">
       <div className="col-span-1 md:col-span-9 p-4">
-        <Section>
+        {/* <Section> */}
           <div className="flex items-center justify-between">
             <div className="flex  gap-2 ">
               <p className="text-xl font-smbold text-linkedinGray">Messaging</p>
@@ -38,7 +38,7 @@ function Messaging() {
               <MessageInput />
             </div>
           </div>
-        </Section>
+        {/* </Section> */}
       </div>
       <div className="hidden md:block md:col-span-3  p-4">
         <UserInfoCart />
