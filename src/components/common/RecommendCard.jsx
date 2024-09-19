@@ -1,5 +1,5 @@
 import React from "react";
-import Section from "./section";
+import Section from "./Section";
 import Button from "./Button";
 import addFriendIcon from "../../assets/images/item-icon.svg";
 function UserInfo() {

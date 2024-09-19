@@ -1,3 +1,9 @@
 .icon-blue {
   filter: invert(17%) sepia(100%) saturate(2868%) hue-rotate(215deg) brightness(101%) contrast(101%);
 }
+.fGhzmg{
+  max-width: 90% !important;
+}
+.p-5{
+  width: 100% !important; 
+}

@@ -33,7 +33,7 @@ function PostShortView() {
             <img
               src={"https://picsum.photos/150/150"}
               alt={"image"}
-              className="w-[70px] h-[70px] rounded-lg"
+              className="w-[90px] h-[70px] rounded-lg"
             />
             <p>
               {description.length > 210 ? (
