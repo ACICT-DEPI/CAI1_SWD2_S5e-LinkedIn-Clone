@@ -9,7 +9,7 @@ function SignUpDetailsPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/home');
+    navigate('/feed');
   };
 
   return (
@@ -25,7 +25,7 @@ function SignUpDetailsPage() {
             </label>
             <input
               type="text"
-              placeholder="First Name"
+              required
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               className="border p-2 rounded w-full mb-4"
@@ -37,7 +37,7 @@ function SignUpDetailsPage() {
             </label>
             <input
               type="text"
-              placeholder="Last Name"
+              required
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               className="border p-2 rounded w-full mb-4"

@@ -12,7 +12,7 @@ function SignUpPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('details');
+    navigate('SignUpDetailsPage');
   };
 
   return (
