@@ -103,7 +103,7 @@ const LoginPage = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               New to LinkedIn?{' '}
-              <Link to="/sign-up" className="text-linkedinBlue hover:underline">
+              <Link to="/signup" className="text-linkedinBlue hover:underline">
                 Join now
               </Link>
             </p>
