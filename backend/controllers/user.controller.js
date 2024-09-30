@@ -1,6 +1,6 @@
-import { User } from "../models/user.model";
+const { User } = require("../models/user.model.js");
 
-export const getSuggstedConnections = async (req, res) => {
+ const getSuggstedConnections = async (req, res) => {
   try {
     //dont recommend my rofile nor the users i have
     const curentUser = await User.findById(req.user._id).select("connections");
@@ -16,7 +16,7 @@ export const getSuggstedConnections = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
-export const getPublicProfile = async (req, res) => {
+ const getPublicProfile = async (req, res) => {
   try {
     const user = await User.findOne({ usrname: req.params.usrname }).select(
       "-password"
@@ -31,7 +31,7 @@ export const getPublicProfile = async (req, res) => {
   }
 };
 
-export const UpdateProfile = async (req, res) => {
+ const UpdateProfile = async (req, res) => {
   try {
     const allowedField = [
       "firstName",
@@ -63,4 +63,10 @@ export const UpdateProfile = async (req, res) => {
     console.log("error in  Up dateProfile:", error);
     res.status(500).json({ message: "server error" });
   }
+};
+
+module.exports = {
+  getSuggstedConnections,
+  getPublicProfile,
+  UpdateProfile,
 };

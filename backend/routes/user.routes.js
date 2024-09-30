@@ -1,9 +1,10 @@
 const express = require("express");
 const {
-  protectRoute,
+  getSuggstedConnections,
   getPublicProfile,
   UpdateProfile,
-} = require("../controllers/auth.controller");
+} = require("../controllers/user.controller.js");
+const { protectRoute } = require("../controllers/auth.controller.js");
 const router = express.Router();
 
 //get
