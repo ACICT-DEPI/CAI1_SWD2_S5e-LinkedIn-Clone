@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 function SignUpPage() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -24,6 +25,19 @@ function SignUpPage() {
         {/* Card */}
         <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="username" className="block text-linkedinsecondGray">
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                className="w-full p-2 border rounded"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
             <div>
               <label htmlFor="email" className="block text-linkedinsecondGray">
                 Email
