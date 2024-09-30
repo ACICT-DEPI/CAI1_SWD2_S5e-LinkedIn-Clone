@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    profilePicute: {
+    profilePicture: {
       type: String,
       default: "",
     },
@@ -68,6 +68,10 @@ const userSchema = new mongoose.Schema(
       },
     ],
     isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    isVerified: {
       type: Boolean,
       default: false,
     },
