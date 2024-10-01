@@ -30,7 +30,6 @@ const { User } = require("../models/user.model.js");
     res.status(500).json({ message: "server error" });
   }
 };
-
  const UpdateProfile = async (req, res) => {
   try {
     const allowedField = [
