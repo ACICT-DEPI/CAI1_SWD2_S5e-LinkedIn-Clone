@@ -4,7 +4,7 @@ const {
   getPublicProfile,
   UpdateProfile,
   getAllUsers,
-  getUserById,
+  getUserPosts,
 } = require("../controllers/user.controller.js");
 const { protectRoute } = require("../controllers/auth.controller.js");
 const router = express.Router();
@@ -12,7 +12,9 @@ const router = express.Router();
 //get
 router.get("/", protectRoute, getAllUsers); //ok
 router.get("/suggestions", protectRoute, getSuggstedConnections); //ok
-router.get("/:username", protectRoute, getPublicProfile); //ok //example api call: http://localhost:5000/api/users/haneen
+router.get("/posts", getUserPosts);
+router.get("/:id", protectRoute, getPublicProfile); //ok //example api call: http://localhost:5000/api/users/haneen
+
 // router.get("/:id", getUserById);
 
 //put
