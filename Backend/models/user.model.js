@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+//todo add other sections and about section.
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -42,6 +43,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    other_sections: [],
+    about: { type: String },
     skills: [String],
     experience: [
       {
