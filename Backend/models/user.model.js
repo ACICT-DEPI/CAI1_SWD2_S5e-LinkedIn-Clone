@@ -43,9 +43,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    other_sections: [],
-    about: { type: String },
-    skills: [String],
+    otherSections: [],
+    about: {},
+    skills: [],
     experience: [
       {
         title: String,
