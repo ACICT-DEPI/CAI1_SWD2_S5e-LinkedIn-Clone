@@ -148,6 +148,18 @@ const getUserPosts = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
+const getUserComments = async (req, res) => {
+  try {
+    const user = await User.findById(req.body.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user.comments);
+  } catch (error) {
+    console.log("error in getUserComments :", error);
+    res.status(500).json({ message: "server error" });
+  }
+};
 
 module.exports = {
   getSuggstedConnections,
@@ -157,4 +169,5 @@ module.exports = {
   getAllUsers,
   getUserPosts,
   deleteUser,
+  getUserComments,
 };

@@ -81,6 +81,12 @@ const userSchema = new mongoose.Schema(
         ref: "Posts",
       },
     ],
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comments",
+      },
+    ],
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
