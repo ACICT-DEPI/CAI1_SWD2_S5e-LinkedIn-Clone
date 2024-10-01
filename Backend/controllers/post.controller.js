@@ -6,7 +6,9 @@ const getFeedPosts = async (req, res) => {
   try {
     let posts;
     let tagIds = [];
-    const user = await User.findOne({ username: req.body.username });
+    const userId = req.body.userId;
+    const user = await User.findById(userId);
+
     if (!user) {
       return res.status(404).json({
         message: "user not found!",
@@ -190,6 +192,29 @@ const getAllPosts = async (req, res) => {
   }
 };
 
+const getAllComments = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const post = await Posts.findById(postId)
+      .populate({
+        path: "comments",
+        populate: {
+          path: "userId",
+          select: "username profilePicture",
+        },
+        select: "-postId -__v",
+      })
+      .select("comments");
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.error("Error in getPostById controller:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 // Export the functions using CommonJS
 module.exports = {
@@ -198,4 +223,5 @@ module.exports = {
   getPostById,
   deletePost,
   getAllPosts,
+  getAllComments,
 };
