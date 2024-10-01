@@ -9,23 +9,20 @@ const commentSchema = new mongoose.Schema(
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
+      ref: "User",
       required: true,
     },
     content: {
       type: String,
       required: true,
     },
-    media: [
-      {
-        videos: { type: String },
-        images: { type: String },
-      },
-    ],
+    videos: [{ type: String }],
+    images: [{ type: String }],
+
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Users",
+        ref: "User",
       },
     ],
     replies: [

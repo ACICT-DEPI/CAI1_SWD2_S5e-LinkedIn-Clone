@@ -148,7 +148,7 @@ const deletePost = async (req, res) => {
     }
 
     await Posts.findByIdAndDelete(postId);
-    
+
     user.posts = user.posts.filter((post) => post != postId);
     await user.save();
     res.status(200).json({ message: "Post deleted successfully" });
@@ -158,10 +158,44 @@ const deletePost = async (req, res) => {
   }
 };
 
+const getAllPosts = async (req, res) => {
+  try {
+    // Get page and limit from query parameters, default to 1 and 10 if not provided
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    // Calculate the number of posts to skip based on the current page
+    const skip = (page - 1) * limit;
+
+    // Fetch posts with pagination, populating the required fields (e.g., 'auther', 'comments')
+    const posts = await Posts.find()
+      .populate("auther", "username") // Populate the author field with username
+      .populate("tags") // Populate tags if needed
+      .skip(skip) // Skip the previous pages' posts
+      .limit(limit) // Limit the number of posts to be returned
+      .sort({ createdAt: -1 }); // Sort posts by creation date (newest first)
+
+    // Get total number of posts for calculating total pages
+    const totalPosts = await Posts.countDocuments();
+
+    res.status(200).json({
+      posts,
+      currentPage: page,
+      totalPages: Math.ceil(totalPosts / limit),
+      totalPosts,
+    });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ error: "Server error while fetching posts" });
+  }
+};
+
+
 // Export the functions using CommonJS
 module.exports = {
   getFeedPosts,
   createPost,
   getPostById,
   deletePost,
+  getAllPosts,
 };

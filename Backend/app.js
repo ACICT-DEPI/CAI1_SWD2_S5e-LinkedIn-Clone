@@ -7,7 +7,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
-const commentRoutes = require("./routes/post.routes");
+const commentRoutes = require("./routes/comment.route");
 
 
 // Init App

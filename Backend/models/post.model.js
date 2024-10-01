@@ -4,19 +4,17 @@ const postSchema = new mongoose.Schema(
   {
     auther: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
+      ref: "User",
       required: true,
     },
     content: { type: String, required: true },
-    media: {
-      images: [{ type: String }],
-      videos: [{ type: String }],
-    },
-    likes: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
+    images: [{ type: String }],
+    videos: [{ type: String }],
+    likes: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
     comments: [
       {
-        type:mongoose.Schema.ObjectId, 
-        ref:"Comments"
+        type: mongoose.Schema.ObjectId,
+        ref: "Comments",
       },
     ],
     tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tags" }],

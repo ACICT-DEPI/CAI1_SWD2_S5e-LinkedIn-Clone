@@ -5,70 +5,65 @@ const Comments = require("../models/comments.model.js");
 
 // helper functions
 const findPost = async (postId) => {
-  const post = await Posts.findById(postId, (err, docs) => {
-    if (err) {
-      console.log(err);
-      return res.status(404).json({
-        message: "Post not found!",
-      });
-    } else return docs;
-  });
+  console.log("post");
+
+  const post = await Posts.findById(postId);
+  if (!post) return null;
   return post;
 };
 const findUser = async (userId) => {
-  const user = await Posts.findById(userId, (err, docs) => {
-    if (err) {
-      console.log(err);
-      return res.status(404).json({
-        message: "Not exist user not found!",
-      });
-    } else return docs;
-  });
+  console.log("user");
+
+  const user = await User.findById(userId);
+  if (!user) return null;
+  return user;
 };
 
 const findComment = async (commentId) => {
   // Find the comment in the Comment schema, ensuring it belongs to the user and post
-  const existingComment = await Comment.findById(commentId);
-
-  if (!existingComment) {
-    return res.status(404).json({ error: "Comment not found or unauthorized" });
-  }
+  const existingComment = await Comments.findById(commentId);
   return existingComment;
 };
 
 // controllers
 const addComment = async (req, res) => {
-  // todo add comment id in users db
   try {
     const { imgs, videos, comment, userId, postId } = req.body;
 
     // Find the post and user
-    const post = await findPost(postId);
-    const user = await findUser(userId);
+    const post = await Posts.findById(postId);
+    const user = await User.findById(userId);
 
     if (!post || !user) {
       return res.status(404).json({ error: "Post or user not found" });
     }
 
     // Create a new comment
-    let newComment = new Posts({
+    let newComment = new Comments({
+      content: comment,
       postId: post._id,
       userId: user._id,
-      content: comment,
-      media: {
-        images: imgs || [],
-        videos: videos || [],
-      },
+      images: imgs || [],
+      videos: videos || [],
     });
 
-    // Save the comment
+    // Save the new comment
     await newComment.save();
-    post.comments.push(newComment._id);
-    await post.save();
-    // Respond with the new comment
-    res
-      .status(201)
-      .json({ message: "Comment added successfully", comment: newComment });
+
+    await Posts.findByIdAndUpdate(
+      postId,
+      { $push: { comments: newComment._id } },
+      { new: true }
+    );
+    await User.findByIdAndUpdate(
+      userId,
+      { $push: { comments: newComment._id } },
+      { new: true }
+    );
+    res.status(201).json({
+      message: "Comment added successfully",
+      comment: newComment,
+    });
   } catch (error) {
     console.error("Error adding comment:", error);
     res.status(500).json({ error: "Failed to add comment" });
@@ -77,18 +72,24 @@ const addComment = async (req, res) => {
 
 const editComment = async (req, res) => {
   try {
-    const { imgs, videos, comment, userId, postId, commentId } = req.body;
+    const commentId = req.params.id;
+    const { imgs, videos, comment, userId } = req.body;
 
     // Find the post and user (ensure these functions return the post and user)
-    const post = await findPost(postId);
     const user = await findUser(userId);
+
+    const existingComment = await findComment(commentId);
+
+    if (!existingComment) {
+      return res.status(404).json({ error: "Comment not found !" });
+    }
+
+    const postId = existingComment.postId;
+    const post = await findPost(postId);
 
     if (!post || !user) {
       return res.status(404).json({ error: "Post or user not found" });
     }
-
-    const existingComment = await findComment(commentId);
-
     // Update the comment's content and media (images, videos)
     existingComment.content = comment;
 
@@ -123,40 +124,52 @@ const editComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
-    const { commentId, userId, postId } = req.body;
+    const commentId = req.params.id;
 
-    // Validate user and post (assuming these functions throw an error if not found)
-    const user = await findUser(userId);
-    const post = await findPost(postId);
-    // Find and delete the comment by its ID
-    const deletedComment = await Comment.findOneAndDelete({
-      _id: commentId,
-      userId: userId,
-      postId: postId,
-    });
+    // Find the comment to delete
+    const commentToDelete = await Comments.findById(commentId).populate(
+      "replies"
+    );
+
+    if (!commentToDelete) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Recursively delete all replies
+    const repliesToDelete = commentToDelete.replies; // Get all replies to the comment
+
+    // If there are replies, delete them
+    if (repliesToDelete.length > 0) {
+      await Comments.deleteMany({ _id: { $in: repliesToDelete } });
+    }
+
+    // Now delete the original comment
+    const deletedComment = await Comments.findByIdAndDelete(commentId);
 
     if (!deletedComment) {
-      return res
-        .status(404)
-        .json({ error: "Comment not found or unauthorized" });
+      return res.status(404).json({ message: "Comment not found" });
     }
-    //todo delete comment from users db
-    post.comments = post.comments.filter((comment) => comment !== commentId);
-    await post.save();
-    res.status(200).json({ message: "Comment deleted successfully" });
+
+    res
+      .status(200)
+      .json({ message: "Comment and its replies deleted successfully" });
   } catch (error) {
-    console.error("Error deleting comment:", error);
-    res.status(500).json({ error: "Failed to delete comment" });
+    console.error("Error deleting comment and replies:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 const addLike = async (req, res) => {
   try {
-    const { commentId, userId, postId } = req.body;
-    await findUser(userId);
-    await findPost(postId);
+    const commentId = req.params.id;
+    const { userId } = req.body;
+    if (!commentId || !userId) {
+      return res
+        .status(400)
+        .json({ message: "Comment ID and User ID are required." });
+    }
     // Add the userId to the likes array if it's not already present
-    await Comment.findByIdAndUpdate(
+    await Comments.findByIdAndUpdate(
       commentId,
       { $addToSet: { likes: userId } }, // $addToSet adds userId only if it's not already in the array
       { new: true } // Return the updated document
@@ -171,12 +184,13 @@ const addLike = async (req, res) => {
 
 const deleteLike = async (req, res) => {
   try {
-    const { commentId, userId, postId } = req.body;
-
-    // Validate user and post (assuming these functions throw an error if not found)
-    await findUser(userId);
-    await findPost(postId);
-
+    const commentId = req.params.id;
+    const { userId } = req.body;
+    if (!commentId || !userId) {
+      return res
+        .status(400)
+        .json({ message: "Comment ID and User ID are required." });
+    }
     // Remove the userId from the likes array in the comment
     const updatedComment = await Comment.findByIdAndUpdate(
       commentId,
@@ -199,13 +213,15 @@ const deleteLike = async (req, res) => {
 
 const addReply = async (req, res) => {
   try {
-    const { commentId, userId, postId, content, imgs, videos } = req.body;
+    const commentId = req.params.id;
+    const { userId, content, imgs, videos } = req.body;
 
     // Find the parent comment to which we are adding a reply
     const parentComment = await findComment(commentId);
+    const postId = parentComment.postId;
 
     // Create a new reply as a comment
-    const newReply = new Comment({
+    const newReply = new Comments({
       userId: userId,
       postId: postId,
       content,
@@ -235,41 +251,48 @@ const addReply = async (req, res) => {
 
 const deleteReply = async (req, res) => {
   try {
-    const { commentId, userId, postId } = req.body;
+    const commentId = req.params.id; // This is the reply ID
+    const { userId } = req.body;
 
-    // Validate user and post (assuming these functions throw an error if not found)
-    await findUser(userId);
-    await findPost(postId);
-
-    const comment = await findComment(commentId);
-
-    if (!comment) {
+    if (!commentId || !userId) {
       return res
-        .status(404)
-        .json({ error: "Comment not found or unauthorized" });
+        .status(400)
+        .json({ message: "Comment ID and User ID are required." });
     }
 
-    // Remove the userId from the likes array in the comment
-    const updatedComment = await Comment.findByIdAndUpdate(
-      comment.parentComment,
-      { $pull: { Reply: userId } }, // $pull removes the userId from the likes array
-      { new: true } // Return the updated document after the change
+    // Find the reply to delete
+    const reply = await findComment(commentId); // Assume findComment fetches the comment or reply
+
+    if (!reply) {
+      return res.status(404).json({ error: "Reply not found or unauthorized" });
+    }
+
+    // Find the parent comment of the reply
+    const parentComment = await Comments.findById(reply.parentComment).populate(
+      "replies"
     );
 
-    if (!updatedComment) {
-      return res.status(404).json({ error: "Comment not found" });
+    if (!parentComment) {
+      return res.status(404).json({ error: "Parent comment not found" });
     }
 
-    await Comment.findOneAndDelete({
-      _id: commentId,
-    });
+    // Remove the reply from the parent comment's replies array
+    await Comments.findByIdAndUpdate(
+      reply.parentComment,
+      { $pull: { replies: commentId } }, // Assuming replies is the field that holds the replies
+      { new: true }
+    );
+
+    // Delete the reply and all its replies
+    await Comments.deleteMany({ _id: { $in: reply.replies } });
+    await Comments.findByIdAndDelete(commentId); // Finally delete the reply itself
 
     res
       .status(200)
-      .json({ message: "Like removed successfully", updatedComment });
+      .json({ message: "Reply and its replies deleted successfully" });
   } catch (error) {
-    console.error("Error deleting like:", error);
-    res.status(500).json({ error: "Failed to remove like" });
+    console.error("Error deleting reply:", error);
+    res.status(500).json({ error: "Failed to remove reply" });
   }
 };
 
@@ -278,11 +301,7 @@ const deleteReply = async (req, res) => {
 const getAllComments = async (req, res) => {
   try {
     // Fetch all comments from the database
-    const comments = await Comment.find().populate(
-      "userId",
-      "username",
-      "profile"
-    ); // Populate userId with username (optional)
+    const comments = await Comments.find().populate("userId", "username"); // Populate userId with username (optional)
 
     // Check if comments exist
     if (!comments.length) {
@@ -297,6 +316,40 @@ const getAllComments = async (req, res) => {
   }
 };
 
+const getCommentById = async (req, res) => {
+  try {
+    const commentId = req.params.id;
+
+    // Ensure commentId is provided
+    if (!commentId) {
+      return res.status(400).json({ message: "Comment ID is required" });
+    }
+
+    // Find the comment by its ID
+    const comment = await Comments.findById(commentId)
+      .populate("userId", "username") // Populate username from the Users collection
+      .populate({
+        path: "postId",
+        populate: {
+          path: "auther",
+          select: "username",
+        },
+        select: "auther",
+      })
+      .exec();
+    // Check if comment exists
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Respond with the comment
+    res.status(200).json({ comment });
+  } catch (error) {
+    console.error("Error fetching comment by ID:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 // Export the functions using CommonJS
 module.exports = {
   addComment,
@@ -307,4 +360,5 @@ module.exports = {
   addReply,
   deleteReply,
   getAllComments,
+  getCommentById,
 };

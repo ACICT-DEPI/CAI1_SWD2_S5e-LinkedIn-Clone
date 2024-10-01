@@ -6,17 +6,24 @@ const router = express.Router();
 router
   .route("/")
   .get(commentController.getAllComments)
-  .put(commentController.addComment)
+  .post(commentController.addComment)
   
   
 router
   .route('/:id')
+  .get(commentController.getCommentById)
   .patch(commentController.editComment)
   .delete(commentController.deleteComment)
-  .patch(commentController.addLike)
-  .patch(commentController.addReply)
-  .delete(commentController.deleteLike)
-  .delete(commentController.deleteReply);
+
+  router
+    .route("/likes/:id")
+    .patch(commentController.addLike)
+    .delete(commentController.deleteLike);
+  
+  router
+    .route("/reply/:id")
+    .patch(commentController.addReply)
+    .delete(commentController.deleteReply);
 
 
 module.exports = router;
