@@ -1,17 +1,10 @@
-import express from "express";
-
-import {
-  getFeedPosts,
-  createPost,
-  getPostById,
-  deletePost,
-} from "../controllers/post.controller.js";
-
+const express = require('express')
+const postController = require('../controllers/post.controller.js')
 const router = express.Router();
 
-router.get("/", getFeedPosts);
-router.patch("/", createPost);
-router.get("/:id", getPostById);
-router.delete("/:id", deletePost);
+router.get("/", postController.getFeedPosts);
+router.patch("/", postController.createPost);
+router.get("/:id", postController.getPostById);
+router.delete("/:id", postController.deletePost);
 
-export default router;
+module.exports = router;

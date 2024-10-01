@@ -1,6 +1,6 @@
 import Posts from "../models/post.model.js";
 
-import Tag from "../models/Tag"; // Import your Tag model
+import Tag from "../models/tag.model.js";
 
 export const getFeedPosts = async (req, res) => {
   try {
@@ -39,7 +39,10 @@ export const getFeedPosts = async (req, res) => {
         .populate("comments.user", "name profilePicture")
         .sort({ createdAt: -1 }); // First sort by time
     }
-
+    if(!posts || posts.length() === 0)
+      res.statsu(404).json({
+        message:"No posts found!"
+      })
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error in get all feed posts controller:", error);

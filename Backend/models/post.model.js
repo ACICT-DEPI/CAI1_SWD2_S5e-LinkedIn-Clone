@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
 
-const tagSchema = new mongoose.Schema({
-  name: { type: String, unique: true, trim: true, lowercase: true },
-});
 
 const postSchema = new mongoose.Schema(
   {
@@ -30,6 +27,5 @@ const postSchema = new mongoose.Schema(
 );
 
 const Posts = mongoose.model("Post", postSchema);
-const Tag = mongoose.model("Tag", tagSchema);
 
-export default { Posts, Tag };
+export default Posts;
