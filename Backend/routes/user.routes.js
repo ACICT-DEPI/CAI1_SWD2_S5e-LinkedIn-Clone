@@ -9,7 +9,7 @@ const router = express.Router();
 
 //get
 router.get("/suggestions", protectRoute, getSuggstedConnections);
-router.get("/:username", protectRoute, getPublicProfile);
+router.get("/:username", getPublicProfile);
 
 //put
 router.put("/profile", protectRoute, UpdateProfile);
