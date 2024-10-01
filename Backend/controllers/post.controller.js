@@ -1,19 +1,52 @@
 import Posts from "../models/post.model.js";
 
+import Tag from "../models/Tag"; // Import your Tag model
+
 export const getFeedPosts = async (req, res) => {
   try {
-    const posts = await Posts.find({
-      auther: { $in: [...req.user.connections, req.user.id] },
-    })
-    .populate("auther", "name username profilePicture headline")
-    .populate("comments.user", "name profilePicture")
-    .sort({ createdAt: -1 });
+    let posts;
+    let tagIds = [];
+
+    // Find matching tags for the user's title (interest) using regex
+    if (req.user.title) {
+      const userTitleRegex = new RegExp(
+        req.user.title.split(" ").join("|"),
+        // i indecates for case-insensitive matching.
+        "i"
+      );
+      const matchingTags = await Tag.find({ name: { $regex: userTitleRegex } });
+      tagIds = matchingTags.map((tag) => tag._id);
+    }
+
+    // Case 1: If the user has no connections, fetch posts based on their interests (tags)
+    if (!req.user.connections || req.user.connections.length === 0) {
+      posts = await Posts.find({
+        tags: { $in: tagIds }, // Match posts with user's interests (tags)
+      })
+        .populate("auther", "name username profilePicture headline")
+        .populate("comments.user", "name profilePicture")
+        .sort({ createdAt: -1 }); // Sort by time (most recent first)
+    }
+    // Case 2: If the user has connections, fetch posts from both connections and by their interests
+    else {
+      posts = await Posts.find({
+        $or: [
+          { auther: { $in: [...req.user.connections, req.user.id] } }, // Posts from connections
+          { tags: { $in: tagIds } }, // Posts matching user's interests
+        ],
+      })
+        .populate("auther", "name username profilePicture headline")
+        .populate("comments.user", "name profilePicture")
+        .sort({ createdAt: -1 }); // First sort by time
+    }
+
     res.status(200).json(posts);
   } catch (error) {
-    console.error("Error in get all feed posts controller!");
+    console.error("Error in get all feed posts controller:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 export const createPost = async (req, res) => {
   try {

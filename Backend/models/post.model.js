@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
 
+const tagSchema = new mongoose.Schema({
+  name: { type: String, unique: true, trim: true, lowercase: true },
+});
+
 const postSchema = new mongoose.Schema(
   {
     auther: {
@@ -20,9 +24,12 @@ const postSchema = new mongoose.Schema(
         createdAt: { type: Date, default: Date.now },
       },
     ],
+    tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
   },
   { timestamps: true }
 );
 
 const Posts = mongoose.model("Post", postSchema);
-export default Posts;
+const Tag = mongoose.model("Tag", tagSchema);
+
+export default { Posts, Tag };
