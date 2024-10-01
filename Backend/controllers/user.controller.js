@@ -1,8 +1,11 @@
 const { User } = require("../models/user.model.js");
-
- const getSuggstedConnections = async (req, res) => {
+const cloudinary = require("../db/cloudinary.js");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+const getSuggstedConnections = async (req, res) => {
   try {
-    //dont recommend my rofile nor the users i have
+    //select the profile, name , header, path to their profile
+    //dont recommend my profile($ne) nor the users i have ($nin)
     const curentUser = await User.findById(req.user._id).select("connections");
     const suggestedUser = await User.find({
       _id: { $ne: req.user._id, $nin: curentUser.connections },
@@ -10,15 +13,15 @@ const { User } = require("../models/user.model.js");
       .select("name username profilePicture headline")
       .limit(3);
     res.json(suggestedUser);
-    //profile, name , header, path to their profile
   } catch (error) {
     console.log("error in  getSuggstedConnections:", error);
     res.status(500).json({ message: "server error" });
   }
 };
- const getPublicProfile = async (req, res) => {
+const getPublicProfile = async (req, res) => {
   try {
-    const user = await User.findOne({ usrname: req.params.usrname }).select(
+    console.log("Received request for id:", req.params.id);
+    const user = await User.findOne({ id: req.params.id }).select(
       "-password"
     );
     if (!user) {
@@ -30,7 +33,8 @@ const { User } = require("../models/user.model.js");
     res.status(500).json({ message: "server error" });
   }
 };
- const UpdateProfile = async (req, res) => {
+
+const UpdateProfile = async (req, res) => {
   try {
     const allowedField = [
       "firstName",
@@ -51,15 +55,89 @@ const { User } = require("../models/user.model.js");
         updatedData[field] = req.body[field];
       }
     }
-    //todo: profile and banner img
+
+      if (req.body.profilePicture) {
+        try {
+          const result = await cloudinary.uploader.upload(
+            req.body.profilePicture
+          );
+          updatedData.profilePicture = result.secure_url;
+        } catch (uploadError) {
+          console.log("Error uploading profile picture:", uploadError);
+          return res
+            .status(500)
+            .json({ message: "Error uploading profile picture" });
+        }
+      }
+
+    if (req.body.bannerImg) {
+      try {
+        const result = await cloudinary.uploader.upload(req.body.bannerImg);
+        updatedData.bannerImg = result.secure_url;
+      } catch (uploadError) {
+        console.log("Error uploading banner image:", uploadError);
+        return res
+          .status(500)
+          .json({ message: "Error uploading banner image" });
+      }
+    }
+
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      req.params.id,
       { $set: updatedData },
       { new: true }
-    ).select("-password"); // the new returns the pbject after the update is done
+    ).select("-password"); // the new returns the user object after the update is done
     res.json(user);
   } catch (error) {
-    console.log("error in  Up dateProfile:", error);
+    console.log("error in  UpdateProfile:", error);
+    res.status(500).json({ message: "server error" });
+  }
+};
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.log("Error in deleteUser:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    console.log("error in  Up getAllUsers:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// const getUserById = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.params.id); 
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     res.status(200).json(user);
+//   } catch (error) {
+//     console.log("error in getById:", error);
+//     res.status(500).json({ message: "server error" });
+//   }
+// };
+const getUserPosts=async(req,res)=>{
+   try {
+    
+    const user = await User.findById(req.body.id);; 
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user.posts);
+  } catch (error) {
+    console.log("error in getUserPosts :", error);
     res.status(500).json({ message: "server error" });
   }
 };
@@ -68,4 +146,8 @@ module.exports = {
   getSuggstedConnections,
   getPublicProfile,
   UpdateProfile,
+  // getUserById,
+  getAllUsers,
+  getUserPosts,
+  deleteUser,
 };
