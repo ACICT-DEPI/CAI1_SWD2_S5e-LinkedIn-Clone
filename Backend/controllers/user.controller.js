@@ -1,5 +1,5 @@
 const { User } = require("../models/user.model.js");
-
+// const cloudinary = require("../db/cloudinary.js");
 const getSuggstedConnections = async (req, res) => {
   try {
     //select the profile, name , header, path to their profile
@@ -18,8 +18,8 @@ const getSuggstedConnections = async (req, res) => {
 };
 const getPublicProfile = async (req, res) => {
   try {
-    console.log("Received request for username:", req.params.username);
-    const user = await User.findOne({ username: req.params.username }).select(
+    console.log("Received request for id:", req.params.id);
+    const user = await User.findOne({ id: req.params.id }).select(
       "-password"
     );
     if (!user) {
@@ -53,9 +53,19 @@ const UpdateProfile = async (req, res) => {
         updatedData[field] = req.body[field];
       }
     }
-    //todo: profile and banner img
+
+    if (req.body.profilePicture) {
+      const result = await cloudinary.uploader.upload(req.body.profilePicture);
+      updatedData.profilePicture = result.secure_url;
+    }
+
+    if (req.body.bannerImg) {
+      const result = await cloudinary.uploader.upload(req.body.bannerImg);
+      updatedData.bannerImg = result.secure_url;
+    }
+
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      req.body.id,
       { $set: updatedData },
       { new: true }
     ).select("-password"); // the new returns the user object after the update is done
@@ -78,16 +88,29 @@ const getAllUsers = async (req, res) => {
 
 // const getUserById = async (req, res) => {
 //   try {
-//     const user = await User.findById(req.params.id); // Use req.params.id instead of req.body.id
+//     const user = await User.findById(req.params.id); 
 //     if (!user) {
 //       return res.status(404).json({ message: "User not found" });
 //     }
 //     res.status(200).json(user);
 //   } catch (error) {
-//     console.log("error in  Up getById:", error);
+//     console.log("error in getById:", error);
 //     res.status(500).json({ message: "server error" });
 //   }
 // };
+const getUserPosts=async(req,res)=>{
+   try {
+    
+    const user = await User.findById(req.body.id);; 
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user.posts);
+  } catch (error) {
+    console.log("error in getUserPosts :", error);
+    res.status(500).json({ message: "server error" });
+  }
+};
 
 module.exports = {
   getSuggstedConnections,
@@ -95,4 +118,5 @@ module.exports = {
   UpdateProfile,
   // getUserById,
   getAllUsers,
+  getUserPosts,
 };

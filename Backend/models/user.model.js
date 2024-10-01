@@ -72,9 +72,15 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     isVerified: {
-			type: Boolean,
-			default: false,
-		},
+      type: Boolean,
+      default: false,
+    },
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Posts",
+      },
+    ],
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
