@@ -5,8 +5,8 @@ const { User } = require("../models/user.model.js");
 const getFeedPosts = async (req, res) => {
   try {
     let posts;
-    let tagIds = [];    
-    const user = await User.findOne({ username: req.body.username })
+    let tagIds = [];
+    const user = await User.findOne({ username: req.body.username });
     // Find matching tags for the user's title (interest) using regex
     if (user.headline) {
       const userTitleRegex = new RegExp(
@@ -61,6 +61,8 @@ const createPost = async (req, res) => {
     const { content, imgs, videos } = req.body;
     let newPost;
     const user = await User.findOne({ username: req.body.username });
+    console.log(user);
+    
     if (imgs && videos) {
       newPost = new Posts({
         // auther: req.user._id, // Fix typo (use -> req.user)
@@ -97,6 +99,8 @@ const createPost = async (req, res) => {
       });
     }
     await newPost.save();
+    user.posts.push(newPost._id);
+    await user.save();
     res.status(201).json(newPost);
   } catch (error) {
     console.error("Error creating post:", error);
