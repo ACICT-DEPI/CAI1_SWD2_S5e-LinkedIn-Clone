@@ -55,7 +55,7 @@ const UpdateProfile = async (req, res) => {
     }
     //todo: profile and banner img
     const user = await User.findByIdAndUpdate(
-      req.body.id,
+      req.user._id,
       { $set: updatedData },
       { new: true }
     ).select("-password"); // the new returns the user object after the update is done
