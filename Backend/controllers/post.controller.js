@@ -7,6 +7,11 @@ const getFeedPosts = async (req, res) => {
     let posts;
     let tagIds = [];
     const user = await User.findOne({ username: req.body.username });
+    if (!user) {
+      return res.status(404).json({
+        message: "user not found!",
+      });
+    }
     // Find matching tags for the user's title (interest) using regex
     if (user.headline) {
       const userTitleRegex = new RegExp(
@@ -62,7 +67,7 @@ const createPost = async (req, res) => {
     let newPost;
     const user = await User.findOne({ username: req.body.username });
     console.log(user);
-    
+
     if (imgs && videos) {
       newPost = new Posts({
         // auther: req.user._id, // Fix typo (use -> req.user)
@@ -128,10 +133,10 @@ const getPostById = async (req, res) => {
 
 const deletePost = async (req, res) => {
   try {
+    const userId = req.body.userId;
     const postId = req.params.id;
-    const userId = req.user._id; // Fix typo (use -> req.user)
     const post = await Posts.findById(postId);
-
+    const user = await User.findById(userId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -143,6 +148,9 @@ const deletePost = async (req, res) => {
     }
 
     await Posts.findByIdAndDelete(postId);
+    
+    user.posts = user.posts.filter((post) => post != postId);
+    await user.save();
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
     console.log("Error in delete post controller", error.message);

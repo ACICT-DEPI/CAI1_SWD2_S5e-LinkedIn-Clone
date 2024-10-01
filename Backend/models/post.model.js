@@ -4,7 +4,7 @@ const postSchema = new mongoose.Schema(
   {
     auther: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Users",
       required: true,
     },
     content: { type: String, required: true },
@@ -12,19 +12,18 @@ const postSchema = new mongoose.Schema(
       images: [{ type: String }],
       videos: [{ type: String }],
     },
-    likes: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+    likes: [{ type: mongoose.Schema.ObjectId, ref: "Users" }],
     comments: [
       {
-        content: { type: String },
-        user: { type: mongoose.Schema.ObjectId, ref: "User" },
-        createdAt: { type: Date, default: Date.now },
+        type:mongoose.Schema.ObjectId, 
+        ref:"Comments"
       },
     ],
-    tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
+    tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tags" }],
   },
   { timestamps: true }
 );
 
-const Posts = mongoose.model("Post", postSchema);
+const Posts = mongoose.model("Posts", postSchema);
 
 module.exports = Posts ;
