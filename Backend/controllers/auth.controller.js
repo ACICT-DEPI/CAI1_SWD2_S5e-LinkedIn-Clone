@@ -17,8 +17,10 @@ const {
 const { User } = require("../models/user.model");
 
 module.exports.signup = async (req, res) => {
-  const { email, password, firstName, lastName } = req.body;
+  const { email, password, firstName, lastName, username } = req.body;
   try {
+    console.log(req.body);
+
     if (!email || !password || !firstName || !lastName) {
       throw new Error("All fields are required");
     }
@@ -32,24 +34,27 @@ module.exports.signup = async (req, res) => {
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
-    const verificationToken = generateverificationToken();
+    // const verificationToken = generateverificationToken();
 
-		const user = new User({
-			email,
-			password: hashedPassword,
-			username,
-			verificationToken,
-			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-      isVerified: true
-		});
+    const user = new User({
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      username,
+      // verificationToken,
+      // verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+      isVerified: true,
+    });
+    console.log(user);
 
     await user.save();
 
     // jwt
-		generateTokenAndSetCookie(res, user._id);
-    
+    // generateTokenAndSetCookie(res, user._id);
+
     //send verification token "email"
-		// await sendVerificationEmail(user.email, verificationToken);
+    // await sendVerificationEmail(user.email, verificationToken);
 
     res.status(201).json({
       success: true,
@@ -73,12 +78,10 @@ module.exports.verifyEmail = async (req, res) => {
     });
 
     if (!user) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Invalid or expired verification code",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired verification code",
+      });
     }
 
     user.isVerified = true;
@@ -168,12 +171,10 @@ module.exports.forgotPassword = async (req, res) => {
       `${process.env.CLIENT_URL}/reset-password/${resetToken}`
     );
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Password reset link sent to your email",
-      });
+    res.status(200).json({
+      success: true,
+      message: "Password reset link sent to your email",
+    });
   } catch (error) {
     console.log("Error in forgotPassword ", error);
     res.status(400).json({ success: false, message: error.message });

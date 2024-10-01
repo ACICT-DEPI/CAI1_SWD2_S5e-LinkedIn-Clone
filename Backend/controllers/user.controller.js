@@ -21,9 +21,7 @@ const getSuggstedConnections = async (req, res) => {
 const getPublicProfile = async (req, res) => {
   try {
     console.log("Received request for id:", req.params.id);
-    const user = await User.findOne({ id: req.params.id }).select(
-      "-password"
-    );
+    const user = await User.findOne({ id: req.params.id }).select("-password");
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
@@ -36,6 +34,10 @@ const getPublicProfile = async (req, res) => {
 
 const UpdateProfile = async (req, res) => {
   try {
+    console.log(req.params); // Debugging logs
+    console.log(req.files); // Check if files are coming through
+    console.log(req.body);
+
     const allowedField = [
       "firstName",
       "lastName",
@@ -56,23 +58,27 @@ const UpdateProfile = async (req, res) => {
       }
     }
 
-      if (req.body.profilePicture) {
-        try {
-          const result = await cloudinary.uploader.upload(
-            req.body.profilePicture
-          );
-          updatedData.profilePicture = result.secure_url;
-        } catch (uploadError) {
-          console.log("Error uploading profile picture:", uploadError);
-          return res
-            .status(500)
-            .json({ message: "Error uploading profile picture" });
-        }
-      }
-
-    if (req.body.bannerImg) {
+    // Handle profile picture upload
+    if (req.files && req.files.profilePicture) {
       try {
-        const result = await cloudinary.uploader.upload(req.body.bannerImg);
+        const result = await cloudinary.uploader.upload(
+          req.files.profilePicture[0].path
+        );
+        updatedData.profilePicture = result.secure_url;
+      } catch (uploadError) {
+        console.log("Error uploading profile picture:", uploadError);
+        return res
+          .status(500)
+          .json({ message: "Error uploading profile picture" });
+      }
+    }
+
+    // Handle banner image upload
+    if (req.files && req.files.bannerImg) {
+      try {
+        const result = await cloudinary.uploader.upload(
+          req.files.bannerImg[0].path
+        );
         updatedData.bannerImg = result.secure_url;
       } catch (uploadError) {
         console.log("Error uploading banner image:", uploadError);
@@ -82,17 +88,19 @@ const UpdateProfile = async (req, res) => {
       }
     }
 
+    // Update the user profile
     const user = await User.findByIdAndUpdate(
       req.params.id,
       { $set: updatedData },
       { new: true }
-    ).select("-password"); // the new returns the user object after the update is done
+    ).select("-password"); // exclude password field
     res.json(user);
   } catch (error) {
-    console.log("error in  UpdateProfile:", error);
-    res.status(500).json({ message: "server error" });
+    console.log("Error in UpdateProfile:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -118,7 +126,7 @@ const getAllUsers = async (req, res) => {
 
 // const getUserById = async (req, res) => {
 //   try {
-//     const user = await User.findById(req.params.id); 
+//     const user = await User.findById(req.params.id);
 //     if (!user) {
 //       return res.status(404).json({ message: "User not found" });
 //     }
@@ -128,10 +136,9 @@ const getAllUsers = async (req, res) => {
 //     res.status(500).json({ message: "server error" });
 //   }
 // };
-const getUserPosts=async(req,res)=>{
-   try {
-    
-    const user = await User.findById(req.body.id);; 
+const getUserPosts = async (req, res) => {
+  try {
+    const user = await User.findById(req.body.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

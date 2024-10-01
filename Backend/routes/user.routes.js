@@ -1,4 +1,7 @@
 const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const upload = multer({ dest: path.join(__dirname, "../uploads/") });
 const {
   getSuggstedConnections,
   getPublicProfile,
@@ -15,10 +18,14 @@ router.get("/", getAllUsers); //ok
 router.get("/suggestions", protectRoute, getSuggstedConnections); //ok
 router.get("/posts", getUserPosts);
 router.get("/:id", protectRoute, getPublicProfile); //ok ,//example api call: http://localhost:5000/api/users/haneen
-router.delete('/:id', deleteUser); //ok //deleting profile
+router.delete("/:id", deleteUser); //ok //deleting profile
 // router.get("/:id", getUserById);
 
 //put
-router.put("/:id", UpdateProfile); //ok //updating profile
+router.post(
+  "/:id",
+  upload.fields([{ name: "profilePicture" }, { name: "bannerImg" }]),
+  UpdateProfile
+); //ok //updating profile
 
 module.exports = router;
