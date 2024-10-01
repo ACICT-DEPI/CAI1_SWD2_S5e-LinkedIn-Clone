@@ -1,5 +1,7 @@
 const { User } = require("../models/user.model.js");
-// const cloudinary = require("../db/cloudinary.js");
+const cloudinary = require("../db/cloudinary.js");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 const getSuggstedConnections = async (req, res) => {
   try {
     //select the profile, name , header, path to their profile
@@ -54,25 +56,53 @@ const UpdateProfile = async (req, res) => {
       }
     }
 
-    if (req.body.profilePicture) {
-      const result = await cloudinary.uploader.upload(req.body.profilePicture);
-      updatedData.profilePicture = result.secure_url;
-    }
+      if (req.body.profilePicture) {
+        try {
+          const result = await cloudinary.uploader.upload(
+            req.body.profilePicture
+          );
+          updatedData.profilePicture = result.secure_url;
+        } catch (uploadError) {
+          console.log("Error uploading profile picture:", uploadError);
+          return res
+            .status(500)
+            .json({ message: "Error uploading profile picture" });
+        }
+      }
 
     if (req.body.bannerImg) {
-      const result = await cloudinary.uploader.upload(req.body.bannerImg);
-      updatedData.bannerImg = result.secure_url;
+      try {
+        const result = await cloudinary.uploader.upload(req.body.bannerImg);
+        updatedData.bannerImg = result.secure_url;
+      } catch (uploadError) {
+        console.log("Error uploading banner image:", uploadError);
+        return res
+          .status(500)
+          .json({ message: "Error uploading banner image" });
+      }
     }
 
     const user = await User.findByIdAndUpdate(
-      req.body.id,
+      req.params.id,
       { $set: updatedData },
       { new: true }
     ).select("-password"); // the new returns the user object after the update is done
     res.json(user);
   } catch (error) {
-    console.log("error in  Up dateProfile:", error);
+    console.log("error in  UpdateProfile:", error);
     res.status(500).json({ message: "server error" });
+  }
+};
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.log("Error in deleteUser:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -119,4 +149,5 @@ module.exports = {
   // getUserById,
   getAllUsers,
   getUserPosts,
+  deleteUser,
 };
