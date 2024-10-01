@@ -74,7 +74,7 @@ const createPost = async (req, res) => {
         auther: user._id,
         content,
         media: {
-          images: imgs, // Fix typo: imags -> imgs
+          images: imgs, // Fix typo: images -> imgs
           videos: videos,
         },
       });

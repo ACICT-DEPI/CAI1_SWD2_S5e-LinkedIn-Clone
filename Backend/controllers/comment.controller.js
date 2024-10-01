@@ -142,6 +142,7 @@ const deleteComment = async (req, res) => {
     }
     //todo delete comment from users db
     post.comments = post.comments.filter((comment) => comment !== commentId);
+    await post.save();
     res.status(200).json({ message: "Comment deleted successfully" });
   } catch (error) {
     console.error("Error deleting comment:", error);
@@ -232,12 +233,56 @@ const addReply = async (req, res) => {
   }
 };
 
+const deleteReply = async (req, res) => {
+  try {
+    const { commentId, userId, postId } = req.body;
+
+    // Validate user and post (assuming these functions throw an error if not found)
+    await findUser(userId);
+    await findPost(postId);
+
+    const comment = await findComment(commentId);
+
+    if (!comment) {
+      return res
+        .status(404)
+        .json({ error: "Comment not found or unauthorized" });
+    }
+
+    // Remove the userId from the likes array in the comment
+    const updatedComment = await Comment.findByIdAndUpdate(
+      comment.parentComment,
+      { $pull: { Reply: userId } }, // $pull removes the userId from the likes array
+      { new: true } // Return the updated document after the change
+    );
+
+    if (!updatedComment) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    await Comment.findOneAndDelete({
+      _id: commentId,
+    });
+
+    res
+      .status(200)
+      .json({ message: "Like removed successfully", updatedComment });
+  } catch (error) {
+    console.error("Error deleting like:", error);
+    res.status(500).json({ error: "Failed to remove like" });
+  }
+};
+
 // display controllers
 
 const getAllComments = async (req, res) => {
   try {
     // Fetch all comments from the database
-    const comments = await Comment.find().populate("userId", "username", "profile"); // Populate userId with username (optional)
+    const comments = await Comment.find().populate(
+      "userId",
+      "username",
+      "profile"
+    ); // Populate userId with username (optional)
 
     // Check if comments exist
     if (!comments.length) {
@@ -260,4 +305,6 @@ module.exports = {
   addLike,
   deleteLike,
   addReply,
+  deleteReply,
+  getAllComments,
 };
