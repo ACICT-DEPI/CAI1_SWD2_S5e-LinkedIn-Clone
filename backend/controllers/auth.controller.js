@@ -1,24 +1,37 @@
 const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
+const asyncHandler = require("express-async-handler");
 
 const { generateverificationToken } = require("../utlis/generateverificationToken");
 const { generateTokenAndSetCookie } = require("../utlis/generateTokenAndSetCookie");
 const { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail,
 	sendResetSuccessEmail, } = require("../mailtrap/emails");
 
-  const {User} = require("../models/user.model");
+  const {User, validateRegisterUser, validateLoginUser} = require("../models/user.model");
 
-module.exports.signup = async (req,res)=>{
-  const { email, password, username } = req.body;
-  try{
-    if (!email || !password || !username) {
-			throw new Error("All fields are required");
-		}
+  /**
+ *  @desc    Register New User
+ *  @route   /api/auth/signup
+ *  @method  POST
+ *  @access  public
+ */
+module.exports.signup = asyncHandler (async (req,res)=>{
+  const { error } = validateRegisterUser(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    const { email, password, username } = req.body;
+
     const userAlreadyExists = await User.findOne({ email });
-		console.log("userAlreadyExists", userAlreadyExists);
+    const userNameAlreadyExists = await User.findOne({ username });
+		// console.log("userAlreadyExists", userAlreadyExists);
 
 		if (userAlreadyExists) {
 			return res.status(400).json({ success: false, message: "User already exists" });
+		}
+		if (userNameAlreadyExists) {
+			return res.status(400).json({ success: false, message: "Username already exists. Please choose a unique one" });
 		}
 
 		const hashedPassword = await bcryptjs.hash(password, 10);
@@ -49,15 +62,17 @@ module.exports.signup = async (req,res)=>{
 				password: undefined,
 			},
 		});
+});
 
-  }catch (error) {
-		res.status(400).json({ success: false, message: error.message });
-	}
-};
-
-module.exports.verifyEmail = async (req, res) => {
+  /**
+ *  @desc    verify-email
+ *  @route   /api/auth/verify-email
+ *  @method  POST
+ *  @access  public
+ */
+module.exports.verifyEmail = asyncHandler( async (req, res) => {
 	const { code } = req.body;
-	try {
+
 		const user = await User.findOne({
 			verificationToken: code,
 			verificationTokenExpiresAt: { $gt: Date.now() },
@@ -84,20 +99,30 @@ module.exports.verifyEmail = async (req, res) => {
 				password: undefined,
 			},
 		});
-	} catch (error) {
-		console.log("error in verifyEmail ", error);
-		res.status(500).json({ success: false, message: "Server error" });
-	}
-};
+	
+});
 
-module.exports.login = async (req,res)=>{
-  const { email, password } = req.body;
-	try {
-		const user = await User.findOne({ email });
+/**
+ *  @desc    Login User
+ *  @route   /api/auth/login
+ *  @method  POST
+ *  @access  public
+ */
+module.exports.login = asyncHandler(async (req,res)=>{
+  const { error } = validateLoginUser(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+		const user = await User.findOne({ email: req.body.email  });
+
 		if (!user) {
 			return res.status(400).json({ success: false, message: "Invalid credentials" });
 		}
-		const isPasswordValid = await bcryptjs.compare(password, user.password);
+		const isPasswordValid = await bcryptjs.compare(
+      req.body.password,
+      user.password
+    );
 		if (!isPasswordValid) {
 			return res.status(400).json({ success: false, message: "Invalid credentials" });
 		}
@@ -115,20 +140,26 @@ module.exports.login = async (req,res)=>{
 				password: undefined,
 			},
 		});
-	} catch (error) {
-		console.log("Error in login ", error);
-		res.status(400).json({ success: false, message: error.message });
-	}
-};
+});
 
-module.exports.logout = async (req,res)=>{
+/**
+ *  @desc    logout User
+ *  @route   /api/auth/logout
+ *  @method  POST
+ */
+module.exports.logout = asyncHandler (async (req,res)=>{
   res.clearCookie("token");
 	res.status(200).json({ success: true, message: "Logged out successfully" });
-};
+});
 
-module.exports.forgotPassword = async (req,res) => {
+/**
+ *  @desc    forgotPassword
+ *  @route   /api/auth/forgotPassword
+ *  @method  POST
+ */
+module.exports.forgotPassword = asyncHandler( async (req,res) => {
   const { email } = req.body;
-	try {
+
 		const user = await User.findOne({ email });
 
 		if (!user) {
@@ -148,14 +179,11 @@ module.exports.forgotPassword = async (req,res) => {
 		await sendPasswordResetEmail(user.email, `${process.env.CLIENT_URL}/reset-password/${resetToken}`);
 
 		res.status(200).json({ success: true, message: "Password reset link sent to your email" });
-	} catch (error) {
-		console.log("Error in forgotPassword ", error);
-		res.status(400).json({ success: false, message: error.message });
-	}
-};
+	
+});
 
-module.exports.resetPassword = async (req, res) => {
-  try {
+module.exports.resetPassword = asyncHandler( async (req, res) => {
+  
 		const { token } = req.params;
 		const { password } = req.body;
 
@@ -179,22 +207,18 @@ module.exports.resetPassword = async (req, res) => {
 		await sendResetSuccessEmail(user.email);
 
 		res.status(200).json({ success: true, message: "Password reset successful" });
-	} catch (error) {
-		console.log("Error in resetPassword ", error);
-		res.status(400).json({ success: false, message: error.message });
-	}
-}
+	
+});
 
-module.exports.protectRoute = async (req, res) => {
-  try {
+/**
+ *  @desc    protectRoute
+ *  @route   /api/auth/check-auth
+ *  @method  Get
+ */
+module.exports.protectRoute = asyncHandler(async (req, res) => {
 		const user = await User.findById(req.userId).select("-password");
 		if (!user) {
 			return res.status(400).json({ success: false, message: "User not found" });
 		}
-
 		res.status(200).json({ success: true, user });
-	} catch (error) {
-		console.log("Error in checkAuth ", error);
-		res.status(400).json({ success: false, message: error.message });
-	}
-}
+})
