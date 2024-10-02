@@ -1,5 +1,6 @@
 
 
+
 const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
 const asyncHandler = require("express-async-handler");
@@ -224,8 +225,6 @@ module.exports.protectRoute = asyncHandler(async (req, res) => {
 		}
 		res.status(200).json({ success: true, user });
 })
-// 
-// 
-// 
+
 
 
