@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
-//todo add other sections and about section.
+const Joi = require("joi");
+const passwordComplexity = require("joi-password-complexity");
+
+
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -17,17 +20,26 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: true,
-    },
-    password: {
-      type: String,
-      required: true,
+      unique: true,
+      trim: true,
+      minlength: 3,
+      maxlength: 200,
     },
     email: {
       type: String,
       unique: true,
       required: true,
+      trim: true,
+      minlength: 10,
+      maxlength: 100,
     },
-    profilePicture: {
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 8,
+    },
+    profilePicute: {
       type: String,
       default: "",
     },
@@ -43,9 +55,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    otherSections: [],
-    about: {},
-    skills: [],
+    skills: [String],
     experience: [
       {
         title: String,
@@ -75,21 +85,9 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     isVerified: {
-      type: Boolean,
-      default: false,
-    },
-    posts: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Posts",
-      },
-    ],
-    comments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Comments",
-      },
-    ],
+			type: Boolean,
+			default: false,
+		},
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
@@ -99,6 +97,28 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 const User = mongoose.model("User", userSchema);
+
+// Validate Register User
+function validateRegisterUser(obj) {
+  const schema = Joi.object({
+    email: Joi.string().trim().min(5).max(100).required().email(),
+    username: Joi.string().trim().min(2).max(200).required(),
+    password: passwordComplexity().required(),
+  });
+  return schema.validate(obj);
+}
+
+// Validate Login User
+function validateLoginUser(obj) {
+  const schema = Joi.object({
+    email: Joi.string().trim().min(5).max(100).required().email(),
+    password: Joi.string().trim().min(6).required(),
+  });
+  return schema.validate(obj);
+}
+
 module.exports = {
-  User,
+User,
+validateRegisterUser,
+validateLoginUser
 };
