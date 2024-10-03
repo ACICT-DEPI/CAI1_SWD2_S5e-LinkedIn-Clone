@@ -64,10 +64,10 @@ const userSchema = new mongoose.Schema(
         description: String,
       },
     ],
-    connection: [
+    connections: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Connections",
       },
     ],
     isAdmin: {

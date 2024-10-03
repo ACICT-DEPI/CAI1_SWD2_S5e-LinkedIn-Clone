@@ -8,6 +8,8 @@ const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
 const commentRoutes = require("./routes/comment.route");
+const connectionRoutes = require("./routes/connection.routes");
+
 
 
 // Init App
@@ -22,6 +24,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/connections", connectionRoutes);
 
 
 const PORT = process.env.PORT || 5000;
