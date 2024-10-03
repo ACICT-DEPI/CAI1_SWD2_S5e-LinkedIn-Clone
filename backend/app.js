@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./db/connectDB");
 const cookieParser = require("cookie-parser");
 const logger = require("./middleware/logger");
+const { notFound, errorHanlder } = require("./middleware/errors");
 
 require("dotenv").config();
 
@@ -24,6 +25,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 
+app.use(notFound);
+app.use(errorHanlder);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
