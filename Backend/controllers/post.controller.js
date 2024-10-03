@@ -1,6 +1,38 @@
 const Posts = require("../models/post.model.js");
 const Tag = require("../models/tag.model.js");
 const { User } = require("../models/user.model.js");
+const Connections = require("../models/connection.model.js");
+const findMyAcceptedConnectionsIds = async (user) => {
+  try {
+    let acceptedUsers = [];
+    const acceptedConnections = await Promise.all(
+      user.connections.map(async (connectionId) => {
+        const connection = await Connections.findById(connectionId);
+        // console.log(connection);
+
+        if (!connection || connection.status !== "accepted") {
+          return null;
+        }
+        // console.log(connectionId);
+        const friendId =
+          String(connection.senderId) !== String(user._id)
+            ? connection.senderId
+            : connection.receiverId; 
+        console.log("sender", connection.senderId);
+        console.log("receiver", connection.receiverId);
+        console.log("user", user._id);
+        
+        
+        acceptedUsers.push(friendId);
+      })
+    );
+
+    return acceptedUsers;
+  } catch (error) {
+    console.error("Error fetching accepted connections:", error);
+    return [];
+  }
+};
 
 const getFeedPosts = async (req, res) => {
   try {
@@ -39,9 +71,12 @@ const getFeedPosts = async (req, res) => {
     }
     // Case 2: If the user has connections, fetch posts from both connections and by their interests
     else {
+      const userConnections = await findMyAcceptedConnectionsIds(user);
+      console.log(userConnections);
+      
       posts = await Posts.find({
         $or: [
-          { auther: { $in: [...user.connections, user._id] } }, // Posts from connections, fixed typo (use -> user)
+          { auther: { $in: [...userConnections, user._id] } }, // Posts from connections, fixed typo (use -> user)
           { tags: { $in: tagIds } }, // Posts matching user's interests
         ],
       })
@@ -108,7 +143,10 @@ const createPost = async (req, res) => {
     await newPost.save();
     user.posts.push(newPost._id);
     await user.save();
-    res.status(201).json(newPost);
+    res.status(201).json({
+      status: "sucess",
+      body: newPost,
+    });
   } catch (error) {
     console.error("Error creating post:", error);
     res.status(500).json({ error: "Failed to create post" });
