@@ -10,6 +10,7 @@ const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
 const commentRoutes = require("./routes/comment.route");
+const notificationRoutes = require("./routes/notification.routes");
 
 // Init App
 const app = express();
@@ -24,6 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/notification", notificationRoutes);
 
 app.use(notFound);
 app.use(errorHanlder);

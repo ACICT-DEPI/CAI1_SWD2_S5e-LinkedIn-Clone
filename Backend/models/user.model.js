@@ -81,6 +81,12 @@ const userSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    notifications: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Notification",
+      },
+    ],
     isAdmin: {
       type: Boolean,
       default: false,
@@ -99,7 +105,6 @@ const userSchema = new mongoose.Schema(
 );
 const User = mongoose.model("User", userSchema);
 
-// Validate Register User
 function validateRegisterUser(obj) {
   const schema = Joi.object({
     email: Joi.string().trim().min(5).max(100).required().email(),
@@ -109,7 +114,6 @@ function validateRegisterUser(obj) {
   return schema.validate(obj);
 }
 
-// Validate Login User
 function validateLoginUser(obj) {
   const schema = Joi.object({
     email: Joi.string().trim().min(5).max(100).required().email(),
