@@ -55,7 +55,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    skills: [String],
+    skills: [{ name: String, level: String }],
+    section: [{ name: String, dexcription: String }],
     experience: [
       {
         title: String,
@@ -85,9 +86,9 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     isVerified: {
-			type: Boolean,
-			default: false,
-		},
+      type: Boolean,
+      default: false,
+    },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,

@@ -124,18 +124,6 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// const getUserById = async (req, res) => {
-//   try {
-//     const user = await User.findById(req.params.id);
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     res.status(200).json(user);
-//   } catch (error) {
-//     console.log("error in getById:", error);
-//     res.status(500).json({ message: "server error" });
-//   }
-// };
 const getUserPosts = async (req, res) => {
   try {
     const user = await User.findById(req.body.id);
@@ -161,13 +149,58 @@ const getUserComments = async (req, res) => {
   }
 };
 
+const addExperience = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.experience.push(req.body);
+  await user.save();
+  res.status(200).json(user);
+};
+const addSkills = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.skills.push(req.body);
+  await user.save();
+  res.status(200).json(user);
+};
+const addEducation = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.education.push(req.body);
+  await user.save();
+  res.status(200).json(user);
+};
+
+const addSection= async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.section.push(req.body);
+  await user.save();
+  res.status(200).json(user);
+};
+
 module.exports = {
   getSuggstedConnections,
   getPublicProfile,
   UpdateProfile,
-  // getUserById,
   getAllUsers,
   getUserPosts,
   deleteUser,
   getUserComments,
+  addSection,
+  addExperience,
+  addSkills,
+  addEducation,
 };

@@ -10,18 +10,30 @@ const {
   getUserPosts,
   deleteUser,
   getUserComments,
+  addSection,
+  addExperience,
+  addSkills,
+  addEducation,
 } = require("../controllers/user.controller.js");
 const { protectRoute } = require("../controllers/auth.controller.js");
 const router = express.Router();
 
 //get
 router.get("/", getAllUsers); //ok
-router.get("/suggestions",  getSuggstedConnections); //ok
+router.get("/suggestions", getSuggstedConnections); //ok
 router.get("/posts", getUserPosts);
 router.get("/comments", getUserComments);
-router.get("/:id",  getPublicProfile); //ok ,//example api call: http://localhost:5000/api/users/haneen
+router.get("/:id", getPublicProfile); //ok ,//example api call: http://localhost:5000/api/users/haneen
+router.get("/:id", addSection);
+
+//delete
 router.delete("/:id", deleteUser); //ok //deleting profile
-// router.get("/:id", getUserById);
+
+//post
+router.post("/:id/experience", addExperience);
+router.post("/:id/education", addEducation);
+router.post("/:id/skill", addSkills);
+router.post("/:id/section", addSection);
 
 //put
 router.post(
