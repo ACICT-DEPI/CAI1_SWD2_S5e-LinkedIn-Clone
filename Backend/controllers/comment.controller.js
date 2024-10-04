@@ -5,15 +5,11 @@ const Comments = require("../models/comments.model.js");
 
 // helper functions
 const findPost = async (postId) => {
-  console.log("post");
-
   const post = await Posts.findById(postId);
   if (!post) return null;
   return post;
 };
 const findUser = async (userId) => {
-  console.log("user");
-
   const user = await User.findById(userId);
   if (!user) return null;
   return user;
