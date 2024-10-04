@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.get("/admin", postController.getAllPosts);
 router.get("/", postController.getFeedPosts);
+router.patch("/reshare", postController.resharePost);
 router.get('/comments/:id',postController.getAllComments)
 router.patch("/", postController.createPost);
 router.get("/:id", postController.getPostById);

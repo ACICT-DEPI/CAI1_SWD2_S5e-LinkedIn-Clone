@@ -10,7 +10,10 @@ const getAllNotification = async (req, res) => {
 };
 const getNotificationById = async (req, res) => {
   try {
+    console.log(req.params.id);
+
     const notification = await Notification.findById(req.params.id);
+    console.log(notification);
 
     if (!notification) {
       return res.status(404).json({ message: "notification not found" });
@@ -29,7 +32,7 @@ const changeNotificationStatus = async (req, res) => {
     if (!notification) {
       return res.status(404).json({ message: "notification not found" });
     }
-    notification.isRead=true;
+    notification.isRead = true;
     res.json(notification);
   } catch (error) {
     console.log("error in  getPublicProfile:", error);

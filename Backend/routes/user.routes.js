@@ -16,6 +16,7 @@ const {
   addEducation,
   getNotification,
   addNotificationToUser,
+  getUserConnections,
 } = require("../controllers/user.controller.js");
 const { protectRoute } = require("../controllers/auth.controller.js");
 const router = express.Router();
@@ -23,6 +24,7 @@ const router = express.Router();
 //get
 router.get("/", getAllUsers);
 router.get("/suggestions", getSuggstedConnections);
+router.get("/connections", getUserConnections);
 router.get("/posts", getUserPosts);
 router.get("/comments", getUserComments);
 router.get("/:id", getPublicProfile); //example api call: http://localhost:5000/api/users/haneen

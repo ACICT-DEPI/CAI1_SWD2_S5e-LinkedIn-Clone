@@ -261,6 +261,30 @@ const addNotificationToUser = async (req, res) => {
   }
 };
 
+const getUserConnections = async (req, res) => {
+  try {
+    const user = await User.findById(req.body.id);
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
+    }
+    const connectionOfUser = await Promise.all(
+      user.connectedUsers.map(async (connectionId) => {
+        return await User.findById(connectionId).select(
+          "profilePicute firstName lastName headline username"
+        );
+      })
+    );
+    return res.status(200).json({
+      message: "success",
+      connections: connectionOfUser,
+    });
+  } catch (error) {
+    console.log("Error getUserConnections", error);
+    return res
+      .status(500)
+      .json({ message: "Error in getting user connections" });
+  }
+};
 module.exports = {
   getSuggstedConnections,
   getPublicProfile,
@@ -275,4 +299,5 @@ module.exports = {
   addEducation,
   getNotification,
   addNotificationToUser,
+  getUserConnections,
 };

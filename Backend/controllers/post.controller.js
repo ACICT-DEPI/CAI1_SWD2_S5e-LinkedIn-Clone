@@ -275,6 +275,54 @@ const getAllComments = async (req, res) => {
   }
 };
 
+const resharePost = async (req, res) => {
+  try {
+    const user = await User.findById(req.body.userId);
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
+    }
+    const post = await Posts.findByIdAndUpdate(
+      req.body.postId,
+      { $addToSet: { reshare: user._id } },
+      { new: true }
+    );
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    //send notification to auther
+    const notification = new Notification({
+      type: "post",
+      message: `${user.username} reposted your post`,
+      relatedId: post._id,
+      isRead: false,
+    });
+    console.log(notification);
+    const savedNotification = await notification.save();
+    const author = await User.findById(post.auther); 
+    if (!author) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+
+    if (!author.notifications) {
+      author.notifications = [];
+    }
+    author.notifications.push(savedNotification._id);
+
+    // Save the author's notifications
+    await author.save();
+
+    return res.status(200).json({
+      message: "Post reshared successfully",
+      post,
+    });
+  } catch (error) {
+    console.log("Error resharePost", error);
+    return res.status(500).json({ message: "Error in reshare a post" });
+  }
+};
+
 // Export the functions using CommonJS
 module.exports = {
   getFeedPosts,
@@ -283,4 +331,5 @@ module.exports = {
   deletePost,
   getAllPosts,
   getAllComments,
+  resharePost,
 };
