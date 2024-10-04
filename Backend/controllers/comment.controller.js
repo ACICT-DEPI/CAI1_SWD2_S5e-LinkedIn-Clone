@@ -1,6 +1,7 @@
 const Posts = require("../models/post.model.js");
 const Tag = require("../models/tag.model.js");
 const { User } = require("../models/user.model.js");
+const { Notification } = require("../models/notification.model.js");
 const Comments = require("../models/comments.model.js");
 
 // helper functions
@@ -56,6 +57,27 @@ const addComment = async (req, res) => {
       { $push: { comments: newComment._id } },
       { new: true }
     );
+    //send notification to auther
+    const notification = new Notification({
+      type: "comment",
+      message: `${user.username} commented on your post`,
+      relatedId: post._id,
+      isRead: false,
+    });
+    console.log(notification);
+    const savedNotification = await notification.save();
+    const author = await User.findById(post.auther);
+    if (!author) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+
+    if (!author.notifications) {
+      author.notifications = [];
+    }
+    author.notifications.push(savedNotification._id);
+
+    // Save the author's notifications
+    await author.save();
     res.status(201).json({
       message: "Comment added successfully",
       comment: newComment,
@@ -170,6 +192,30 @@ const addLike = async (req, res) => {
       { $addToSet: { likes: userId } }, // $addToSet adds userId only if it's not already in the array
       { new: true } // Return the updated document
     );
+
+    //todo make this function applicable for post,comments,replies , ex: make content type = post so like added to post,etc..
+
+    //send notification to auther
+    // const notification = new Notification({
+    //   type: "like",
+    //   message: `${user.username} liked your {post}`,
+    //   relatedId: post._id,
+    //   isRead: false,
+    // });
+    // console.log(notification);
+    // const savedNotification = await notification.save();
+    // const author = await User.findById(post.auther);
+    // if (!author) {
+    //   return res.status(404).json({ message: "Author not found" });
+    // }
+
+    // if (!author.notifications) {
+    //   author.notifications = [];
+    // }
+    // author.notifications.push(savedNotification._id);
+
+    // // Save the author's notifications
+    // await author.save();
 
     res.status(200).json({ message: "Like added successfully" });
   } catch (error) {
