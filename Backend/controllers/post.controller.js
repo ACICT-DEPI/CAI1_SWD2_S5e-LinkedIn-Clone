@@ -108,6 +108,29 @@ const createPost = async (req, res) => {
     await newPost.save();
     user.posts.push(newPost._id);
     await user.save();
+    // Notify all connections about the new post
+    const notificationMessage = `${user.username} created a new post`;
+
+    const notifications = user.connection.map(async (connectionId) => {
+      const notification = new Notification({
+        type: "post",
+        message: notificationMessage,
+        isRead: false,
+      });
+
+      const savedNotification = await notification.save();
+
+      // Find the connected user and add the notification
+      const connectedUser = await User.findById(connectionId);
+      if (connectedUser) {
+        connectedUser.notifications.push(savedNotification._id);
+        await connectedUser.save();
+      }
+    });
+
+    // Wait for all notifications to be processed
+    await Promise.all(notifications);
+
     res.status(201).json(newPost);
   } catch (error) {
     console.error("Error creating post:", error);

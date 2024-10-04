@@ -21,7 +21,23 @@ const getNotificationById = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
+
+const changeNotificationStatus = async (req, res) => {
+  try {
+    const notification = await Notification.findById(req.params.id);
+
+    if (!notification) {
+      return res.status(404).json({ message: "notification not found" });
+    }
+    notification.isRead=true;
+    res.json(notification);
+  } catch (error) {
+    console.log("error in  getPublicProfile:", error);
+    res.status(500).json({ message: "server error" });
+  }
+};
 module.exports = {
   getNotificationById,
   getAllNotification,
+  changeNotificationStatus,
 };
