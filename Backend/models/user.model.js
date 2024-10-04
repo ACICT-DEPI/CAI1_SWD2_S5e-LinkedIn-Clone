@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 const passwordComplexity = require("joi-password-complexity");
 
-
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -81,6 +80,12 @@ const userSchema = new mongoose.Schema(
         ref: "Connections",
       },
     ],
+    connectedUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     notifications: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -95,6 +100,18 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Posts",
+      },
+    ],
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comments",
+      },
+    ],
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
@@ -123,7 +140,7 @@ function validateLoginUser(obj) {
 }
 
 module.exports = {
-User,
-validateRegisterUser,
-validateLoginUser
+  User,
+  validateRegisterUser,
+  validateLoginUser,
 };

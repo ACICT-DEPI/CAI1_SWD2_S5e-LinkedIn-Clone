@@ -1,6 +1,7 @@
 const Posts = require("../models/post.model.js");
 const Tag = require("../models/tag.model.js");
 const { User } = require("../models/user.model.js");
+const { Notification } = require("../models/notification.model.js");
 const Connections = require("../models/connection.model.js");
 const findMyAcceptedConnectionsIds = async (user) => {
   try {
@@ -145,10 +146,11 @@ const createPost = async (req, res) => {
     // Notify all connections about the new post
     const notificationMessage = `${user.username} created a new post`;
 
-    const notifications = user.connection.map(async (connectionId) => {
+    const notifications = user.connectedUsers.map(async (connectionId) => {
       const notification = new Notification({
         type: "post",
         message: notificationMessage,
+        relatedId: newPost._id,
         isRead: false,
       });
 

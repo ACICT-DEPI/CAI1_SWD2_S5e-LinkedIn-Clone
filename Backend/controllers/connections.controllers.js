@@ -1,53 +1,93 @@
 const { User } = require("../models/user.model.js");
+const { Notification } = require("../models/notification.model.js");
 const Connections = require("../models/connection.model");
 const sendConnection = async (req, res) => {
-  //todo check if the users are already friends
-
   try {
     const { senderId, receiverId } = req.body;
+
+    // Validate request body
     if (!senderId || !receiverId) {
       return res.status(400).json({
-        message: "Bad request - sender id and receiver id is required !",
+        message: "Bad request - senderId and receiverId are required!",
       });
     }
-    const newConnection = new Connections({
-        senderId: senderId,
-        receiverId: receiverId,
+
+    // Check if a connection already exists
+    const existingConnection = await Connections.findOne({
+      senderId,
+      receiverId,
+    });
+
+    if (existingConnection) {
+      return res.status(400).json({
+        message:
+          "Connection request already sent or users are already connected!",
       });
+    }
+
+    // Create new connection
+    const newConnection = new Connections({
+      senderId,
+      receiverId,
+      status: "pending", // default status for a new connection request
+    });
+
+    // Update sender's connections
     const sender = await User.findByIdAndUpdate(
       senderId,
       { $push: { connections: newConnection._id } },
       { new: true }
     );
+
     if (!sender) {
       return res.status(404).json({
-        message: "User not found!",
+        message: "Sender not found!",
       });
     }
+
+    // Update receiver's connections
     const receiver = await User.findByIdAndUpdate(
       receiverId,
       { $push: { connections: newConnection._id } },
       { new: true }
     );
+
     if (!receiver) {
       return res.status(404).json({
         message: "Receiver not found!",
       });
     }
 
+    // Save the new connection
     await newConnection.save();
-    await sender.save();
+
+    // Send notification to the receiver
+    const notificationMessage = `${sender.username} has sent you a connection request`;
+
+    const notification = new Notification({
+      type: "connectionRequest", // Notification type for connection requests
+      message: notificationMessage,
+      relatedId: newConnection._id, // Store the connection request ID as the relatedId
+      isRead: false,
+    });
+
+    // Save the notification
+    const savedNotification = await notification.save();
+
+    // Push notification to the receiver's notifications array
+    receiver.notifications.push(savedNotification._id);
     await receiver.save();
 
     res.status(201).json({
-      message: `Connection has been send successfully from ${sender.username} to ${receiver.username}`,
+      message: `Connection request successfully sent from ${sender.username} to ${receiver.username}`,
       connection: newConnection,
     });
   } catch (error) {
-    console.error("Error sending connection :", error);
+    console.error("Error sending connection:", error);
     res.status(500).json({ error: "Failed to send connection" });
   }
 };
+
 const showAllPendingConnections = async (req, res) => {
   try {
     // Find all connections with a status of 'pending'
@@ -119,6 +159,31 @@ const changeConnectionStatus = async (req, res) => {
         { status: newStatus },
         { new: true } // Return the updated document
       );
+      // Add the sender to the receiver's connectedUsers array and vice versa
+      await User.findByIdAndUpdate(senderId, {
+        $addToSet: { connectedUsers: receiverId }, 
+      });
+
+      await User.findByIdAndUpdate(receiverId, {
+        $addToSet: { connectedUsers: senderId }, 
+      });
+      // Send notification to the sender that the connection was accepted
+      const receiver = await User.findById(receiverId);
+      const notificationMessage = `${receiver.username} has accepted your connection request`;
+
+      const notification = new Notification({
+        type: "connectionRequest",
+        message: notificationMessage,
+        relatedId: connectionId, // Store the connection ID in the notification
+        isRead: false,
+      });
+
+      const savedNotification = await notification.save();
+
+      // Add the notification to the sender's notifications array
+      await User.findByIdAndUpdate(senderId, {
+        $push: { notifications: savedNotification._id },
+      });
       return res.status(200).json({
         status: "success",
         message: "Connection status updated successfully",

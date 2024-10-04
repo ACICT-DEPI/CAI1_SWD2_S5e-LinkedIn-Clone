@@ -35,24 +35,24 @@ module.exports.signup = asyncHandler (async (req,res)=>{
 		}
 
 		const hashedPassword = await bcryptjs.hash(password, 10);
-    const verificationToken = generateverificationToken();
+    // const verificationToken = generateverificationToken();
 
 		const user = new User({
 			email,
 			password: hashedPassword,
 			username,
-			verificationToken,
-			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+			// verificationToken,
+			// verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
       isVerified: true
 		});
 
     await user.save();
 
     // jwt
-		generateTokenAndSetCookie(res, user._id);
+	// 	generateTokenAndSetCookie(res, user._id);
     
-    //send verification token "email"
-		await sendVerificationEmail(user.email, verificationToken);
+    // //send verification token "email"
+	// 	await sendVerificationEmail(user.email, verificationToken);
 
 		res.status(201).json({
 			success: true,
