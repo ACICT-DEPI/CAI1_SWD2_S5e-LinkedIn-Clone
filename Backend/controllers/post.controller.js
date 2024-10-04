@@ -275,7 +275,7 @@ const getAllComments = async (req, res) => {
   }
 };
 
-const resharePost = async (req, res) => {
+const sharePost = async (req, res) => {
   try {
     const user = await User.findById(req.body.userId);
     if (!user) {
@@ -283,7 +283,7 @@ const resharePost = async (req, res) => {
     }
     const post = await Posts.findByIdAndUpdate(
       req.body.postId,
-      { $addToSet: { reshare: user._id } },
+      { $addToSet: { share: user._id } },
       { new: true }
     );
 
@@ -314,12 +314,12 @@ const resharePost = async (req, res) => {
     await author.save();
 
     return res.status(200).json({
-      message: "Post reshared successfully",
+      message: "Post shared successfully",
       post,
     });
   } catch (error) {
-    console.log("Error resharePost", error);
-    return res.status(500).json({ message: "Error in reshare a post" });
+    console.log("Error sharePost", error);
+    return res.status(500).json({ message: "Error in share a post" });
   }
 };
 
@@ -331,5 +331,5 @@ module.exports = {
   deletePost,
   getAllPosts,
   getAllComments,
-  resharePost,
+  sharePost,
 };

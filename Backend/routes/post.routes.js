@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get("/admin", postController.getAllPosts);
 router.get("/", postController.getFeedPosts);
-router.patch("/reshare", postController.resharePost); // takes userId who repost and postId that is been reposted
+router.patch("/share", postController.sharePost); // takes userId who repost and postId that is been reposted
 router.get('/comments/:id',postController.getAllComments)
 router.patch("/", postController.createPost);
 router.get("/:id", postController.getPostById);

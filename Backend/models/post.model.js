@@ -11,7 +11,7 @@ const postSchema = new mongoose.Schema(
     images: [{ type: String }],
     videos: [{ type: String }],
     likes: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
-    reshare: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+    shares: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
     comments: [
       {
         type: mongoose.Schema.ObjectId,
