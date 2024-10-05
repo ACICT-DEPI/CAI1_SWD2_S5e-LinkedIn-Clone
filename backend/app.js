@@ -31,6 +31,9 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/connections", connectionRoutes);
 app.use("/api/likes", likeRoutes);
+//
+// app.use("/api/messages", messageRoutes);
+// app.use("/api/users", userRoutes);
 
 app.use(notFound);
 app.use(errorHanlder);
