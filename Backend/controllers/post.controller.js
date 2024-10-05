@@ -102,7 +102,7 @@ const createPost = async (req, res) => {
   try {
     const { content, imgs, videos } = req.body;
     let newPost;
-    const user = await User.findOne({ username: req.body.username });
+    const user = await User.findById(req.body.userId);
     console.log(user);
 
     if (imgs && videos) {

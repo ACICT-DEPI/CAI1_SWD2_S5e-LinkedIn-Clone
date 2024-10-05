@@ -177,81 +177,7 @@ const deleteComment = async (req, res) => {
   }
 };
 
-const addLike = async (req, res) => {
-  try {
-    const commentId = req.params.id;
-    const { userId } = req.body;
-    if (!commentId || !userId) {
-      return res
-        .status(400)
-        .json({ message: "Comment ID and User ID are required." });
-    }
-    // Add the userId to the likes array if it's not already present
-    await Comments.findByIdAndUpdate(
-      commentId,
-      { $addToSet: { likes: userId } }, // $addToSet adds userId only if it's not already in the array
-      { new: true } // Return the updated document
-    );
 
-    //todo make this function applicable for post,comments,replies , ex: make content type = post so like added to post,etc..
-
-    //send notification to auther
-    // const notification = new Notification({
-    //   type: "like",
-    //   message: `${user.username} liked your {post}`,
-    //   relatedId: post._id,
-    //   isRead: false,
-    // });
-    // console.log(notification);
-    // const savedNotification = await notification.save();
-    // const author = await User.findById(post.auther);
-    // if (!author) {
-    //   return res.status(404).json({ message: "Author not found" });
-    // }
-
-    // if (!author.notifications) {
-    //   author.notifications = [];
-    // }
-    // author.notifications.push(savedNotification._id);
-
-    // // Save the author's notifications
-    // await author.save();
-
-    res.status(200).json({ message: "Like added successfully" });
-  } catch (error) {
-    console.error("Error adding like:", error);
-    res.status(500).json({ error: "Failed to add like" });
-  }
-};
-
-const deleteLike = async (req, res) => {
-  try {
-    const commentId = req.params.id;
-    const { userId } = req.body;
-    if (!commentId || !userId) {
-      return res
-        .status(400)
-        .json({ message: "Comment ID and User ID are required." });
-    }
-    // Remove the userId from the likes array in the comment
-    const updatedComment = await Comment.findByIdAndUpdate(
-      commentId,
-      { $pull: { likes: userId } }, // $pull removes the userId from the likes array
-      { new: true } // Return the updated document after the change
-    );
-
-    if (!updatedComment) {
-      return res.status(404).json({ error: "Comment not found" });
-    }
-
-    res
-      .status(200)
-      .json({ message: "Like removed successfully", updatedComment });
-  } catch (error) {
-    console.error("Error deleting like:", error);
-    res.status(500).json({ error: "Failed to remove like" });
-  }
-};
 
 const addReply = async (req, res) => {
   try {
@@ -397,8 +323,6 @@ module.exports = {
   addComment,
   editComment,
   deleteComment,
-  addLike,
-  deleteLike,
   addReply,
   deleteReply,
   getAllComments,

@@ -14,11 +14,6 @@ router
   .get(commentController.getCommentById)
   .patch(commentController.editComment)
   .delete(commentController.deleteComment)
-
-  router
-    .route("/likes/:id")
-    .patch(commentController.addLike)
-    .delete(commentController.deleteLike);
   
   router
     .route("/reply/:id")
