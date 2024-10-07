@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./db/connectDB");
 const cookieParser = require("cookie-parser");
 const logger = require("./middleware/logger");
+const cors = require("cors");
 const { notFound, errorHanlder } = require("./middleware/errors");
 
 require("dotenv").config();
@@ -17,6 +18,8 @@ const likeRoutes = require('./routes/like.routes')
 
 // Init App
 const app = express();
+
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // Apply Middlewares
 app.use(express.json());

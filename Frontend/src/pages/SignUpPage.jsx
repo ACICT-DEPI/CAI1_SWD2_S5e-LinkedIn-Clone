@@ -4,6 +4,7 @@ import google_logo from '../assets/images/google.svg';
 import Button from '../components/common/Button';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 
 function SignUpPage() {
   const navigate = useNavigate();
@@ -11,10 +12,18 @@ function SignUpPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    navigate('SignUpDetailsPage');
-  };
+  const { signup, error, isLoading } = useAuthStore();
+
+  const handleSignUp = async (e) => {
+		e.preventDefault();
+
+		try {
+			await signup(email, password, username);
+			navigate("/feed");
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
   return (
     <>
@@ -24,7 +33,7 @@ function SignUpPage() {
         </h1>
         {/* Card */}
         <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-lg">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSignUp} className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-linkedinsecondGray">
                 Username
@@ -64,7 +73,9 @@ function SignUpPage() {
                 required
               />
             </div>
-            <Button label="Agree & Join" styleType="primary" className="w-full"/>
+            {error && <p className='text-red-500 font-semibold mt-2'>{error}</p>}
+            <Button label="Agree & Join" styleType="primary" className="w-full"
+            disabled={isLoading}/>
 
             <div className="flex items-center my-4">
               <div className="flex-grow border-t border-gray-300"></div>

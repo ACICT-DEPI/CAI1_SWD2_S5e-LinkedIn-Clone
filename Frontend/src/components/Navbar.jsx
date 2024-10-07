@@ -9,6 +9,7 @@ import notificationsIcon from "../assets/images/nav/nav-notifications.svg";
 import userIcon from "../assets/images/nav/user.svg";
 import searchIcon from "../assets/images/nav/search-icon.svg";
 import ellipsisIcon from "../assets/images/ellipsis.svg";
+import { useAuthStore } from "../store/authStore";
 
 //global
 const icons = [
@@ -96,7 +97,17 @@ export default function Navbar() {
         setVisibleIcons(icons.length - 4);
       }
     };
-        
+    
+     const { logout } = useAuthStore();
+     const handleLogout = async (e) => {
+    e.preventDefault(); 
+    try {
+      await logout(); 
+      navigate("/home");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
   // rendering
   return (
@@ -209,6 +220,7 @@ export default function Navbar() {
                       to="/home"
                       ref={(el) => (dropdownItemsRef.current[2] = el)} // Save reference to first item
                       className="items-center hover:bg-gray-200 px-3 py-2 rounded-md whitespace-nowrap"
+                      onClick={handleLogout} 
                     >
                       Sign Out
                     </Link>

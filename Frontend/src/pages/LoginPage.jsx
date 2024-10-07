@@ -4,17 +4,25 @@ import google_logo from '../assets/images/google.svg';
 import Button from '../components/common/Button';
 import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import logo from '../assets/images/login-logo.svg';
+import { useAuthStore } from '../store/authStore';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Perform form validation and login logic here (optional)
-    navigate('/home'); // Navigate to home after login
-  };
+  const { login, isLoading, error } = useAuthStore();
+
+	const handleLogin = async (e) => {
+		e.preventDefault();
+		await login(email, password);
+	};
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   // Perform form validation and login logic here (optional)
+  //   navigate('/home'); // Navigate to home after login
+  // };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -30,7 +38,7 @@ const LoginPage = () => {
             Stay updated on your professional world.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-linkedinsecondGray">
                 Email
@@ -63,7 +71,8 @@ const LoginPage = () => {
               Forgot Password?
             </p>
 
-            <Button label="Sign In" styleType="primary" className="w-full" />
+            {error && <p className="text-red-500 text-xs">{error}</p>}
+            <Button label="Sign In" styleType="primary" className="w-full"  disabled={isLoading}/>
 
             <div className="flex items-center my-4">
               <div className="flex-grow border-t border-gray-300"></div>
