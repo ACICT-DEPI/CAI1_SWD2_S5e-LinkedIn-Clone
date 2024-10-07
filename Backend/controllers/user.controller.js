@@ -22,7 +22,8 @@ const getSuggstedConnections = async (req, res) => {
 const getPublicProfile = async (req, res) => {
   try {
     console.log("Received request for id:", req.params.id);
-    const user = await User.findOne({ id: req.params.id }).select("-password");
+    // edit it because it was not working with findOne
+    const user = await User.findById(req.params.id).select("-password");
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
