@@ -44,16 +44,19 @@ const EmailVerificationPage = () => {
 	};
 
 	const handleSubmit = async (e) => {
-		e.preventDefault();
-		const verificationCode = code.join("");
-		try {
-			await verifyEmail(verificationCode);
-			navigate("/signup/SignUpDetailsPage");
-			toast.success("Email verified successfully");
-		} catch (error) {
-			console.log(error);
-		}
-	};
+  e.preventDefault();
+  const verificationCode = code.join("");
+  try {
+    const response = await verifyEmail(verificationCode);
+    console.log("Verification successful:", response);
+    navigate("/signup/SignUpDetailsPage");
+    toast.success("Email verified successfully");
+  } catch (error) {
+    console.error("Verification failed:", error);
+    toast.error(error.message || "Verification failed");
+  }
+};
+
 
 	// Auto submit when all fields are filled
 	useEffect(() => {

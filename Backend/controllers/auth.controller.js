@@ -52,7 +52,7 @@ module.exports.signup = asyncHandler (async (req,res)=>{
 	// 	generateTokenAndSetCookie(res, user._id);
     
     // //send verification token "email"
-	// 	await sendVerificationEmail(user.email, verificationToken);
+		await sendVerificationEmail(user.email, verificationToken);
 
 		res.status(201).json({
 			success: true,
