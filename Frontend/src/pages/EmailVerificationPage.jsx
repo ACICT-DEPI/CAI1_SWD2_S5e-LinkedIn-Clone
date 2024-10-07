@@ -49,7 +49,7 @@ const EmailVerificationPage = () => {
   try {
     const response = await verifyEmail(verificationCode);
     console.log("Verification successful:", response);
-    navigate("/signup/SignUpDetailsPage");
+    navigate("signup/SignUpDetailsPage");
     toast.success("Email verified successfully");
   } catch (error) {
     console.error("Verification failed:", error);

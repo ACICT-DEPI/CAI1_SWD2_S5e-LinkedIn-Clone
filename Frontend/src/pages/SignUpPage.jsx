@@ -20,6 +20,7 @@ function SignUpPage() {
 		try {
 			await signup(email, password, username);
 			navigate("signup/verify-email");
+			// navigate("signup/verify-email");
 		} catch (error) {
 			console.log(error);
 		}

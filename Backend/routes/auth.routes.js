@@ -8,11 +8,11 @@ const {
   resetPassword,
   protectRoute,
 } = require("../controllers/auth.controller.js");
-const { verifyToken } = require("../middleware/verifyToken");
+const { verifyAndProtect } = require("../middleware/verifyAndProtect.js");
 
 const router = express.Router();
 
-router.get("/check-auth", verifyToken, protectRoute); //checkAuth
+router.get("/check-auth", verifyAndProtect); 
 
 router.post("/signup", signup);
 router.post("/login", login);
