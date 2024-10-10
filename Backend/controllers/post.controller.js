@@ -38,9 +38,6 @@ const getFeedPosts = async (req, res) => {
   try {
     let posts;
     let tagIds = [];
-    const userId = req.user._id;
-    // console.log(userId);
-    // const user = await User.findById(userId);
     const user = req.user;
     console.log(user);
     
@@ -105,7 +102,7 @@ const createPost = async (req, res) => {
   try {
     const { content, imgs, videos } = req.body;
     let newPost;
-    const user = await User.findById(req.userId);
+    const user = req.user;
     console.log(user);
 
     if (imgs && videos) {
@@ -197,10 +194,10 @@ const getPostById = async (req, res) => {
 
 const deletePost = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user._id;
     const postId = req.params.id;
     const post = await Posts.findById(postId);
-    const user = await User.findById(userId);
+    const user = req.user;
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -280,7 +277,7 @@ const getAllComments = async (req, res) => {
 
 const sharePost = async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
