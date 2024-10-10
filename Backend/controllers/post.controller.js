@@ -38,9 +38,12 @@ const getFeedPosts = async (req, res) => {
   try {
     let posts;
     let tagIds = [];
-    const userId = req.userId;
-    console.log(userId);
-    const user = await User.findById(userId);
+    const userId = req.user._id;
+    // console.log(userId);
+    // const user = await User.findById(userId);
+    const user = req.user;
+    console.log(user);
+    
     if (!user) {
       return res.status(404).json({
         message: "user not found!",
