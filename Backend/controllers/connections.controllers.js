@@ -199,27 +199,44 @@ const changeConnectionStatus = async (req, res) => {
     });
   }
 };
-
 // for testing
 const getAllConnections = async (req, res) => {
   try {
-    // Fetch all comments from the database
+    // Extract pagination parameters from the query
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 100; // Default limit; adjust as needed
+
+    // Fetch all connections from the database with pagination
     const connections = await Connections.find()
       .populate("senderId", "username")
-      .populate("receiverId", "username");
+      .populate("receiverId", "username")
+      .skip((page - 1) * limit) // Skip the documents for the current page
+      .limit(limit); // Limit the number of results
 
-    // Check if comments exist
+    // Check if any connections exist
     if (!connections.length) {
-      return res.status(404).json({ message: "No comments found" });
+      return res.status(404).json({ message: "No connections found" });
     }
 
-    // Return the list of comments
-    res.status(200).json(connections);
+    // Count total connections for pagination
+    const totalConnections = await Connections.countDocuments();
+
+    // Prepare the response object
+    const response = {
+      totalConnections,
+      currentPage: page,
+      totalPages: Math.ceil(totalConnections / limit),
+      connections,
+    };
+
+    // Return the list of connections
+    res.status(200).json(response);
   } catch (error) {
-    console.error("Error retrieving comments:", error);
-    res.status(500).json({ error: "Failed to retrieve comments" });
+    console.error("Error retrieving connections:", error);
+    res.status(500).json({ error: "Failed to retrieve connections" });
   }
 };
+
 module.exports = {
   sendConnection,
   showAllPendingConnections,
