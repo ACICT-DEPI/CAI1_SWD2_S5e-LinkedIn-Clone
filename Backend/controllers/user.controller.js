@@ -23,7 +23,7 @@ const getPublicProfile = async (req, res) => {
   try {
     console.log("Received request for id:", req.params.id);
     // edit it because it was not working with findOne
-    const user = await User.findById(req.params.id).select("-password");
+    const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
@@ -128,7 +128,7 @@ const getAllUsers = async (req, res) => {
 
 const getUserPosts = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
+    const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -140,7 +140,7 @@ const getUserPosts = async (req, res) => {
 };
 const getUserComments = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
+    const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -264,7 +264,7 @@ const addNotificationToUser = async (req, res) => {
 
 const getUserConnections = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
+    const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
