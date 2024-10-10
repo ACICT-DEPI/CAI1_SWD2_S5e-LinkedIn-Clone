@@ -10,7 +10,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
-const commentRoutes = require("./routes/comment.route");
+const commentRoutes = require("./routes/comment.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const connectionRoutes = require("./routes/connection.routes");
 const likeRoutes = require('./routes/like.routes')

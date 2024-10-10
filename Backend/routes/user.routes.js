@@ -18,27 +18,27 @@ const {
   addNotificationToUser,
   getUserConnections,
 } = require("../controllers/user.controller.js");
-const { protectRoute } = require("../controllers/auth.controller.js");
+const { verifyAndProtect } = require("../middleware/verifyAndProtect.js");
 const router = express.Router();
 
 //get
-router.get("/", getAllUsers);
-router.get("/suggestions", getSuggstedConnections);
-router.get("/connections", getUserConnections);
-router.get("/posts", getUserPosts);
-router.get("/comments", getUserComments);
-router.get("/:id", getPublicProfile); //example api call: http://localhost:5000/api/users/haneen
-router.get("/:id", addSection);
-router.get("/:id/notifications", getNotification); // use pagination  page = 1, limit = 10, isRead, type 
+router.get("/",verifyAndProtect, getAllUsers);
+router.get("/suggestions",verifyAndProtect, getSuggstedConnections);
+router.get("/connections",verifyAndProtect, getUserConnections);
+router.get("/posts",verifyAndProtect, getUserPosts);
+router.get("/comments", verifyAndProtect,getUserComments);
+router.get("/:id",verifyAndProtect, getPublicProfile); //example api call: http://localhost:5000/api/users/haneen
+router.get("/:id",verifyAndProtect, addSection);
+router.get("/:id/notifications",verifyAndProtect,getNotification); // use pagination  page = 1, limit = 10, isRead, type 
 //delete
-router.delete("/:id", deleteUser); //deleting profile
+router.delete("/:id", verifyAndProtect,deleteUser); //deleting profile
 
 //post
-router.post("/:id/experience", addExperience);
-router.post("/:id/education", addEducation);
-router.post("/:id/skill", addSkills);
-router.post("/:id/section", addSection);
-router.post("/:id/notification", addNotificationToUser); //provide type and message => req.body =>:{type: req.body.type,message: req.body.message,}
+router.post("/:id/experience",verifyAndProtect, addExperience);
+router.post("/:id/education",verifyAndProtect, addEducation);
+router.post("/:id/skill", verifyAndProtect,addSkills);
+router.post("/:id/section", verifyAndProtect,addSection);
+router.post("/:id/notification", verifyAndProtect,addNotificationToUser); //provide type and message => req.body =>:{type: req.body.type,message: req.body.message,}
 //types of notification => "connectionRequest", "message", "like", "comment", "jobAlert"
 
 //put
