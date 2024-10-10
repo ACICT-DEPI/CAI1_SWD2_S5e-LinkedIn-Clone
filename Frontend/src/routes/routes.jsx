@@ -82,6 +82,46 @@ const routes = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "networks",
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <Networks />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "notifications",
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <Notifications />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "messaging",
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <Messaging />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "jobs",
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <Jobs />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   {
