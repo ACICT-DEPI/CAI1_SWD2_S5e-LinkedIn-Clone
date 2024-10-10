@@ -24,7 +24,7 @@ const { verifyAndProtect } = require("../middleware/verifyAndProtect.js");
 const router = express.Router();
 
 //get
-router.get("/",verifyAndProtect, getAllUsers);
+router.get("/", getAllUsers);
 router.get("/suggestions",verifyAndProtect, getSuggstedConnections);
 router.get("/connections",verifyAndProtect, getUserConnections);
 router.get("/posts",verifyAndProtect, getUserPosts);

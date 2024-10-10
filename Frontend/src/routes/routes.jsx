@@ -17,7 +17,6 @@ import MessagingPage from "../pages/Messaging/MessagingPage";
 
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
-const Messaging = lazy(() => import("../pages/Messaging/Messaging"));
 const Networks = lazy(() => import("../pages/Networks/NetworksPage"));
 const Notifications = lazy(() => import("../pages/Notifications/NotificationsPage"));
 const Profile = lazy(() => import("../pages/Profile/Profile"));
