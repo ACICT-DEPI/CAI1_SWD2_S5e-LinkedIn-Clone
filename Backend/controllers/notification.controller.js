@@ -27,7 +27,6 @@ const getAllNotification = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 const getNotificationById = async (req, res) => {
   try {
     console.log(req.params.id);
@@ -44,7 +43,6 @@ const getNotificationById = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
-
 const changeNotificationStatus = async (req, res) => {
   try {
     const notification = await Notification.findById(req.params.id);
