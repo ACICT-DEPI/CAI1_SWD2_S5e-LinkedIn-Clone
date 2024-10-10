@@ -4,7 +4,7 @@ const SearchInput = () => {
       <input
         type="text"
         placeholder="Search messages"
-        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none bg-gray-200"
+        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none bg-linkedin-lighthover-blue "
       />
     </div>
   );
