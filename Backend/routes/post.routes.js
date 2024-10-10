@@ -1,7 +1,8 @@
 const express = require("express");
 const postController = require("../controllers/post.controller.js");
-const { protectRoute } = require("../controllers/auth.controller.js");
+
 const { verifyAndProtect } = require("../middleware/verifyAndProtect.js");
+
 const router = express.Router();
 
 router.get("/admin", verifyAndProtect, postController.getAllPosts);
