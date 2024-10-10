@@ -98,8 +98,8 @@ export default function Navbar() {
       }
     };
     
-     const { logout } = useAuthStore();
-     const handleLogout = async (e) => {
+    const { logout } = useAuthStore();
+    const handleLogout = async (e) => {
     e.preventDefault(); 
     try {
       await logout(); 

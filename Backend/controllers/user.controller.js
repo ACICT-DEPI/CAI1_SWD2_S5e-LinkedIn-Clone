@@ -118,7 +118,7 @@ const deleteUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select("-password");;
     res.status(200).json(users);
   } catch (error) {
     console.log("error in  Up getAllUsers:", error);
@@ -128,7 +128,7 @@ const getAllUsers = async (req, res) => {
 
 const getUserPosts = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -140,7 +140,7 @@ const getUserPosts = async (req, res) => {
 };
 const getUserComments = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -264,7 +264,7 @@ const addNotificationToUser = async (req, res) => {
 
 const getUserConnections = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
+    const user = await User.findById(req.user._id);;
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
@@ -286,6 +286,9 @@ const getUserConnections = async (req, res) => {
       .json({ message: "Error in getting user connections" });
   }
 };
+
+
+
 module.exports = {
   getSuggstedConnections,
   getPublicProfile,

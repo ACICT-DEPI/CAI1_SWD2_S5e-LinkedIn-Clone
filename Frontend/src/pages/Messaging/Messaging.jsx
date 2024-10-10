@@ -1,5 +1,5 @@
 import React from "react";
-import Section from "../../components/common/section";
+// import Section from "../../components/common/section";
 import UserInfoCart from "../../components/common/UserInfoCart";
 import Button from "../../components/common/Button";
 import FriendsList from "./componenets/friendsList";

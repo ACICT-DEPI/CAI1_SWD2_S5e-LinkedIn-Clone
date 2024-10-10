@@ -13,6 +13,7 @@ import LoginPage from "../pages/LoginPage";
 import AllActivitysPage from "../pages/Profile/AllActivitysPage";
 import AnalyticsPage from '../pages/Profile/AnalyticsPage';
 import ResourcePage from '../pages/Profile/ResourcesPage';
+import MessagingPage from "../pages/Messaging/MessagingPage";
 
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
@@ -107,7 +108,7 @@ const routes = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Suspense fallback={<h1>Loading...</h1>}>
-              <Messaging />
+              <MessagingPage />
             </Suspense>
           </ProtectedRoute>
         ),
@@ -180,7 +181,7 @@ const routes = createBrowserRouter([
   },
   {
     path: "*",
-    element: <Navigate to="/Home" replace />,
+    element: <Navigate to="/home" replace />,
   },
 ]);
 

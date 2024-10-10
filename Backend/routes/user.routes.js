@@ -18,7 +18,9 @@ const {
   addNotificationToUser,
   getUserConnections,
 } = require("../controllers/user.controller.js");
+
 const { verifyAndProtect } = require("../middleware/verifyAndProtect.js");
+
 const router = express.Router();
 
 //get
@@ -30,6 +32,7 @@ router.get("/comments", verifyAndProtect,getUserComments);
 router.get("/:id",verifyAndProtect, getPublicProfile); //example api call: http://localhost:5000/api/users/haneen
 router.get("/:id",verifyAndProtect, addSection);
 router.get("/:id/notifications",verifyAndProtect,getNotification); // use pagination  page = 1, limit = 10, isRead, type 
+
 //delete
 router.delete("/:id", verifyAndProtect,deleteUser); //deleting profile
 

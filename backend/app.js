@@ -14,6 +14,7 @@ const commentRoutes = require("./routes/comment.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const connectionRoutes = require("./routes/connection.routes");
 const likeRoutes = require('./routes/like.routes')
+const messageRoute = require('./routes/message.routes');
 
 
 // Init App
@@ -28,15 +29,21 @@ app.use(logger);
 
 //Routes
 app.use("/api/auth", authRoutes);
+
 app.use("/api/users", userRoutes);
+
 app.use("/api/posts", postRoutes);
+
 app.use("/api/comments", commentRoutes);
+
 app.use("/api/notification", notificationRoutes);
+
 app.use("/api/connections", connectionRoutes);
+
 app.use("/api/likes", likeRoutes);
-//
-// app.use("/api/messages", messageRoutes);
-// app.use("/api/users", userRoutes);
+
+app.use("/api/messages", messageRoute);
+
 
 app.use(notFound);
 app.use(errorHanlder);
