@@ -268,21 +268,40 @@ const deleteReply = async (req, res) => {
 
 const getAllComments = async (req, res) => {
   try {
-    // Fetch all comments from the database
-    const comments = await Comments.find().populate("userId", "username"); // Populate userId with username (optional)
+    // Extract pagination parameters from the query
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 100; // Default limit; adjust as needed
 
-    // Check if comments exist
+    // Fetch all comments from the database with pagination
+    const comments = await Comments.find()
+      .populate("userId", "username") // Populate userId with username (optional)
+      .skip((page - 1) * limit) // Skip the documents for the current page
+      .limit(limit); // Limit the number of results
+
+    // Check if any comments exist
     if (!comments.length) {
       return res.status(404).json({ message: "No comments found" });
     }
 
+    // Count total comments for pagination
+    const totalComments = await Comments.countDocuments();
+
+    // Prepare the response object
+    const response = {
+      totalComments,
+      currentPage: page,
+      totalPages: Math.ceil(totalComments / limit),
+      comments,
+    };
+
     // Return the list of comments
-    res.status(200).json(comments);
+    res.status(200).json(response);
   } catch (error) {
     console.error("Error retrieving comments:", error);
     res.status(500).json({ error: "Failed to retrieve comments" });
   }
 };
+
 
 const getCommentById = async (req, res) => {
   try {
