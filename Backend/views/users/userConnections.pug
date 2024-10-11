@@ -1,0 +1,52 @@
+extends ../layout.pug
+
+block content
+    div(class='w-full max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6')
+
+        h2.text-2xl.font-bold.mb-4 Connections of #{user.firstName}
+
+        // Status Filter Buttons
+        div.mb-4
+            a(href=`/users/${user._id}/connections?status=accepted`, class='inline-block bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md mr-2') Accepted
+            a(href=`/users/${user._id}/connections?status=pending`, class='inline-block bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md') Pending
+
+        // Loop through filtered connections
+        if connections.length > 0
+            // Accepted Connections
+            if connections.filter(connection => connection.status === 'accepted').length > 0
+                h3.text-xl.font-bold.mt-4.mb-2 Accepted Connections
+                ul
+                    each connection in connections
+                        if connection.status === 'accepted'
+                            li.mb-4
+                                p.text-lg #{connection.senderId.firstName} #{connection.senderId.lastName}
+                            li.mb-4
+                                p.text-lg #{connection.senderId.headline}  
+            else
+                p.text-gray-500 No accepted connections to show.
+
+            // Pending Connections
+            if connections.filter(connection => connection.status === 'pending').length > 0
+                h3.text-xl.font-bold.mt-4.mb-2 Pending Connections
+                ul
+                    each connection in connections
+                        if connection.status === 'pending'
+                            li.mb-4
+                                p.text-lg #{connection.senderId.headline} #{connection.senderId.lastName}
+                            li.mb-4
+                                p.text-lg #{connection.senderId.headline}  
+            else
+                p.text-gray-500 No pending connections to show.
+        else
+            p.text-gray-500 No connections to show.
+
+
+        // Pagination Controls (if needed)
+        if totalPages > 1
+            div.mt-4
+                if currentPage > 1
+                    a(href=`/users/${user._id}/connections?page=${currentPage - 1}`, class='inline-block bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-md mr-2') Previous
+                each pageNum in [...Array(totalPages).keys()].map(i => i + 1)
+                    a(href=`/users/${user._id}/connections?page=${pageNum}`, class='inline-block bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-md mr-2')= pageNum
+                if currentPage < totalPages
+                    a(href=`/users/${user._id}/connections?page=${currentPage + 1}`, class='inline-block bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-md') Next

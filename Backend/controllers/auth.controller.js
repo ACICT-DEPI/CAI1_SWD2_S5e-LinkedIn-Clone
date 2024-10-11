@@ -44,8 +44,7 @@ module.exports.signup = asyncHandler (async (req,res)=>{
 			verificationToken,
 			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
       isVerified: true
-		});
-
+		});		
     await user.save();
 
     // jwt

@@ -1,0 +1,27 @@
+extends ../layout.pug
+
+block content
+    div(class='w-full max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6')
+
+        h2.text-2xl.font-bold.mb-4 Comments by #{user.firstName}
+
+        // Loop through paginated comments
+        if comments.length > 0
+            ul
+                each comment in comments
+                    li.mb-4
+                        p.text-lg= comment.content
+                        p.text-gray-600 On Post: #{comment.postId.content}
+                        p.text-gray-600 Created: #{comment.createdAt.toLocaleDateString()}
+        else
+            p.text-gray-500 No comments to show.
+
+        // Pagination Controls
+        if totalPages > 1
+            div.mt-4
+                if currentPage > 1
+                    a(href=`/users/${user._id}/comments?page=${currentPage - 1}`, class='inline-block bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md mr-2') Previous
+                each pageNum in [...Array(totalPages).keys()].map(i => i + 1)
+                    a(href=`/users/${user._id}/comments?page=${pageNum}`, class='inline-block bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md mr-2')= pageNum
+                if currentPage < totalPages
+                    a(href=`/users/${user._id}/comments?page=${currentPage + 1}`, class='inline-block bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md') Next

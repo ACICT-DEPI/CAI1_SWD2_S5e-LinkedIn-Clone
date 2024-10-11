@@ -1,0 +1,57 @@
+extends ../layout.pug
+
+block content
+    // User Details Container
+    div(class='w-full max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6')
+
+        // Profile Picture
+        img(src=user.profilePicute, alt='Profile Picture' class='w-20 h-20 object-cover rounded-full mb-4')
+
+        // User Basic Information
+        h2.text-2xl.font-bold.mb-2= user.firstName + ' ' + user.lastName
+        p.text-gray-700 Username: #{user.username}
+        p.text-gray-700 Headline: #{user.headline}
+        p.text-gray-700 Email: #{user.email}
+        p.text-gray-700 Location: #{user.location || 'Not specified'}
+
+        // Skills Section
+        if user.skills.length > 0
+            h3.text-xl.font-bold.mt-6.mb-2 Skills
+            ul
+                each skill in user.skills
+                    li.text-gray-600= skill.name + ' - ' + skill.level
+        else
+            p.text-gray-500 No skills added.
+
+        // Experience Section
+        if user.experience.length > 0
+            h3.text-xl.font-bold.mt-6.mb-2 Experience
+            ul
+                each exp in user.experience
+                    li.text-gray-600
+                        span.font-bold= exp.title
+                        span.text-gray-500= ' at ' + exp.company
+                        p.text-gray-500= exp.startDate.toLocaleDateString() + ' - ' + (exp.endDate ? exp.endDate.toLocaleDateString() : 'Present')
+                        p.text-gray-600= exp.description
+        else
+            p.text-gray-500 No experience added.
+
+        // Education Section
+        if user.education.length > 0
+            h3.text-xl.font-bold.mt-6.mb-2 Education
+            ul
+                each edu in user.education
+                    li.text-gray-600
+                        span.font-bold= edu.school
+                        span.text-gray-500= ' - ' + edu.fieldOfStudy
+                        p.text-gray-500= edu.startDate.toLocaleDateString() + ' - ' + (edu.endDate ? edu.endDate.toLocaleDateString() : 'Present')
+                        p.text-gray-600= edu.description
+        else
+            p.text-gray-500 No education added.
+
+        // Buttons for Posts, Comments, Connections
+        div(class='mt-6')
+            a(href=`/api/admin/users/${user._id}/posts`, class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mr-2') View Posts
+            a(href=`/api/admin/users/${user._id}/comments`, class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mr-2') View Comments
+            a(href=`/api/admin/users/${user._id}/connections`, class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md') View Connections
+

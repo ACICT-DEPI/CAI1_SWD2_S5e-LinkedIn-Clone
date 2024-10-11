@@ -1,0 +1,50 @@
+extends ../layout.pug
+
+block content
+  //- Search Bar
+  div(class='w-full w-4xl mb-4')
+    input(type='text', placeholder='Search users...' class='w-full p-2 border border-gray-300 rounded')
+
+  //- Check if there are users
+  if users.length > 0
+    //- users Table
+    table(class='w-full w-4xl bg-white shadow-md rounded-lg overflow-hidden')
+        thead(class='bg-gray-800 text-white')
+            tr
+            th(class='p-4 text-left') Profile Picture 
+            th(class='p-4 text-left') First name
+            th(class='p-4 text-left') Last name
+            th(class='p-4 text-left') Username
+            th(class='p-4 text-left') Headline           
+            th(class='p-4 text-left') Email
+            th(class='p-4 text-left') Details
+
+        tbody
+            each user, index in users
+                tr(class=(index % 2 === 0 ? 'bg-gray-100' : 'bg-white'))
+                    td(class='p-4') 
+                        img(src=user.profilePicture ? user.profilePicture : "", alt='', class='w-10 h-10 object-cover')
+                    td(class='p-4')= user.firstname
+                    td(class='p-4')= user.lastname
+                    td(class='p-4')= user.username
+                    td(class='p-4')= user.headline
+                    td(class='p-4')= user.email
+                    td(class='p-4')
+                        a(href=`/api/admin/users/${user._id}`)
+                            button(class='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700') View Details
+ 
+
+    //- Pagination Controls
+    .pagination(class='mt-4 flex justify-center space-x-2')
+      if currentPage > 1
+        a(href=`?page=${currentPage - 1}&limit=${limit}`, class='px-4 py-2 bg-gray-300 rounded hover:bg-gray-400') Previous
+      if totalPages > 1
+        each pageNum in Array(totalPages).fill().map((_, i) => i + 1)
+          a(href=`?page=${pageNum}&limit=${limit}`, class=(pageNum === currentPage ? 'px-4 py-2 bg-blue-500 text-white rounded' : 'px-4 py-2 bg-gray-300 rounded hover:bg-gray-400'))= pageNum
+      if currentPage < totalPages
+        a(href=`?page=${currentPage + 1}&limit=${limit}`, class='px-4 py-2 bg-gray-300 rounded hover:bg-gray-400') Next
+  else
+    //- No users Warning
+    div(class='w-full max-w-4xl bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative')
+      strong(class='font-bold') Warning!
+      span(class='block sm:inline') No users found. Please add some users.

@@ -13,12 +13,17 @@ const postRoutes = require("./routes/post.routes");
 const commentRoutes = require("./routes/comment.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const connectionRoutes = require("./routes/connection.routes");
-const likeRoutes = require('./routes/like.routes')
-
+const likeRoutes = require("./routes/like.routes");
+const adminRoutes = require("./routes/admin.routes");
+const path = require("path");
 
 // Init App
 const app = express();
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(`${__dirname}/public`));
+app.use(express.urlencoded({ extended: true }));
 
+app.set("view engine", "pug");
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // Apply Middlewares
@@ -34,6 +39,7 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/connections", connectionRoutes);
 app.use("/api/likes", likeRoutes);
+app.use("/api/admin", adminRoutes);
 //
 // app.use("/api/messages", messageRoutes);
 // app.use("/api/users", userRoutes);
