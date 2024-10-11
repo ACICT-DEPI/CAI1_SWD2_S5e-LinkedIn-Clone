@@ -1,12 +1,12 @@
 const express = require("express");
-const { verifyAndProtect } = require("../middleware/verifyAndProtect");
+const { verifyTokenAndUserCheck } = require("../middleware/verifyToken");
 const { sendMessage , getMessages} = require("../controllers/message.controller");
 
 const router = express.Router();
 
           //user_id i want their chat  //load Messages btwn 2 users
-router.get("/:id", verifyAndProtect, getMessages);
+router.get("/:id", verifyTokenAndUserCheck, getMessages);
             //receiver_Id
-router.post("/send/:id", verifyAndProtect, sendMessage);
+router.post("/send/:id", verifyTokenAndUserCheck, sendMessage);
 
 module.exports = router;

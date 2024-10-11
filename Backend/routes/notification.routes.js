@@ -5,13 +5,11 @@ const {
   changeNotificationStatus,
 //   changeConnectionStatus,
 } = require("../controllers/notification.controller.js");
-const { verifyAndProtect } = require("../middleware/verifyAndProtect.js");
-// const { verifyToken} = require("../middleware/verifyToken.js");
-// const {protectRoute} = require("../controllers/auth.controller.js");
+const { verifyTokenAndUserCheck } = require("../middleware/verifyToken");
 
 const router = express.Router();
-router.get("/",verifyAndProtect, getAllNotification);
-router.get("/:id", verifyAndProtect,getNotificationById);
-router.patch("/:id", verifyAndProtect,changeNotificationStatus);
+router.get("/",verifyTokenAndUserCheck, getAllNotification);
+router.get("/:id", verifyTokenAndUserCheck,getNotificationById);
+router.patch("/:id", verifyTokenAndUserCheck,changeNotificationStatus);
 // router.get("/:id", changeConnectionStatus);
 module.exports = router;
