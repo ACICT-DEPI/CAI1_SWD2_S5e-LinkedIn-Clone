@@ -50,6 +50,7 @@ module.exports.signup = asyncHandler (async (req,res)=>{
 
     // jwt
 	  generateTokenAndSetCookie(res, user._id);
+
     
     //send verification token "email"
 		await sendVerificationEmail(user.email, verificationToken);
@@ -128,6 +129,7 @@ module.exports.login = asyncHandler(async (req,res)=>{
 		}
 
 		generateTokenAndSetCookie(res, user._id);
+
 
 		user.lastLogin = new Date();
 		await user.save();

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import useGetMessages from '../../../../hooks/useGetMessages';
 import Message from './Message';
 import MessageSkeleton from './MessageSkeleton';
@@ -10,13 +11,21 @@ import MessageSkeleton from './MessageSkeleton';
 
 const Messages = () => {
   const { messages, loading } = useGetMessages();
+	const lastMessageRef = useRef();
+
+	useEffect(() => {
+		setTimeout(() => {
+			lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+		}, 100);
+	}, [messages]);
+
   console.log(messages);
   return (
     <div className="space-y-4">
       {!loading &&
 				messages.length > 0 &&
 				messages.map((message) => (
-					<div key={message._id} >
+					<div key={message._id} ref={lastMessageRef}>
 						<Message message={message} />
 					</div>
 				))}
