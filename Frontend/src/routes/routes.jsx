@@ -108,7 +108,6 @@ const routes = createBrowserRouter([
           <ProtectedRoute>
             <Suspense fallback={<h1>Loading...</h1>}>
               <MessagingPage />
-              {/* <Messaging/> */}
             </Suspense>
           </ProtectedRoute>
         ),
