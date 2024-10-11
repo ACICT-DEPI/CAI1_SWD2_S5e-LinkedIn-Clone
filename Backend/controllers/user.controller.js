@@ -5,25 +5,46 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const getSuggstedConnections = async (req, res) => {
   try {
-    //select the profile, name , header, path to their profile
-    //dont recommend my profile($ne) nor the users i have ($nin)
-    const curentUser = await User.findById(req.user._id).select("connections");
-    const suggestedUser = await User.find({
-      _id: { $ne: req.user._id, $nin: curentUser.connections },
+    // Get page and limit from query parameters, default to 1 and 3 if not provided
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+    const limit = parseInt(req.query.limit) || 3; // Default to limit 3 if not provided
+
+    // Calculate the number of users to skip based on the current page
+    const skip = (page - 1) * limit;
+
+    // Select the current user's connections
+    const currentUser = await User.findById(req.user._id).select("connections");
+
+    // Find suggested users excluding the current user and their connections
+    const suggestedUsers = await User.find({
+      _id: { $ne: req.user._id, $nin: currentUser.connections },
     })
       .select("name username profilePicture headline")
-      .limit(3);
-    res.json(suggestedUser);
+      .skip(skip) // Skip the previous pages' users
+      .limit(limit); // Limit the number of suggested users returned
+
+    // Get total number of suggested users for calculating total pages
+    const totalSuggestedUsers = await User.countDocuments({
+      _id: { $ne: req.user._id, $nin: currentUser.connections },
+    });
+
+    res.status(200).json({
+      suggestedUsers,
+      currentPage: page,
+      totalPages: Math.ceil(totalSuggestedUsers / limit), // Total pages calculated
+      totalSuggestedUsers,
+    });
   } catch (error) {
-    console.log("error in  getSuggstedConnections:", error);
+    console.log("error in getSuggstedConnections:", error);
     res.status(500).json({ message: "server error" });
   }
 };
+
 const getPublicProfile = async (req, res) => {
   try {
     console.log("Received request for id:", req.params.id);
     // edit it because it was not working with findOne
-    const user = await User.findById(req.params.id).select("-password");
+    const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
@@ -118,17 +139,38 @@ const deleteUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select("-password");;
-    res.status(200).json(users);
+    // Get page and limit from query parameters, default to 1 and null if not provided
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+    const limit = parseInt(req.query.limit); // Default to undefined if not provided
+
+    // Calculate the number of users to skip based on the current page
+    const skip = limit ? (page - 1) * limit : 0; // Only calculate skip if limit is defined
+
+    // Fetch users with optional pagination
+    const users = await User.find()
+      .skip(skip) // Skip the previous pages' users, if limit is defined
+      .limit(limit) // Limit the number of users to be returned, or undefined for all
+      .select("name username profilePicture headline"); // Select desired fields
+
+    // Get total number of users for calculating total pages
+    const totalUsers = await User.countDocuments();
+
+    res.status(200).json({
+      users,
+      currentPage: page,
+      totalPages: limit ? Math.ceil(totalUsers / limit) : 1, // Total pages calculated only if limit is defined
+      totalUsers,
+    });
   } catch (error) {
-    console.log("error in  Up getAllUsers:", error);
+    console.log("error in Up getAllUsers:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
+
 const getUserPosts = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -140,16 +182,37 @@ const getUserPosts = async (req, res) => {
 };
 const getUserComments = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json(user.comments);
+
+    const comments = user.comments || [];
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || comments.length; // Default to send all comments
+
+    // Calculate the start and end indices for pagination
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    // Paginate the comments
+    const paginatedComments = comments.slice(startIndex, endIndex);
+
+    // Prepare the response object
+    const response = {
+      totalComments: comments.length,
+      currentPage: page,
+      totalPages: Math.ceil(comments.length / limit),
+      comments: paginatedComments,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.log("error in getUserComments :", error);
     res.status(500).json({ message: "server error" });
   }
 };
+
 
 const addExperience = async (req, res) => {
   const user = await User.findById(req.params.id);
@@ -264,30 +327,48 @@ const addNotificationToUser = async (req, res) => {
 
 const getUserConnections = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);;
+    const user = req.user;
     if (!user) {
-      return res.status(404).json({ message: "user not found" });
+      return res.status(404).json({ message: "User not found" });
     }
+
     const connectionOfUser = await Promise.all(
       user.connectedUsers.map(async (connectionId) => {
         return await User.findById(connectionId).select(
-          "profilePicute firstName lastName headline username"
+          "profilePicture firstName lastName headline username"
         );
       })
     );
+
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || connectionOfUser.length; // Default to send all connections
+
+    // Calculate the start and end indices for pagination
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    // Paginate the connections
+    const paginatedConnections = connectionOfUser.slice(startIndex, endIndex);
+
+    // Prepare the response object
+    const response = {
+      totalConnections: connectionOfUser.length,
+      currentPage: page,
+      totalPages: Math.ceil(connectionOfUser.length / limit),
+      connections: paginatedConnections,
+    };
+
     return res.status(200).json({
-      message: "success",
-      connections: connectionOfUser,
+      message: "Success",
+      ...response,
     });
   } catch (error) {
-    console.log("Error getUserConnections", error);
+    console.log("Error in getUserConnections", error);
     return res
       .status(500)
       .json({ message: "Error in getting user connections" });
   }
 };
-
-
 
 module.exports = {
   getSuggstedConnections,
