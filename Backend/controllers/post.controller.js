@@ -38,39 +38,40 @@ const getFeedPosts = async (req, res) => {
   try {
     let posts;
     let tagIds = [];
-    const userId = req.user._id;
-    // console.log(userId);
-    // const user = await User.findById(userId);
     const user = req.user;
     console.log(user);
-    
+
     if (!user) {
       return res.status(404).json({
         message: "user not found!",
       });
     }
+
     // Find matching tags for the user's title (interest) using regex
     if (user.headline) {
       const userTitleRegex = new RegExp(
-        user.headline.split(" ").join("|"), // Fix typo here: use -> user
+        user.headline.split(" ").join("|"),
         "i" // Case-insensitive matching
       );
       const matchingTags = await Tag.find({ name: { $regex: userTitleRegex } });
       tagIds = matchingTags.map((tag) => tag._id);
     }
 
+    // Get pagination parameters from query
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+    const limit = parseInt(req.query.limit) || null; // Default to null (all posts) if not provided
+    const skip = limit ? (page - 1) * limit : 0; // Calculate the number of posts to skip only if limit is provided
+
     // Case 1: If the user has no connections, fetch posts based on their interests (tags)
     if (!user.connections || user.connections.length === 0) {
-      // Fix typo here: use -> user
       posts = await Posts.find({
-        $or: [
-          { auther: { $in: user._id } }, // Posts from connections, fixed typo (use -> user)
-          { tags: { $in: tagIds } }, // Posts matching user's interests
-        ],
+        $or: [{ auther: { $in: user._id } }, { tags: { $in: tagIds } }],
       })
         .populate("auther", "name username profilePicture headline")
         .populate("comments.user", "name profilePicture")
-        .sort({ createdAt: -1 }); // Sort by time (most recent first)
+        .sort({ createdAt: -1 }) // Sort by time (most recent first)
+        .skip(skip) // Skip the calculated number of posts
+        .limit(limit); // Limit the number of posts returned, or null for all
     }
     // Case 2: If the user has connections, fetch posts from both connections and by their interests
     else {
@@ -79,13 +80,15 @@ const getFeedPosts = async (req, res) => {
 
       posts = await Posts.find({
         $or: [
-          { auther: { $in: [...userConnections, user._id] } }, // Posts from connections, fixed typo (use -> user)
-          { tags: { $in: tagIds } }, // Posts matching user's interests
+          { auther: { $in: [...userConnections, user._id] } },
+          { tags: { $in: tagIds } },
         ],
       })
         .populate("auther", "name username profilePicture headline")
         .populate("comments.user", "name profilePicture")
-        .sort({ createdAt: -1 }); // First sort by time
+        .sort({ createdAt: -1 }) // First sort by time
+        .skip(skip) // Skip the calculated number of posts
+        .limit(limit); // Limit the number of posts returned, or null for all
     }
 
     if (!posts || posts.length === 0) {
@@ -101,11 +104,12 @@ const getFeedPosts = async (req, res) => {
   }
 };
 
+
 const createPost = async (req, res) => {
   try {
     const { content, imgs, videos } = req.body;
     let newPost;
-    const user = await User.findById(req.userId);
+    const user = req.user;
     console.log(user);
 
     if (imgs && videos) {
@@ -197,10 +201,10 @@ const getPostById = async (req, res) => {
 
 const deletePost = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user._id;
     const postId = req.params.id;
     const post = await Posts.findById(postId);
-    const user = await User.findById(userId);
+    const user = req.user;
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -224,19 +228,19 @@ const deletePost = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
   try {
-    // Get page and limit from query parameters, default to 1 and 10 if not provided
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    // Get page and limit from query parameters, default to 1 and null if not provided
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+    const limit = parseInt(req.query.limit); // Default to undefined if not provided
 
     // Calculate the number of posts to skip based on the current page
-    const skip = (page - 1) * limit;
+    const skip = limit ? (page - 1) * limit : 0; // Only calculate skip if limit is defined
 
     // Fetch posts with pagination, populating the required fields (e.g., 'auther', 'comments')
     const posts = await Posts.find()
       .populate("auther", "username") // Populate the author field with username
       .populate("tags") // Populate tags if needed
       .skip(skip) // Skip the previous pages' posts
-      .limit(limit) // Limit the number of posts to be returned
+      .limit(limit) // Limit the number of posts to be returned, or null for all
       .sort({ createdAt: -1 }); // Sort posts by creation date (newest first)
 
     // Get total number of posts for calculating total pages
@@ -245,7 +249,7 @@ const getAllPosts = async (req, res) => {
     res.status(200).json({
       posts,
       currentPage: page,
-      totalPages: Math.ceil(totalPosts / limit),
+      totalPages: limit ? Math.ceil(totalPosts / limit) : 1, // Total pages calculated only if limit is defined
       totalPosts,
     });
   } catch (error) {
@@ -254,12 +258,26 @@ const getAllPosts = async (req, res) => {
   }
 };
 
+
 const getAllComments = async (req, res) => {
   try {
     const postId = req.params.id;
+
+    // Get page and limit from query parameters, default to 1 and null if not provided
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+    const limit = parseInt(req.query.limit); // Default to undefined if not provided
+
+    // Calculate the number of comments to skip based on the current page
+    const skip = limit ? (page - 1) * limit : 0; // Only calculate skip if limit is defined
+
+    // Find the post and populate comments with user details
     const post = await Posts.findById(postId)
       .populate({
         path: "comments",
+        options: {
+          skip, // Skip the previous pages' comments
+          limit, // Limit the number of comments returned, or null for all
+        },
         populate: {
           path: "userId",
           select: "username profilePicture",
@@ -267,20 +285,33 @@ const getAllComments = async (req, res) => {
         select: "-postId -__v",
       })
       .select("comments");
+
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    res.status(200).json(post);
+    // Get total number of comments for calculating total pages
+    const totalComments = await Posts.findById(postId)
+      .select("comments")
+      .populate("comments")
+      .then((p) => p.comments.length);
+
+    res.status(200).json({
+      comments: post.comments,
+      currentPage: page,
+      totalPages: limit ? Math.ceil(totalComments / limit) : 1, // Total pages calculated only if limit is defined
+      totalComments,
+    });
   } catch (error) {
     console.error("Error in getPostById controller:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+
 const sharePost = async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
