@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import useGetMessages from '../../../../hooks/useGetMessages';
 import Message from './Message';
 import MessageSkeleton from './MessageSkeleton';
+import useListenMessages from '../../../../hooks/useListenMessages';
 
 // const messages = [
 //   // { from: 'Jana Fadl', content: 'Hey, how are you?' },
@@ -11,6 +12,7 @@ import MessageSkeleton from './MessageSkeleton';
 
 const Messages = () => {
   const { messages, loading } = useGetMessages();
+  useListenMessages();
 	const lastMessageRef = useRef();
 
 	useEffect(() => {
