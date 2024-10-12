@@ -2,6 +2,7 @@
 const {Message} = require("../models/message.model");
 const {Conversation} = require("../models/conversation.model");
 const { getReceiverSocketId } = require("../socket/socket");
+const { io } = require("../socket/socket"); 
 
 const sendMessage = async (req, res) => {
 	try {
@@ -70,7 +71,62 @@ const getMessages = async (req, res) => {
 };
 
 
+// Edit Message
+const editMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const { message: newContent } = req.body;
+
+    const updatedMessage = await Message.findByIdAndUpdate(
+      messageId,
+      { message: newContent },
+      { new: true }
+    );
+
+    if (!updatedMessage) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    // Emit updated message via socket
+    io.emit("messageUpdated", updatedMessage);
+
+    res.status(200).json(updatedMessage);
+  } catch (error) {
+    console.error("Error in editMessage controller:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// Delete Message
+const deleteMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+
+    const deletedMessage = await Message.findByIdAndDelete(messageId);
+
+    if (!deletedMessage) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    // Remove the message from its conversation
+    await Conversation.updateMany(
+      { messages: messageId },
+      { $pull: { messages: messageId } }
+    );
+
+    // Emit deletion via socket
+    io.emit("messageDeleted", messageId);
+
+    res.status(200).json({ message: "Message deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleteMessage controller:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   sendMessage,
-  getMessages
+  getMessages,
+  deleteMessage,
+  editMessage
 };

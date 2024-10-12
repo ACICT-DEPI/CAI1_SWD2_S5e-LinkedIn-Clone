@@ -13,7 +13,7 @@ const SearchInput = ({ onSearch }) => {
     <div className="mb-4">
       <input
         type="text"
-        placeholder="Search messages"
+        placeholder="Search for a User..."
         className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none bg-linkedin-lighthover-blue"
         value={searchTerm}
         onChange={handleInputChange}

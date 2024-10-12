@@ -1,6 +1,6 @@
 const express = require("express");
 const { verifyTokenAndUserCheck } = require("../middleware/verifyToken");
-const { sendMessage , getMessages} = require("../controllers/message.controller");
+const { sendMessage , getMessages, deleteMessage, editMessage} = require("../controllers/message.controller");
 
 const router = express.Router();
 
@@ -9,4 +9,6 @@ router.get("/:id", verifyTokenAndUserCheck, getMessages);
             //receiver_Id
 router.post("/send/:id", verifyTokenAndUserCheck, sendMessage);
 
+router.put("/edit/:messageId", verifyTokenAndUserCheck, editMessage); // Edit message
+router.delete("/delete/:messageId", verifyTokenAndUserCheck, deleteMessage); // Delete message
 module.exports = router;
