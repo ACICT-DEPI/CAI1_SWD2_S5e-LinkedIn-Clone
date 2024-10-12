@@ -51,7 +51,19 @@ block content
 
         // Buttons for Posts, Comments, Connections
         div(class='mt-6')
-            a(href=`/api/admin/users/${user._id}/posts`, class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mr-2') View Posts
-            a(href=`/api/admin/users/${user._id}/comments`, class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mr-2') View Comments
-            a(href=`/api/admin/users/${user._id}/connections`, class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md') View Connections
+            a(
+                href=`/api/admin/users/${user._id}/posts`, 
+                class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mr-2',
+                disabled=user.posts.length === 0 ? true : false
+            ) View Posts
+            a(
+                href=`/api/admin/users/${user._id}/comments`, 
+                class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mr-2',
+                disabled=user.comments.length === 0 ? true : false
+            ) View Comments
+            a(
+                href=`/api/admin/users/${user._id}/connections`, 
+                class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md',
+                disabled=user.connections.length === 0 ? true : false
+            ) View Connections
 
