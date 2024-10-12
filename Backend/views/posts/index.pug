@@ -1,0 +1,30 @@
+extends ../layout.pug
+
+block content
+    div(class='w-full max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6')
+
+        h2.text-2xl.font-bold.mb-4 All Posts
+
+        // Loop through paginated posts
+        if posts.length > 0
+            ul
+                each post in posts
+                    li.mb-4
+                        h3.text-lg.font-bold= post.content
+                        p.text-gray-600 Created: #{post.createdAt.toLocaleDateString()}
+                        p.text-gray-600= post.likes.length + ' Likes'
+                        p.text-gray-600= post.comments.length + ' Comments'
+                        //- p.text-gray-600= Auther: post.firstName post.secondName
+
+        else
+            p.text-gray-500 No posts to show.
+
+        // Pagination Controls
+        if totalPages > 1
+            div.mt-4
+                if currentPage > 1
+                    a(href=`/api/admin/posts?page=${currentPage - 1}&limit=${limit}`, class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mr-2') Previous
+                each pageNum in [...Array(totalPages).keys()].map(i => i + 1)
+                    a(href=`/api/admin/posts?page=${pageNum}&limit=${limit}`, class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mr-2')= pageNum
+                if currentPage < totalPages
+                    a(href=`/api/admin/posts?page=${currentPage + 1}&limit=${limit}`, class='inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md') Next

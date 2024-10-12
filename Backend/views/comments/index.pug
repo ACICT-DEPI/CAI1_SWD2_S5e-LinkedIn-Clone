@@ -1,0 +1,32 @@
+extends ../layout.pug
+
+block content
+    div(class='w-full max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6')
+
+        h2.text-2xl.font-bold.mb-4 All Comments
+
+        // Loop through paginated comments
+        if comments.length > 0
+            ul
+                each comment in comments
+                    li.mb-4
+                        h3.text-lg.font-bold= comment.content
+                        p.text-gray-600 Created: #{comment.createdAt.toLocaleDateString()}
+                        p.text-gray-600= comment.likes.length + ' Likes'
+                        p.text-gray-600= comment.replies.length + ' Replies'
+                        //- p.text-gray-600= Auther: comment.firstName comment.secondName
+                        a(href=`/api/admin/comments/${comment._id}`)
+                            button(class='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700') View Details
+
+        else
+            p.text-gray-500 No comments to show.
+
+        // Pagination Controls
+        .pagination(class='mt-4 flex justify-center space-x-2')
+        if currentPage > 1
+            a(href=`?page=${currentPage - 1}&limit=${limit}`, class='px-4 py-2 bg-gray-300 rounded hover:bg-gray-400') Previous
+        if totalPages > 1
+            each pageNum in Array(totalPages).fill().map((_, i) => i + 1)
+                a(href=`?page=${pageNum}&limit=${limit}`, class=(pageNum === currentPage ? 'px-4 py-2 bg-blue-500 text-white rounded' : 'px-4 py-2 bg-gray-300 rounded hover:bg-gray-400'))= pageNum
+        if currentPage < totalPages
+            a(href=`?page=${currentPage + 1}&limit=${limit}`, class='px-4 py-2 bg-gray-300 rounded hover:bg-gray-400') Next
