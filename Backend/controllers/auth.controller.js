@@ -48,7 +48,8 @@ module.exports.signup = asyncHandler (async (req,res)=>{
     await user.save();
 
     // jwt
-	  generateTokenAndSetCookie(res, user._id);
+	  generateTokenAndSetCookie(res, user._id, user.isAdmin);
+
     
     //send verification token "email"
 		await sendVerificationEmail(user.email, verificationToken);
@@ -126,7 +127,8 @@ module.exports.login = asyncHandler(async (req,res)=>{
 			return res.status(400).json({ success: false, message: "Invalid credentials" });
 		}
 
-		generateTokenAndSetCookie(res, user._id);
+		generateTokenAndSetCookie(res, user._id, user.isAdmin);
+
 
 		user.lastLogin = new Date();
 		await user.save();
@@ -215,7 +217,7 @@ module.exports.resetPassword = asyncHandler( async (req, res) => {
  *  @method  Get
  */
 module.exports.protectRoute = asyncHandler(async (req, res) => {
-		const user = await User.findById(req.userId).select("-password");
+		const user = req.user;
 		if (!user) {
 			return res.status(400).json({ success: false, message: "User not found" });
 		}

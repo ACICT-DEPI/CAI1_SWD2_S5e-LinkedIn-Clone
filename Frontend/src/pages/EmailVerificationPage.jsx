@@ -92,7 +92,7 @@ const EmailVerificationPage = () => {
               ))}
             </div>
             {error && <p className='text-red-500 font-semibold mt-2'>{error}</p>}
-            <Button type="sumbit" styleType="primary" className="w-full"
+            <Button type="submit" styleType="primary" className="w-full"
               disabled={isLoading || code.some((digit) => !digit)}
               label={isLoading ? "Verifying..." : "Verify Email"} 
               />

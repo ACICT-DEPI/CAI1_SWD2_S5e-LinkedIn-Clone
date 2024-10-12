@@ -18,27 +18,30 @@ const {
   addNotificationToUser,
   getUserConnections,
 } = require("../controllers/user.controller.js");
-const { verifyAndProtect } = require("../middleware/verifyAndProtect.js");
+
+const { verifyTokenAndUserCheck } = require("../middleware/verifyToken.js");
+
 const router = express.Router();
 
 //get
-router.get("/",verifyAndProtect, getAllUsers);
-router.get("/suggestions",verifyAndProtect, getSuggstedConnections);
-router.get("/connections",verifyAndProtect, getUserConnections);
-router.get("/posts",verifyAndProtect, getUserPosts);
-router.get("/comments", verifyAndProtect,getUserComments);
-router.get("/:id",verifyAndProtect, getPublicProfile); //example api call: http://localhost:5000/api/users/haneen
-router.get("/:id",verifyAndProtect, addSection);
-router.get("/:id/notifications",verifyAndProtect,getNotification); // use pagination  page = 1, limit = 10, isRead, type 
+router.get("/", verifyTokenAndUserCheck,getAllUsers);
+router.get("/suggestions",verifyTokenAndUserCheck, getSuggstedConnections);
+router.get("/connections",verifyTokenAndUserCheck, getUserConnections);
+router.get("/posts",verifyTokenAndUserCheck, getUserPosts);
+router.get("/comments", verifyTokenAndUserCheck,getUserComments);
+router.get("/:id",verifyTokenAndUserCheck, getPublicProfile); //example api call: http://localhost:5000/api/users/haneen
+router.get("/:id",verifyTokenAndUserCheck, addSection);
+router.get("/:id/notifications",verifyTokenAndUserCheck,getNotification); // use pagination  page = 1, limit = 10, isRead, type 
+
 //delete
-router.delete("/:id", verifyAndProtect,deleteUser); //deleting profile
+router.delete("/:id", verifyTokenAndUserCheck,deleteUser); //deleting profile
 
 //post
-router.post("/:id/experience",verifyAndProtect, addExperience);
-router.post("/:id/education",verifyAndProtect, addEducation);
-router.post("/:id/skill", verifyAndProtect,addSkills);
-router.post("/:id/section", verifyAndProtect,addSection);
-router.post("/:id/notification", verifyAndProtect,addNotificationToUser); //provide type and message => req.body =>:{type: req.body.type,message: req.body.message,}
+router.post("/:id/experience",verifyTokenAndUserCheck, addExperience);
+router.post("/:id/education",verifyTokenAndUserCheck, addEducation);
+router.post("/:id/skill", verifyTokenAndUserCheck,addSkills);
+router.post("/:id/section", verifyTokenAndUserCheck,addSection);
+router.post("/:id/notification", verifyTokenAndUserCheck,addNotificationToUser); //provide type and message => req.body =>:{type: req.body.type,message: req.body.message,}
 //types of notification => "connectionRequest", "message", "like", "comment", "jobAlert"
 
 //put
