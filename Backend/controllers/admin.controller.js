@@ -3,31 +3,94 @@ const Connections = require("../models/connection.model");
 const Posts = require("../models/post.model");
 const { User } = require("../models/user.model");
 
+const search = async (req, res) => {
+  const module = req.params.module;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 0;
+  const skip = (page - 1) * limit;
+  const search = req.query.search || "";
+  let data=[];
+  if (module === "users") {
+    console.log(123);
+    
+    const query = search
+      ? {
+          $or: [
+            { firstname: { $regex: search, $options: "i" } }, // case-insensitive search for firstname
+            { lastname: { $regex: search, $options: "i" } },
+            { username: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+    data = await User.find(query).skip(skip).limit(limit);
+  } else if (module === "posts") {
+    const query = search
+      ? {
+          $or: [
+            { firstname: { $regex: search, $options: "i" } }, // case-insensitive search for firstname
+            { lastname: { $regex: search, $options: "i" } },
+            { username: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+    db = await Posts.find(query).skip(skip).limit(limit);
+  }
+  res.status(200).json({
+    data,
+    currentPage: page,
+    totalPages: limit > 0 ? Math.ceil(totalUsers / limit) : 1,
+    search: req.query.search || "",
+  });
+};
+
 const renderUsersView = async (req, res) => {
   try {
-    // Get page and limit from query parameters, default to page 1 and showing all users if not specified
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 0; // If limit is 0, fetch all users
-
-    // Calculate the number of users to skip based on the page
+    const limit = parseInt(req.query.limit) || 0;
+    const search = req.query.search || ""; // Get search query
     const skip = (page - 1) * limit;
+    // Filter users based on search query
+    const query = search
+      ? {
+          $or: [
+            { firstname: { $regex: search, $options: "i" } }, // case-insensitive search for firstname
+            { lastname: { $regex: search, $options: "i" } },
+            { username: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
 
-    // Fetch the users with pagination logic
-    const users = await User.find()
-      .skip(skip) // Skip the previous pages' users
-      .limit(limit); // Limit the number of users fetched
+    const users = await User.find(query).skip(skip).limit(limit);
 
-    // Fetch the total number of users for pagination information
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments(query); // Count users based on search
 
-    // Render the users view with pagination data
-    // res.status(200).json({message:users});
+    // Check if it's an AJAX request (from fetch)
+    const isAjaxRequest = req.xhr || req.headers.accept.indexOf("json") > -1;
+
+    // Respond with JSON if it's an AJAX request
+    if (isAjaxRequest) {
+      console.log(123);
+
+      return res.status(200).json({
+        users,
+        currentPage: page,
+        totalPages: limit > 0 ? Math.ceil(totalUsers / limit) : 1,
+        totalUsers,
+        search: req.query.search || "", // Access search query from URL params
+      });
+    }
+
+    // For full-page renders
     res.status(200).render("users", {
       users,
       currentPage: page,
-      limit: limit,
-      totalPages: limit > 0 ? Math.ceil(totalUsers / limit) : 1, // If limit is 0, only 1 page exists
+      limit,
+      totalPages: limit > 0 ? Math.ceil(totalUsers / limit) : 1,
       totalUsers,
+      search: req.query.search || "", // Access search query from URL params
     });
   } catch (error) {
     res.status(500).render("error", {
@@ -35,6 +98,7 @@ const renderUsersView = async (req, res) => {
     });
   }
 };
+
 const renderUserViewById = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
@@ -48,7 +112,6 @@ const renderUserViewById = async (req, res) => {
     });
   }
 };
-
 ///users/:userId/posts
 const renderAllUserPosts = async (req, res) => {
   try {
@@ -97,7 +160,6 @@ const renderAllUserComments = async (req, res) => {
     });
   }
 };
-
 ///users/:userId/connections
 const renderAllUserConnections = async (req, res) => {
   try {
@@ -125,11 +187,11 @@ const renderAllUserConnections = async (req, res) => {
     });
   }
 };
-
 //posts
 const renderAllPosts = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const {page} = parseInt(req.query) || 1;
+    const {limit} = parseInt(req.query) || 0;
     const posts = await Posts.find()
       .limit(limit * 1)
       .skip((page - 1) * limit)
@@ -149,9 +211,7 @@ const renderAllPosts = async (req, res) => {
     });
   }
 };
-
 //comments
-
 const renderAllComments = async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
@@ -174,7 +234,6 @@ const renderAllComments = async (req, res) => {
     });
   }
 };
-
 const renderCommentById = async (req, res) => {
   const commentId = req.params.id;
   try {
@@ -198,7 +257,6 @@ const renderCommentById = async (req, res) => {
     });
   }
 };
-
 module.exports = {
   renderUsersView,
   renderUserViewById,
@@ -208,4 +266,5 @@ module.exports = {
   renderAllPosts,
   renderAllComments,
   renderCommentById,
+  search,
 };
