@@ -14,11 +14,12 @@ const commentRoutes = require("./routes/comment.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const connectionRoutes = require("./routes/connection.routes");
 const likeRoutes = require("./routes/like.routes");
+const messageRoute = require("./routes/message.routes");
+const { app, server } = require("./socket/socket");
 const adminRoutes = require("./routes/admin.routes");
 const path = require("path");
 
 // Init App
-const app = express();
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(`${__dirname}/public`));
 app.use(express.urlencoded({ extended: true }));
