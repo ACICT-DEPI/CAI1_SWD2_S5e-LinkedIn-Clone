@@ -4,12 +4,6 @@ import Message from './Message';
 import MessageSkeleton from './MessageSkeleton';
 import useListenMessages from '../../../../hooks/useListenMessages';
 
-// const messages = [
-//   // { from: 'Jana Fadl', content: 'Hey, how are you?' },
-//   // { from: 'You', content: 'I’m good, thank you!' },
-//   // Add more message data
-// ];
-
 const Messages = () => {
   const { messages, loading } = useGetMessages();
   useListenMessages();

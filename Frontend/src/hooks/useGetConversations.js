@@ -13,10 +13,7 @@ const useGetConversations = () => {
 			setLoading(true);
 			try {
 				const res = await axios.get("http://localhost:5000/api/users");
-				// const data = await res.json();
-				// if (data.error) {
-				// 	throw new Error(data.error);
-				// }
+			
         console.log(res);
 				setConversations(res.data);
 			} catch (error) {
