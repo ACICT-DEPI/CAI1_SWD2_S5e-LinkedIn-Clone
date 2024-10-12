@@ -15,10 +15,8 @@ const notificationRoutes = require("./routes/notification.routes");
 const connectionRoutes = require("./routes/connection.routes");
 const likeRoutes = require('./routes/like.routes')
 const messageRoute = require('./routes/message.routes');
+const { app, server } = require("./socket/socket");
 
-
-// Init App
-const app = express();
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
@@ -49,7 +47,7 @@ app.use(notFound);
 app.use(errorHanlder);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   connectDB();
   console.log("Server is running on port", PORT);
 });
