@@ -1,0 +1,31 @@
+const { Conversation } = require("../models/conversation.model");
+const { Message } = require("../models/message.model");
+const { User } = require("../models/user.model"); // Assuming User model exists
+const { io } = require("../socket/socket");
+
+const getConversations = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    // Find conversations where the user is a participant and there are messages
+    const conversations = await Conversation.find({
+      participants: userId,
+      messages: { $exists: true, $not: { $size: 0 } },
+    })
+      .populate("participants", "username userProfile") // Load username and profile picture
+      .populate({
+        path: "messages",
+        options: { sort: { createdAt: -1 }, limit: 1 }, // Load only the latest message
+      })
+      .exec();
+
+    res.status(200).json(conversations);
+  } catch (error) {
+    console.error("Error in getConversations:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports = { getConversations };
+
+
