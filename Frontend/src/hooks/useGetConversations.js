@@ -15,7 +15,7 @@ const useGetConversations = () => {
 				const res = await axios.get("http://localhost:5000/api/users");
 			
         console.log(res);
-				setConversations(res.data);
+				setConversations(res.data.users);
 			} catch (error) {
         console.error("error in getConversations:", error);
 
