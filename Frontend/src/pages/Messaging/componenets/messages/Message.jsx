@@ -27,14 +27,12 @@ const Message = ({ message }) => {
 
   const handleDelete = () => {
     deleteMessage(message._id);
-    toast.success("Message deleted successfully!"); // Show toast on delete
     setIsModalOpen(false); // Close the modal after confirming
   };
 
   const handleSave = () => {
     editMessage(message._id, newContent);
     setIsEditing(false);
-    toast.success("Message updated successfully!"); // Show toast on save
   };
 
   return (
