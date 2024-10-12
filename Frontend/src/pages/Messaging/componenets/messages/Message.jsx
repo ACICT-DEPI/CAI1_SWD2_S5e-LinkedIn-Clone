@@ -6,6 +6,8 @@ import { extractTime } from "../../../../utils/extractTime";
 import useDeleteMessage from '../../../../hooks/useDeleteMessage';
 import useEditMessage from '../../../../hooks/useEditMessage';
 import { useState } from 'react';
+import toast from 'react-hot-toast'; // Import toast
+import ConfirmationModal from './ConfirmationModal'; // Import the modal
 
 const Message = ({ message }) => {
   const { user } = useAuthStore();
@@ -17,16 +19,22 @@ const Message = ({ message }) => {
   const profilePic = fromMe ? user.profilePicute : selectedConversation?.profilePicute;
   const bubbleBgColor = fromMe ? "bg-linkedinBlue" : "bg-linkedinGray";
 
-  const { deleteMessage, loading: deleting } = useDeleteMessage();
-  const { editMessage, loading: editing } = useEditMessage();
+  const { deleteMessage } = useDeleteMessage();
+  const { editMessage } = useEditMessage();
   const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState(message.message);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
-  const handleDelete = () => deleteMessage(message._id);
+  const handleDelete = () => {
+    deleteMessage(message._id);
+    toast.success("Message deleted successfully!"); // Show toast on delete
+    setIsModalOpen(false); // Close the modal after confirming
+  };
 
-  const handleEdit = () => {
-    if (isEditing) editMessage(message._id, newContent);
-    setIsEditing(!isEditing);
+  const handleSave = () => {
+    editMessage(message._id, newContent);
+    setIsEditing(false);
+    toast.success("Message updated successfully!"); // Show toast on save
   };
 
   return (
@@ -44,29 +52,47 @@ const Message = ({ message }) => {
             value={newContent}
             onChange={(e) => setNewContent(e.target.value)}
             className="w-full bg-transparent border-b border-white"
+            onKeyDown={(e) => e.key === "Enter" && handleSave()} // Save on Enter key
           />
         ) : (
           <span>{message.message}</span>
         )}
       </div>
 
-      <div className="chat-footer opacity-50 text-xs flex gap-1 items-center">
+      <div className="chat-footer opacity-50 text-s flex gap-1 items-center">
         <span>{formattedTime}</span>
         {fromMe && (
           <div className="flex gap-2">
-            <FiEdit
-              onClick={handleEdit}
-              className="cursor-pointer hover:text-yellow-500"
-              title={isEditing ? "Save" : "Edit"}
-            />
+            {isEditing ? (
+              <button
+                onClick={handleSave}
+                className="text-gray-500 font-semibold cursor-pointer underline"
+              >
+                Save
+              </button>
+            ) : (
+              <FiEdit
+                onClick={() => setIsEditing(true)}
+                className="cursor-pointer hover:text-linkedinGreen"
+                title="Edit"
+              />
+            )}
             <AiFillDelete
-              onClick={handleDelete}
+              onClick={() => setIsModalOpen(true)} // Open modal on delete click
               className="cursor-pointer hover:text-red-500"
               title="Delete"
             />
           </div>
         )}
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)} // Close modal
+        onConfirm={handleDelete} // Confirm delete
+        message="Are you sure you want to delete this message?"
+      />
     </div>
   );
 };
