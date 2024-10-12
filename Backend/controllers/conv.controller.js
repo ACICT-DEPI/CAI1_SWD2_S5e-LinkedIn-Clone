@@ -15,7 +15,7 @@ const getConversations = async (req, res) => {
       .populate("participants", "username userProfile") // Load username and profile picture
       .populate({
         path: "messages",
-        options: { sort: { createdAt: -1 }, limit: 1 }, // Load only the latest message
+        options: { sort: { createdAt: -1 } },
       })
       .exec();
 
@@ -26,6 +26,31 @@ const getConversations = async (req, res) => {
   }
 };
 
-module.exports = { getConversations };
+const getChatUsers = async (req, res) => {
+  try {
+    const userId = req.userId; // Get current user's ID from token
+
+    // Find conversations where the user is a participant and there are messages
+    const conversations = await Conversation.find({
+      participants: userId,
+      messages: { $exists: true, $ne: [] },
+    }).populate("participants", "username email profilePicute");
+
+    // Extract unique users (excluding the current user)
+    const chatUsers = conversations.flatMap((conv) =>
+      conv.participants.filter((user) => user._id.toString() !== userId)
+    );
+
+    res.status(200).json(chatUsers);
+  } catch (error) {
+    console.error("Error in getChatUsers:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+module.exports = { getConversations ,
+  getChatUsers
+};
 
 
