@@ -15,6 +15,7 @@ const notificationRoutes = require("./routes/notification.routes");
 const connectionRoutes = require("./routes/connection.routes");
 const likeRoutes = require("./routes/like.routes");
 const messageRoute = require("./routes/message.routes");
+const conversationRoute = require("./routes/conversation.routes");
 const adminRoutes = require("./routes/admin.routes");
 
 const { app, server } = require("./socket/socket");
@@ -50,6 +51,8 @@ app.use("/api/connections", connectionRoutes);
 app.use("/api/likes", likeRoutes);
 
 app.use("/api/messages", messageRoute);
+
+app.use("/api/Conversations", conversationRoute);
 
 app.use("/api/admin", adminRoutes);
 
