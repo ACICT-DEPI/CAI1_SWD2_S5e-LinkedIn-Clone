@@ -1,7 +1,7 @@
-import React from 'react'
-import likeIcon from '../../assets/images/like-icon.svg';
-function Reacts() {
-  return (
+import React from "react";
+import likeIcon from "../../assets/images/like-icon.svg";
+function Reacts({ post }) {
+  return post ? (
     <div className="flex justify-between">
       <div className="relative flex items-center">
         <div className="flex items-center ">
@@ -22,16 +22,18 @@ function Reacts() {
           />
         </div>
         <p className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer">
-          1243
+          {post.likes.length}
         </p>
       </div>
       <div>
         <p className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer">
-          10 comments
+          {post.comments.length} comments
         </p>
       </div>
     </div>
+  ) : (
+    <>loading</>
   );
 }
 
-export default Reacts
+export default Reacts;
