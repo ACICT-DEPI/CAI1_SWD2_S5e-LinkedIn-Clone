@@ -3,7 +3,6 @@ const Posts = require("../models/post.model.js");
 const { Notification } = require("../models/notification.model.js");
 const cloudinary = require("../db/cloudinary.js");
 const multer = require("multer");
-const Posts = require("../models/post.model.js");
 const upload = multer({ dest: "uploads/" });
 
 const getSuggstedConnections = async (req, res) => {
