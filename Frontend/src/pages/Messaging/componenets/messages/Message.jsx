@@ -16,7 +16,7 @@ const Message = ({ message }) => {
 
   const formattedTime = extractTime(message.createdAt);
   const chatClassName = fromMe ? "chat-end" : "chat-start";
-  const profilePic = fromMe ? user.profilePicute : selectedConversation?.profilePicute;
+  const profilePic = fromMe ? user.profilePicture : selectedConversation?.profilePicture;
   const bubbleBgColor = fromMe ? "bg-linkedinBlue" : "bg-linkedinGray";
 
   const { deleteMessage } = useDeleteMessage();

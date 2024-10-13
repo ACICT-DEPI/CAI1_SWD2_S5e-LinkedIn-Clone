@@ -257,7 +257,7 @@ const addSection = async (req, res) => {
 };
 
 const getNotification = async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.user._id;
   const { page = 1, limit = 10, isRead, type } = req.query;
 
   try {

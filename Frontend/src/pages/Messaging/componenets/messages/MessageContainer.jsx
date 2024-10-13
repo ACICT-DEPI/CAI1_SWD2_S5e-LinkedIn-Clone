@@ -18,7 +18,7 @@ const MessageContainer = () => {
           {/* Header Section */}
           <div className="flex items-center space-x-4 p-3 border-b border-gray-300">
             <img
-              src={selectedConversation.profilePicute}
+              src={selectedConversation.profilePicture}
               alt={`${selectedConversation.username}'s profile`}
               className="w-10 h-10 rounded-full"
             />

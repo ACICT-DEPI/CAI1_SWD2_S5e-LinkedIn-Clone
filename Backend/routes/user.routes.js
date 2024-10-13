@@ -31,7 +31,7 @@ router.get("/posts",verifyTokenAndUserCheck, getUserPosts);
 router.get("/comments", verifyTokenAndUserCheck,getUserComments);
 router.get("/:id",verifyTokenAndUserCheck, getPublicProfile); //example api call: http://localhost:5000/api/users/haneen
 router.get("/:id",verifyTokenAndUserCheck, addSection);
-router.get("/:id/notifications",verifyTokenAndUserCheck,getNotification); // use pagination  page = 1, limit = 10, isRead, type 
+router.get("/notifications",verifyTokenAndUserCheck,getNotification); // use pagination  page = 1, limit = 10, isRead, type 
 
 //delete
 router.delete("/:id", verifyTokenAndUserCheck,deleteUser); //deleting profile

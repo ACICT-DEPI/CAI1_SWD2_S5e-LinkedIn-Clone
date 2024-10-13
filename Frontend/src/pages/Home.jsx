@@ -2,17 +2,13 @@ import styled from "styled-components";
 import Leftside from "../components/Leftside";
 import Main from "../components/Main";
 import Rightside from "../components/Rightside";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-const queryClient = new QueryClient();
 
 const Home = () => {
   return (
     <Container>
       <Layout>
         <Leftside />
-        <QueryClientProvider client={queryClient}>
-          <Main />
-        </QueryClientProvider>
+        <Main />
         <Rightside />
       </Layout>
     </Container>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PostFullView from "./Post/PostFullView";
 import PostModal from "./Post/PostModal";
 import { getFeedPosts } from "../utils/postApi";
-import CircularProgress from "@mui/material/CircularProgress";
+// import CircularProgress from "@mui/material/CircularProgress";
 
 const Main = () => {
   const [showModal, setShowModal] = useState(false);
@@ -58,10 +58,12 @@ const Main = () => {
           posts.length > 0 ? (
             posts.map((post) => <PostFullView post={post} key={post._id} />)
           ) : (
-            <CircularProgress />
+            <></>
+            // <CircularProgress />
           )
         ) : (
-          <CircularProgress />
+          <></>
+          // <CircularProgress />
         )}
       </div>
     </div>

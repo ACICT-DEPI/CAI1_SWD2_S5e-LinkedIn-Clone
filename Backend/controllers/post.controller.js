@@ -84,7 +84,7 @@ const getFeedPosts = async (req, res) => {
           { tags: { $in: tagIds } },
         ],
       })
-        .populate("auther", "name username profilePicture headline")
+        .populate("auther", "name firstName lastName profilePicture headline")
         .populate("comments.user", "name profilePicture")
         .sort({ createdAt: -1 }) // First sort by time
         .skip(skip) // Skip the calculated number of posts
