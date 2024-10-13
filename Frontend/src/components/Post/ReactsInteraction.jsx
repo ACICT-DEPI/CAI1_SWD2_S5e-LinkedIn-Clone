@@ -3,7 +3,13 @@ import Button from '../common/Button'
 import commentIcon from "../../assets/images/comment-icon.svg";
 import likeIcon from "../../assets/images/like-icon.svg";
 
-function ReactsInteraction() {
+const handelLikeClicked = (post_id,user_id)=>{
+  
+}
+const handelCommentClicked = (post_id, user_id) => {
+  
+};
+function ReactsInteraction({post}) {
   return (
     <div className="flex justify-around py-4 flex-wrap">
       {/* Like */}

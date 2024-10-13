@@ -2,13 +2,17 @@ import styled from "styled-components";
 import Leftside from "../components/Leftside";
 import Main from "../components/Main";
 import Rightside from "../components/Rightside";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
 
 const Home = () => {
   return (
     <Container>
-      <Layout >
+      <Layout>
         <Leftside />
-        <Main />
+        <QueryClientProvider client={queryClient}>
+          <Main />
+        </QueryClientProvider>
         <Rightside />
       </Layout>
     </Container>
@@ -17,7 +21,7 @@ const Home = () => {
 const Container = styled.div`
   padding-top: 52px;
   max-width: 70%;
-  margin:auto;
+  margin: auto;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -28,7 +32,6 @@ const Content = styled.div`
   margin-left: auto;
   margin-right: auto;
 `;
-
 
 const Section = styled.section`
   min-height: 50px;

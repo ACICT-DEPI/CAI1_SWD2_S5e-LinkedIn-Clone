@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import PostFullView from "./Post/PostFullView";
 import PostModal from "./Post/PostModal";
 import { getFeedPosts } from "../utils/postApi";
+import CircularProgress from "@mui/material/CircularProgress";
+
 const Main = () => {
   const [showModal, setShowModal] = useState(false);
   const [posts, setPosts] = useState([]);
@@ -53,13 +55,14 @@ const Main = () => {
           </div>
         ))}
         {posts ? (
-          posts.length>0?
-          posts.map((post) => <PostFullView post={post} key={post._id} />):
-          <p>No posts found</p>
+          posts.length > 0 ? (
+            posts.map((post) => <PostFullView post={post} key={post._id} />)
+          ) : (
+            <CircularProgress />
+          )
         ) : (
-          <>loading</>
+          <CircularProgress />
         )}
-        {/* <PostFullView/> */}
       </div>
     </div>
   );

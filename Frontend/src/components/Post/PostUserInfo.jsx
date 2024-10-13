@@ -1,6 +1,8 @@
 import React from 'react'
 
-function PostUserInfo() {
+function PostUserInfo({post}) {
+  console.log(post);
+  
   return (
     <div className="flex items-center gap-2">
       <img
@@ -12,14 +14,14 @@ function PostUserInfo() {
         <div className="cursor-pointer">
           <div className="flex gap-2">
             <p className="text-bold text-black hover:text-linkedinBlue hover:underline">
-              John Doe
+              {post.auther.firstName} {" "} {post.auther.lastName}
             </p>
             <p className=" text-linkedinGray">&#x2022; 1st</p>
           </div>
           <p className="text-linkedinGray text-sm">
-            Software Engineer | Frontend Developer
+            {post.auther.headline}
           </p>
-          <p className="text-linkedinGray text-sm">1mo &#x2022; Edited</p>
+          <p className="text-linkedinGray text-sm">{post.updatedAt} &#x2022; {toString(post.updatedAt) !== toString(post.CreatedAt)?"Edited":"Created"}</p>
         </div>
       </div>
     </div>

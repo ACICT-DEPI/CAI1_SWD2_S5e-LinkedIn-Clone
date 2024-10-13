@@ -9,13 +9,12 @@ import LargeText from "../common/LargeText";
 import axios from "axios";
 
 function PostFullView({ post }) {
-  
   const description = post.content;
 
   const [isVisible, setIsVisible] = useState(false);
   const componentRef = useRef(null);
   console.log(post);
-  
+
   // Function to open the PostFocus component when the image is clicked
   const handleImageClick = () => {
     setIsVisible(true);
@@ -42,7 +41,7 @@ function PostFullView({ post }) {
     <div className="bg-gray-100 p-3 rounded my-2">
       {/* title with profile picture */}
       <div className="flex gap-2 justify-between items-start pb-3 ">
-        <PostUserInfo />
+        <PostUserInfo post={post}/>
         <div>{/* more icon */}</div>
       </div>
       {/* Description */}
@@ -50,21 +49,25 @@ function PostFullView({ post }) {
         <LargeText description={description} />
       </div>
       {/* Photos -videos */}
+      {/* todo make it slider ! */}
       <div className="relative group cursor-pointer" onClick={handleImageClick}>
-        <img
-          src={post.images[0]}
-          alt=""
-          className="w-[100vw] rounded-xl my-3 object-cover"
-        />
+        {post.images.map((img, index) => {
+          <img
+            key={index}
+            src={img}
+            alt=""
+            className="w-[100vw] rounded-xl my-3 object-cover"
+          />;
+        })}
         <div className="absolute bottom-5 right-5 bg-[rgba(255,255,255,0.6)] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          1
+          {post.images.length}
         </div>
       </div>
 
       {/* Reacts */}
-      <Reacts post={post}/>
+      <Reacts post={post} />
       <hr />
-      <ReactsInteraction />
+      <ReactsInteraction post={post} />
       {isVisible && (
         <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
           <PostFocus props={componentRef} />
