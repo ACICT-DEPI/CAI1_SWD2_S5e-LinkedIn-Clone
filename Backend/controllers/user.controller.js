@@ -2,6 +2,7 @@ const { User } = require("../models/user.model.js");
 const { Notification } = require("../models/notification.model.js");
 const cloudinary = require("../db/cloudinary.js");
 const multer = require("multer");
+const Posts = require("../models/post.model.js");
 const upload = multer({ dest: "uploads/" });
 const getSuggstedConnections = async (req, res) => {
   try {
@@ -174,7 +175,38 @@ const getUserPosts = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json(user.posts);
+
+    // Check if user has any posts
+    if (!user.posts || !user.posts.length) {
+      return res.status(200).json({
+        message: "User has no posts",
+        totalPosts: 0,
+        currentPage: 1,
+        totalPages: 0,
+        posts: [],
+      });
+    }
+
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 posts per page
+
+    const posts = await Posts.find({ _id: { $in: user.posts } })
+      .populate("auther", "username") // Example: populate the user who created the post
+      .skip((page - 1) * limit) // Skip posts for the current page
+      .limit(limit); // Limit the number of posts per page
+
+    // Count total posts for pagination
+    const totalPosts = user.posts.length;
+
+    // Prepare the response object
+    const response = {
+      totalPosts,
+      currentPage: page,
+      totalPages: Math.ceil(totalPosts / limit),
+      posts,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.log("error in getUserPosts :", error);
     res.status(500).json({ message: "server error" });
@@ -257,7 +289,9 @@ const addSection = async (req, res) => {
 };
 
 const getNotification = async (req, res) => {
+
   const userId = req.user._id;
+  const user = req.user;
   const { page = 1, limit = 10, isRead, type } = req.query;
 
   try {
@@ -270,7 +304,7 @@ const getNotification = async (req, res) => {
       query.type = type;
     }
 
-    const notifications = await Notification.find(query)
+    const notifications = await Notification.find({ _id: { $in: user.notifications } })
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
       .exec();

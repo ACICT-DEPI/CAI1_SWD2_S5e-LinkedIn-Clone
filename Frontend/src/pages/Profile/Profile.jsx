@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ProfileHeader from './componenets/ProfileHeader';
 import AnalyticsSection from './componenets/AnalyticsSection'
 import ResourcesSection from './componenets/ResourcesSection'
@@ -9,7 +9,13 @@ import EducationSection from './componenets/EducationSection';
 import SkillsSection from './componenets/SkillsSection';
 
 
+
 const Profile = () => {
+  const [posts,setPosts] = useState([]);
+  const [user,setUser] = useState([]);
+  useEffect(()=>{
+
+  },[]);
   return (
     
     <div className="bg-linkedinLightGray min-h-screen py-3 mt-16">
@@ -17,7 +23,7 @@ const Profile = () => {
       <AboutSection />
       <AnalyticsSection />
       <ResourcesSection />
-      <ActivitySection />
+      {/* <ActivitySection posts={posts}/> */}
       <ExperienceSection />
       <EducationSection  />
       <SkillsSection />

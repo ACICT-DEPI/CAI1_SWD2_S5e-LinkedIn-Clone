@@ -34,7 +34,9 @@ const sendNotification = async (module) => {
 
 const addLike = async (req, res) => {
   try {
-    const { typeId, userId, type } = req.body;
+    const { typeId,  type } = req.body;
+    const userId = req.user._id;
+    
     // Check if the newStatus is valid
     const validTypes = ["post", "comment"];
     let module;
