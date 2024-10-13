@@ -1,3 +1,4 @@
+
 import useGetConversations from '../../../../hooks/useGetConversations';
 import Conversation from './Conversation';
 
@@ -6,7 +7,8 @@ const Conversations = ({ searchTerm }) => {
 
   // Filter conversations based on searchTerm
   const filteredConversations = conversations.filter((conv) =>
-    conv.username.toLowerCase().includes(searchTerm) // Assuming 'name' is a field in each conversation
+    conv.username.toLowerCase().includes(searchTerm) 
+
   );
 
   return (
