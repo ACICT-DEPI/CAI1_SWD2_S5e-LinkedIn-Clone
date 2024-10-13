@@ -155,17 +155,20 @@ const routes = createBrowserRouter([
       {
         path: "SignUpDetailsPage",
         element: (
-          // <ProtectedRoute>
+          <ProtectedRoute>
               <Suspense fallback={<h1>Loading...</h1>}>
                 <SignUpDetailsPage />
               </Suspense>
-          // </ProtectedRoute>
+          </ProtectedRoute>
         ),
       },
       {
         path: "verify-email",
         element: (
-          <EmailVerificationPage />
+          <RedirectAuthenticatedUser>
+            <EmailVerificationPage />
+          </RedirectAuthenticatedUser>
+          
         ),
       },
     ],
@@ -179,7 +182,10 @@ const routes = createBrowserRouter([
   {
     path: "/reset-password/:token",
     element: (
-      <ResetPasswordPage />
+      <RedirectAuthenticatedUser>
+        <ResetPasswordPage />
+      </RedirectAuthenticatedUser>
+      
     ),
   },
   {
