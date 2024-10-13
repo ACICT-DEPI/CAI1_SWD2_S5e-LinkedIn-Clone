@@ -56,78 +56,11 @@ const getPublicProfile = async (req, res) => {
   }
 };
 
-const UpdateProfile = async (req, res) => {
-  try {
-    console.log(req.params); // Debugging logs
-    console.log(req.files); // Check if files are coming through
-    console.log(req.body);
 
-    const allowedField = [
-      "firstName",
-      "lastName",
-      "username",
-      "headline",
-      "about",
-      "location",
-      "profilePicture",
-      "bannerImg",
-      "skills",
-      "experience",
-      "education",
-    ];
-    const updatedData = {};
-    for (const field of allowedField) {
-      if (req.body[field]) {
-        updatedData[field] = req.body[field];
-      }
-    }
-
-    // Handle profile picture upload
-    if (req.files && req.files.profilePicture) {
-      try {
-        const result = await cloudinary.uploader.upload(
-          req.files.profilePicture[0].path
-        );
-        updatedData.profilePicture = result.secure_url;
-      } catch (uploadError) {
-        console.log("Error uploading profile picture:", uploadError);
-        return res
-          .status(500)
-          .json({ message: "Error uploading profile picture" });
-      }
-    }
-
-    // Handle banner image upload
-    if (req.files && req.files.bannerImg) {
-      try {
-        const result = await cloudinary.uploader.upload(
-          req.files.bannerImg[0].path
-        );
-        updatedData.bannerImg = result.secure_url;
-      } catch (uploadError) {
-        console.log("Error uploading banner image:", uploadError);
-        return res
-          .status(500)
-          .json({ message: "Error uploading banner image" });
-      }
-    }
-
-    // Update the user profile
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { $set: updatedData },
-      { new: true }
-    ).select("-password"); // exclude password field
-    res.json(user);
-  } catch (error) {
-    console.log("Error in UpdateProfile:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
 
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const user = await User.findByIdAndDelete(req.user._id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -246,19 +179,100 @@ const getUserComments = async (req, res) => {
   }
 };
 
+const UpdateProfile = async (req, res) => {
+  try {
+    const allowedFields = [
+      "firstName",
+      "lastName",
+      "username",
+      "headline",
+      "about",
+      "location",
+      "profilePicture",
+      "bannerImg",
+      "skills",
+      "experience",
+      "education"
+    ];
+    const updatedData = {};
+    for (const field of allowedFields) {
+      if (req.body[field]) {
+        updatedData[field] = req.body[field];
+      }
+    }
+
+    // Validate nested experience and education fields (optional)
+    if (req.body.experience) {
+      for (const exp of req.body.experience) {
+        const { error } = validateExperience(exp);
+        if (error) return res.status(400).json({ message: error.details[0].message });
+      }
+    }
+
+    if (req.body.education) {
+      for (const edu of req.body.education) {
+        const { error } = validateEducation(edu);
+        if (error) return res.status(400).json({ message: error.details[0].message });
+      }
+    }
+
+    // Handle profile picture upload
+    if (req.files && req.files.profilePicture) {
+      try {
+        const result = await cloudinary.uploader.upload(
+          req.files.profilePicture[0].path
+        );
+        updatedData.profilePicture = result.secure_url;
+      } catch (uploadError) {
+        return res
+          .status(500)
+          .json({ message: "Error uploading profile picture" });
+      }
+    }
+
+    // Handle banner image upload
+    if (req.files && req.files.bannerImg) {
+      try {
+        const result = await cloudinary.uploader.upload(
+          req.files.bannerImg[0].path
+        );
+        updatedData.bannerImg = result.secure_url;
+      } catch (uploadError) {
+        return res
+          .status(500)
+          .json({ message: "Error uploading banner image" });
+      }
+    }
+
+    // Update the user profile
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updatedData },
+      { new: true }
+    ).select("-password");
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 const addExperience = async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-  user.experience.push(req.body);
-  await user.save();
-  res.status(200).json(user);
+    user.experience.push(req.body);
+    await user.save();
+    res.status(200).json({ experience: user.experience });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
 };
+
 const addSkills = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -268,7 +282,7 @@ const addSkills = async (req, res) => {
   res.status(200).json(user);
 };
 const addEducation = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -279,7 +293,7 @@ const addEducation = async (req, res) => {
 };
 
 const addSection = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -340,7 +354,7 @@ const addNotificationToUser = async (req, res) => {
     console.log("Notification saved:", savedNotification);
 
     // Find the user by ID from req.params
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }

@@ -59,18 +59,29 @@ const userSchema = new mongoose.Schema(
     experience: [
       {
         title: String,
+        employmentType: String,
         company: String,
-        startDate: Date,
-        endDate: Date,
+        location: String,
+        locationType: String,
+        startMonth: String,
+        startYear: String,
+        endMonth: String,
+        endYear: String,
+        currentlyWorking: Boolean,
         description: String,
       },
     ],
     education: [
       {
         school: String,
+        degree: String,
         fieldOfStudy: String,
-        startDate: Date,
-        endDate: Date,
+        startMonth: String,
+        startYear: String,
+        endMonth: String,
+        endYear: String,
+        grade: String,
+        activities: String,
         description: String,
       },
     ],
@@ -139,8 +150,32 @@ function validateLoginUser(obj) {
   return schema.validate(obj);
 }
 
+function validateExperience(experience) {
+  const schema = Joi.object({
+    title: Joi.string().required(),
+    company: Joi.string().required(),
+    startDate: Joi.date().required(),
+    endDate: Joi.date().allow(null),
+    description: Joi.string().allow("")
+  });
+  return schema.validate(experience);
+}
+
+function validateEducation(education) {
+  const schema = Joi.object({
+    school: Joi.string().required(),
+    fieldOfStudy: Joi.string().required(),
+    startDate: Joi.date().required(),
+    endDate: Joi.date().allow(null),
+    description: Joi.string().allow("")
+  });
+  return schema.validate(education);
+}
+
 module.exports = {
   User,
   validateRegisterUser,
   validateLoginUser,
+  validateExperience,
+  validateEducation
 };

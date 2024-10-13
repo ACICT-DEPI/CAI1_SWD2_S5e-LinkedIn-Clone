@@ -55,4 +55,7 @@ router.post(
   UpdateProfile
 ); //updating profile
 
+
+router.put("/profile", verifyTokenAndUserCheck , UpdateProfile);
+
 module.exports = router;
