@@ -1,8 +1,10 @@
 const { User } = require("../models/user.model.js");
+const Posts = require("../models/post.model.js");
 const { Notification } = require("../models/notification.model.js");
 const cloudinary = require("../db/cloudinary.js");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
+
 const getSuggstedConnections = async (req, res) => {
   try {
     // Get page and limit from query parameters, default to 1 and 3 if not provided
@@ -167,19 +169,47 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-
 const getUserPosts = async (req, res) => {
   try {
     const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json(user.posts);
+
+    // Check if user has any posts
+    if (!user.posts || !user.posts.length) {
+      return res.status(200).json({
+        message: "User has no posts",
+        totalPosts: 0,
+        currentPage: 1,
+        totalPages: 0,
+        posts: [],
+      });
+    }
+
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 posts per page
+
+    const posts = await Posts.find({ _id: { $in: user.posts } })
+      .populate("auther", "username") // Example: populate the user who created the post
+      .skip((page - 1) * limit) // Skip posts for the current page
+      .limit(limit); // Limit the number of posts per page
+
+    const totalPosts = user.posts.length;
+    const response = {
+      totalPosts,
+      currentPage: page,
+      totalPages: Math.ceil(totalPosts / limit),
+      posts,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.log("error in getUserPosts :", error);
     res.status(500).json({ message: "server error" });
   }
 };
+
 const getUserComments = async (req, res) => {
   try {
     const user = req.user;
@@ -212,7 +242,6 @@ const getUserComments = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
-
 
 const addExperience = async (req, res) => {
   const user = await User.findById(req.params.id);

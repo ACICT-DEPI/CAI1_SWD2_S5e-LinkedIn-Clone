@@ -1,13 +1,13 @@
-import { FiEdit } from 'react-icons/fi'; // Edit Icon
-import { AiFillDelete } from 'react-icons/ai'; // Delete Icon
+import { FiEdit } from "react-icons/fi"; // Edit Icon
+import { AiFillDelete } from "react-icons/ai"; // Delete Icon
 import { useAuthStore } from "../../../../store/authStore";
 import useConversation from "../../../../store/useConversation";
 import { extractTime } from "../../../../utils/extractTime";
-import useDeleteMessage from '../../../../hooks/useDeleteMessage';
-import useEditMessage from '../../../../hooks/useEditMessage';
-import { useState } from 'react';
-import toast from 'react-hot-toast'; // Import toast
-import ConfirmationModal from './ConfirmationModal'; // Import the modal
+import useDeleteMessage from "../../../../hooks/useDeleteMessage";
+import useEditMessage from "../../../../hooks/useEditMessage";
+import { useState } from "react";
+import toast from "react-hot-toast"; // Import toast
+import ConfirmationModal from "./ConfirmationModal"; // Import the modal
 
 const Message = ({ message }) => {
   const { user } = useAuthStore();
@@ -16,7 +16,9 @@ const Message = ({ message }) => {
 
   const formattedTime = extractTime(message.createdAt);
   const chatClassName = fromMe ? "chat-end" : "chat-start";
-  const profilePic = fromMe ? user.profilePicute : selectedConversation?.profilePicute;
+  const profilePic = fromMe
+    ? user.profilePicture
+    : selectedConversation?.profilePicture;
   const bubbleBgColor = fromMe ? "bg-linkedinBlue" : "bg-linkedinGray";
 
   const { deleteMessage } = useDeleteMessage();
