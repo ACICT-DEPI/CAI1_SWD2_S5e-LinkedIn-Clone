@@ -6,7 +6,7 @@ import Rightside from "../components/Rightside";
 const Home = () => {
   return (
     <Container>
-      <Layout >
+      <Layout>
         <Leftside />
         <Main />
         <Rightside />
@@ -17,7 +17,7 @@ const Home = () => {
 const Container = styled.div`
   padding-top: 52px;
   max-width: 70%;
-  margin:auto;
+  margin: auto;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -28,7 +28,6 @@ const Content = styled.div`
   margin-left: auto;
   margin-right: auto;
 `;
-
 
 const Section = styled.section`
   min-height: 50px;

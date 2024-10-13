@@ -25,11 +25,11 @@ const findComment = async (commentId) => {
 // controllers
 const addComment = async (req, res) => {
   try {
-    const { imgs, videos, comment, userId, postId } = req.body;
-
+    const { imgs, videos, comment, postId } = req.body;
+    const userId = req.userId;
     // Find the post and user
     const post = await Posts.findById(postId);
-    const user = await User.findById(userId);
+    const user = req.user;
 
     if (!post || !user) {
       return res.status(404).json({ error: "Post or user not found" });

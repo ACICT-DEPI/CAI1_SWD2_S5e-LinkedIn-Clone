@@ -1,10 +1,10 @@
 import React from 'react'
 
-function Comment() {
+function Comment({comment}) {
   return (
     <div className="flex gap-2 py-4">
       <img
-        src="https://picsum.photos/150/150"
+        src={comment.userId.profilePicture}
         alt=""
         className="w-[50px] h-[50px] rounded-full"
       />
@@ -12,16 +12,16 @@ function Comment() {
         <div className="cursor-pointer pb-2">
           <div className="flex gap-2 ">
             <p className="text-bold text-black hover:text-linkedinBlue hover:underline">
-              John Doe
+              {comment.userId.username}
             </p>
             <p className=" text-linkedinGray">&#x2022; 1st</p>
           </div>
           <p className="text-linkedinGray text-xs">
-            Software Engineer | Frontend Developer
+            {comment.userId.headline}
           </p>
         </div>
         <div>
-          <p>Congratulations ❤️</p>
+          <p>{comment.content}</p>
         </div>
       </div>
     </div>

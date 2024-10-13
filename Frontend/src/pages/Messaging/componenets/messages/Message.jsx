@@ -19,6 +19,7 @@ const Message = ({ message }) => {
   const profilePic = fromMe
     ? user.profilePicture
     : selectedConversation?.profilePicture;
+
   const bubbleBgColor = fromMe ? "bg-linkedinBlue" : "bg-linkedinGray";
 
   const { deleteMessage } = useDeleteMessage();

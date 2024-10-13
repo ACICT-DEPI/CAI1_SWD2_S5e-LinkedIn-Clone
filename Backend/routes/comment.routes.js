@@ -1,24 +1,25 @@
 const express = require("express");
 const commentController = require("../controllers/comment.controller");
+const { verifyTokenAndUserCheck } = require("../middleware/verifyToken");
 const router = express.Router();
 
 //todo this must be only for admin 
 router
   .route("/")
-  .get(commentController.getAllComments)
-  .post(commentController.addComment)
+  .get(verifyTokenAndUserCheck,commentController.getAllComments)
+  .post(verifyTokenAndUserCheck,commentController.addComment)
   
   
 router
   .route('/:id')
-  .get(commentController.getCommentById)
-  .patch(commentController.editComment)
-  .delete(commentController.deleteComment)
+  .get(verifyTokenAndUserCheck,commentController.getCommentById)
+  .patch(verifyTokenAndUserCheck,commentController.editComment)
+  .delete(verifyTokenAndUserCheck,commentController.deleteComment)
   
   router
     .route("/reply/:id")
-    .patch(commentController.addReply)
-    .delete(commentController.deleteReply);
+    .patch(verifyTokenAndUserCheck,commentController.addReply)
+    .delete(verifyTokenAndUserCheck,commentController.deleteReply);
 
 
 module.exports = router;

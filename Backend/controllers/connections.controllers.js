@@ -3,8 +3,8 @@ const { Notification } = require("../models/notification.model.js");
 const Connections = require("../models/connection.model");
 const sendConnection = async (req, res) => {
   try {
-    const { senderId, receiverId } = req.body;
-
+    const { receiverId } = req.body;
+    const senderId = req.user._id;
     // Validate request body
     if (!senderId || !receiverId) {
       return res.status(400).json({

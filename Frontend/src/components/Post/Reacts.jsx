@@ -1,5 +1,11 @@
 import React from "react";
 import likeIcon from "../../assets/images/like-icon.svg";
+const handelCommentsClick = async()=>{
+  
+};
+const handelLikesClick = async () => {
+  
+};
 function Reacts({ post }) {
   return post ? (
     <div className="flex justify-between">
@@ -21,12 +27,18 @@ function Reacts({ post }) {
             className="w-[17px] h-[17px] bg-green-600 rounded-full p-[2px] relative right-2 border-[1px]"
           />
         </div>
-        <p className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer">
+        <p
+          className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer"
+          onClick={handelLikesClick}
+        >
           {post.likes.length}
         </p>
       </div>
       <div>
-        <p className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer">
+        <p
+          className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer"
+          onClick={handelCommentsClick}
+        >
           {post.comments.length} comments
         </p>
       </div>

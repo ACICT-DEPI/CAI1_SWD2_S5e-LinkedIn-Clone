@@ -4,7 +4,7 @@ import Button from "../../../components/common/Button";
 import editIcon from "../../../assets/images/comment-icon.svg";
 import { Link } from "react-router-dom";
 import Section from "../../../components/common/Section";
-function ActivitySection() {
+function ActivitySection({ posts, user }) {
   return (
     <>
       <Section>
@@ -13,7 +13,10 @@ function ActivitySection() {
           <div className="flex gap-2 justify-between">
             <div>
               <p className="font-bold text-xl">Activity</p>
-              <p className="text-linkedinBlue cursor-pointer">1098 followers</p>
+              <p className="text-linkedinBlue cursor-pointer">
+                {/* todo use user fetch when amira did it */}
+                {user === [] ? user.connectedUsers.length : "loading"} followers
+              </p>
             </div>
             <div className="flex">
               <Button
@@ -44,9 +47,11 @@ function ActivitySection() {
         </div>
 
         <div>
-          <PostShortView />
-          <PostShortView />
-          <PostShortView />
+          {posts ? (
+            posts.map((post, index) => <PostShortView post={post} />)
+          ) : (
+            <>...loading</>
+          )}
         </div>
         <Link
           to="allActivity"

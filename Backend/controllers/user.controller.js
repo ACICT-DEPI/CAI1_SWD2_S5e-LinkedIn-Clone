@@ -3,6 +3,7 @@ const Posts = require("../models/post.model.js");
 const { Notification } = require("../models/notification.model.js");
 const cloudinary = require("../db/cloudinary.js");
 const multer = require("multer");
+const Posts = require("../models/post.model.js");
 const upload = multer({ dest: "uploads/" });
 
 const getSuggstedConnections = async (req, res) => {
@@ -191,11 +192,16 @@ const getUserPosts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10; // Default to 10 posts per page
 
     const posts = await Posts.find({ _id: { $in: user.posts } })
-      .populate("auther", "username") // Example: populate the user who created the post
+
+      .populate("auther") // Example: populate the user who created the post
+      .select("-password")
       .skip((page - 1) * limit) // Skip posts for the current page
       .limit(limit); // Limit the number of posts per page
 
+    // Count total posts for pagination
     const totalPosts = user.posts.length;
+
+    // Prepare the response object
     const response = {
       totalPosts,
       currentPage: page,
@@ -286,7 +292,8 @@ const addSection = async (req, res) => {
 };
 
 const getNotification = async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.user._id;
+  const user = req.user;
   const { page = 1, limit = 10, isRead, type } = req.query;
 
   try {
@@ -299,7 +306,9 @@ const getNotification = async (req, res) => {
       query.type = type;
     }
 
-    const notifications = await Notification.find(query)
+    const notifications = await Notification.find({
+      _id: { $in: user.notifications },
+    })
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
       .exec();
