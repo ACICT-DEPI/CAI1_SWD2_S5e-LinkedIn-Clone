@@ -80,6 +80,12 @@ const userSchema = new mongoose.Schema(
         ref: "Connections",
       },
     ],
+    // pendingUsers: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "User",
+    //   },
+    // ],
     connectedUsers: [
       {
         type: mongoose.Schema.Types.ObjectId,
