@@ -6,31 +6,16 @@ import AddComment from "./AddComment";
 import PostUserInfo from "./PostUserInfo";
 import Comment from "./Comment";
 import LargeText from "../common/LargeText";
+import axios from "axios";
 
-function PostFullView() {
-  const description = `
-Introducing 𝐅𝐀𝐑 𝐀𝐖𝐀𝐘: My Latest React Project 🥳
-
-I’m excited to share 𝐅𝐀𝐑 𝐀𝐖𝐀𝐘, my 2nd React project designed to help travelers manage and track what they should pack💼.
-
-𝑾𝒉𝒂𝒕 𝑰 𝑳𝒆𝒂𝒓𝒏𝒆𝒅 𝒇𝒓𝒐𝒎 𝑻𝒉𝒊𝒔 𝑷𝒓𝒐𝒋𝒆𝒄𝒕:
-
-𝐂𝐨𝐦𝐩𝐨𝐧𝐞𝐧𝐭-𝐃𝐫𝐢𝐯𝐞𝐧 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐦𝐞𝐧𝐭: The importance of building reusable, scalable components to keep the codebase organized and maintainable.
-
-𝐒𝐭𝐚𝐭𝐞 𝐌𝐚𝐧𝐚𝐠𝐞𝐦𝐞𝐧𝐭: How to efficiently manage state to ensure smooth and responsive user interactions.
-
-𝐂𝐨𝐦𝐩𝐨𝐧𝐞𝐧𝐭 𝐂𝐨𝐦𝐩𝐨𝐬𝐢𝐭𝐢𝐨𝐧: Crafting a modular structure through smart component composition, leading to cleaner code and easier maintenance.
-
-𝐇𝐨𝐨𝐤𝐬 𝐌𝐚𝐬𝐭𝐞𝐫𝐲: Leveraging React hooks for effective state management and handling side effects.
-
-I’d love to connect with others who are passionate about React and front-end development!
-
-hashtag#frontend hashtag#css hashtag#html hashtag#javascript hashtag#developer hashtag#programming hashtag#coding hashtag#webdeveloper hashtag#webdevelopment hashtag#webdesign hashtag#frontenddeveloper hashtag#code hashtag#programmer hashtag#coder hashtag#webdev hashtag#web hashtag#reactjs hashtag#softwaredeveloper hashtag#development hashtag#js hashtag#software hashtag#dev hashtag#developers hashtag#ui hashtag#ComponentDriven
-`;
+function PostFullView({ post }) {
+  
+  const description = post.content;
 
   const [isVisible, setIsVisible] = useState(false);
   const componentRef = useRef(null);
-
+  console.log(post);
+  
   // Function to open the PostFocus component when the image is clicked
   const handleImageClick = () => {
     setIsVisible(true);
@@ -67,7 +52,7 @@ hashtag#frontend hashtag#css hashtag#html hashtag#javascript hashtag#developer h
       {/* Photos -videos */}
       <div className="relative group cursor-pointer" onClick={handleImageClick}>
         <img
-          src="https://picsum.photos/2000/2000"
+          src={post.images[0]}
           alt=""
           className="w-[100vw] rounded-xl my-3 object-cover"
         />
@@ -77,7 +62,7 @@ hashtag#frontend hashtag#css hashtag#html hashtag#javascript hashtag#developer h
       </div>
 
       {/* Reacts */}
-      <Reacts />
+      <Reacts post={post}/>
       <hr />
       <ReactsInteraction />
       {isVisible && (
