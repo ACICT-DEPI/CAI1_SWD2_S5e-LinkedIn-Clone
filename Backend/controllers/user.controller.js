@@ -191,7 +191,8 @@ const getUserPosts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10; // Default to 10 posts per page
 
     const posts = await Posts.find({ _id: { $in: user.posts } })
-      .populate("auther", "username") // Example: populate the user who created the post
+      .populate("auther") // Example: populate the user who created the post
+      .select("-password")
       .skip((page - 1) * limit) // Skip posts for the current page
       .limit(limit); // Limit the number of posts per page
 
