@@ -10,7 +10,7 @@ const UsersModal = ({ onClose }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/users'); // Replace with your endpoint
+        const res = await axios.get('http://localhost:5000/api/users');
         setUsers(res.data.users);
       } catch (error) {
         toast.error(error.message);
@@ -26,7 +26,7 @@ const UsersModal = ({ onClose }) => {
   };
 
   return (
-    <div className="absolute left-12 bottom-16 bg-white border rounded shadow-lg max-h-80 overflow-y-auto z-50 w-64 p-2"> {/* Adjust left position */}
+    <div className="fixed left-8 bottom-16 bg-white border rounded shadow-lg max-h-80 overflow-y-auto z-50 w-64 p-2">
       <h2 className="text-xl font-bold mb-2">Select a User</h2>
       <div className="max-h-40 overflow-y-scroll">
         {users.map((user) => (
