@@ -37,10 +37,10 @@ router.get("/:id", verifyTokenAndUserCheck, getPublicProfile); //example api cal
 router.delete("/:id", verifyTokenAndUserCheck, deleteUser); //deleting profile
 
 //post
-router.post("/:id/experience", verifyTokenAndUserCheck, addExperience);
-router.post("/:id/education", verifyTokenAndUserCheck, addEducation);
-router.post("/:id/skill", verifyTokenAndUserCheck, addSkills);
-router.post("/:id/section", verifyTokenAndUserCheck, addSection);
+router.post("/experience", verifyTokenAndUserCheck, addExperience);
+router.post("/education", verifyTokenAndUserCheck, addEducation);
+router.post("/skill", verifyTokenAndUserCheck, addSkills);
+router.post("/section", verifyTokenAndUserCheck, addSection);
 router.post(
   "/:id/notification",
   verifyTokenAndUserCheck,

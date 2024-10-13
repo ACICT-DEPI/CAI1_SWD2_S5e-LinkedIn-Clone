@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    skills: [{ name: String, level: String }],
+    skills: [{ name: String}],  //, level: String 
     section: [{ name: String, dexcription: String }],
     experience: [
       {

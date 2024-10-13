@@ -277,10 +277,13 @@ const addSkills = async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  user.skills.push(req.body);
+  // Make sure the incoming skill is an object
+  const skill = { name: req.body.name };
+  user.skills.push(skill);
   await user.save();
   res.status(200).json(user);
 };
+
 const addEducation = async (req, res) => {
   const user = await User.findById(req.user._id);
   if (!user) {

@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Section from "../../../components/common/Section";
 import Button from "../../../components/common/Button";
 import ExperienceIcon from '../../../assets/images/ExperienceIcon.svg';
 import { IoMdClose } from "react-icons/io";
 import { IoAddOutline } from "react-icons/io5";
 import { MdOutlineEdit } from "react-icons/md";
+import { useAuthStore } from "../../../store/authStore";
+import axios from 'axios'
 
 const ExperienceSection = () => {
   const months = [
     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
   ];
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
-
+  
+  const {user} = useAuthStore();
   const [experience, setExperience] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null); 
@@ -29,6 +32,12 @@ const ExperienceSection = () => {
     description: "",
   });
 
+  useEffect(() => {
+    if (user && user.experience) {
+      setExperience(user.experience);
+    }
+  }, [user]);
+  
   // handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,7 +55,7 @@ const ExperienceSection = () => {
   };
 
   //submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (editingIndex !== null) {
       // update
@@ -55,7 +64,9 @@ const ExperienceSection = () => {
       setExperience(updatedExperiences);
     } else {
       // add new
-      setExperience([...experience, formData]);
+      const response = await axios.post("http://localhost:5000/api/users/experience",formData)
+      console.log('exp data',response.data.experience[response.data.experience.length - 1]);
+      setExperience([...experience, response.data.experience[response.data.experience.length - 1]]);
     }
     resetForm();
   };

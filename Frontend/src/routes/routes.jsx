@@ -155,11 +155,11 @@ const routes = createBrowserRouter([
       {
         path: "SignUpDetailsPage",
         element: (
-          <ProtectedRoute>
+          // <ProtectedRoute>
               <Suspense fallback={<h1>Loading...</h1>}>
                 <SignUpDetailsPage />
               </Suspense>
-          </ProtectedRoute>
+          // </ProtectedRoute>
         ),
       },
       {

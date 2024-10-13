@@ -1,21 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Section from "../../../components/common/Section";
 import Button from "../../../components/common/Button";
 import { IoMdClose } from "react-icons/io";
 import { IoAddOutline } from "react-icons/io5";
+import { useAuthStore } from "../../../store/authStore";
+import axios from 'axios'
 
 const SkillsSection = () => {
+  const {user} = useAuthStore();
+
   const [skills, setSkills] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [skillInput, setSkillInput] = useState("");
 
+  useEffect(() => {
+    if (user && user.skills) {
+      setSkills(user.skills);
+    }
+  }, [user]);
+
   // add new skill
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (skillInput.trim()) {
-      setSkills([...skills, skillInput]);
-      setSkillInput("");
-      setShowModal(false);
+      try {
+        const response = await axios.post('http://localhost:5000/api/users/skill', { name: skillInput });
+        console.log("Skill added successfully:", response.data.skills);
+        setSkills([...skills, response.data.skills[response.data.skills.length - 1]]);
+        setSkillInput("");
+        setShowModal(false);
+      } catch (error) {
+        console.error("Error adding skill:", error);
+      }
     }
   };
 
@@ -50,7 +66,7 @@ const SkillsSection = () => {
           <ul className="list-disc my-4">
             {skills.map((skill, index) => (
               <li key={index} className="flex justify-between items-center mb-2 mb-4 border-b border-gray-200 pb-2">
-                <span className="text-linkedinDarkGray">{skill}</span>
+                <span className="text-linkedinDarkGray">{skill.name}</span>
                 <button
                   className="text-xl text-linkedinDarkGray"
                   onClick={() => handleDelete(index)}
