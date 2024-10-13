@@ -10,6 +10,8 @@ import SignUpPage from "../pages/SignUpPage";
 import SignUpDetailsPage from "../pages/SignUpDetailsPage";
 import EmailVerificationPage from "../pages/EmailVerificationPage";
 import LoginPage from "../pages/LoginPage";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 import AllActivitysPage from "../pages/Profile/AllActivitysPage";
 import AnalyticsPage from '../pages/Profile/AnalyticsPage';
 import ResourcePage from '../pages/Profile/ResourcesPage';
@@ -135,29 +137,29 @@ const routes = createBrowserRouter([
   {
     path: "/signup",
     element: (
-      <RedirectAuthenticatedUser>
-        <Suspense fallback={<h1>Loading...</h1>}>
-          <SignUpLayout />
-        </Suspense>
-      </RedirectAuthenticatedUser>
+      <Suspense fallback={<h1>Loading...</h1>}>
+        <SignUpLayout />
+      </Suspense>
     ),
     children: [
       {
         path: "",
         element: (
-          <Suspense fallback={<h1>Loading...</h1>}>
-            <SignUpPage />
-          </Suspense>
+          <RedirectAuthenticatedUser>
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <SignUpPage />
+            </Suspense>
+          </RedirectAuthenticatedUser>
         ),
       },
       {
         path: "SignUpDetailsPage",
         element: (
-          <ProtectedRoute>
+          // <ProtectedRoute>
               <Suspense fallback={<h1>Loading...</h1>}>
                 <SignUpDetailsPage />
               </Suspense>
-          </ProtectedRoute>
+          // </ProtectedRoute>
         ),
       },
       {
@@ -167,6 +169,18 @@ const routes = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: "/forgot-password",
+    element: (
+      <ForgotPasswordPage />
+    ),
+  },
+  {
+    path: "/reset-password/:token",
+    element: (
+      <ResetPasswordPage />
+    ),
   },
   {
     path: "/login",

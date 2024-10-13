@@ -3,7 +3,8 @@ import { RouterProvider } from "react-router-dom";
 import routes from "./routes/routes.jsx";
 import { useAuthStore } from './store/authStore.js';
 import { useEffect } from 'react';
-import { Toaster } from 'react-hot-toast'; // Import Toaster
+import { Toaster } from 'react-hot-toast';
+import LoadingSpinner from './components/common/LoadingSpinner.jsx';
 
 function App() {
   const { isCheckingAuth, checkAuth } = useAuthStore();
@@ -12,12 +13,12 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
-  if (isCheckingAuth) return <div>Loading...</div>;
+  if (isCheckingAuth) return <LoadingSpinner />;
   
   return (
     <>
       <RouterProvider router={routes} />
-      <Toaster /> {/* Place the Toaster here */}
+      <Toaster /> 
     </>
   );
 }
