@@ -9,10 +9,10 @@ const search = async (req, res) => {
   const limit = parseInt(req.query.limit) || 0;
   const skip = (page - 1) * limit;
   const search = req.query.search || "";
-  let data=[];
+  let data = [];
   if (module === "users") {
     console.log(123);
-    
+
     const query = search
       ? {
           $or: [
@@ -63,7 +63,10 @@ const renderUsersView = async (req, res) => {
         }
       : {};
 
-    const users = await User.find(query).skip(skip).limit(limit);
+    const users = await User.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     const totalUsers = await User.countDocuments(query); // Count users based on search
 
@@ -120,6 +123,7 @@ const renderAllUserPosts = async (req, res) => {
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .populate("comments") // Optionally populate comments
+      .sort({ createdAt: -1 })
       .exec();
     const count = await Posts.countDocuments({ auther: req.params.userId });
     const user = await User.findById(req.params.userId);
@@ -142,6 +146,7 @@ const renderAllUserComments = async (req, res) => {
     const comments = await Comments.find({ userId: req.params.userId })
       .limit(limit * 1)
       .skip((page - 1) * limit)
+      .sort({ createdAt: -1 })
       .populate("postId") // Optionally populate post information
       .exec();
     const count = await Comments.countDocuments({
@@ -169,6 +174,7 @@ const renderAllUserConnections = async (req, res) => {
     })
       .limit(limit * 1)
       .skip((page - 1) * limit)
+      .sort({ createdAt: -1 })
       .populate("senderId receiverId") // Populate both user details
       .exec();
     const count = await Connections.countDocuments({
@@ -190,8 +196,8 @@ const renderAllUserConnections = async (req, res) => {
 //posts
 const renderAllPosts = async (req, res) => {
   try {
-    const {page} = parseInt(req.query) || 1;
-    const {limit} = parseInt(req.query) || 0;
+    const { page } = parseInt(req.query) || 1;
+    const { limit } = parseInt(req.query) || 0;
     const posts = await Posts.find()
       .limit(limit * 1)
       .skip((page - 1) * limit)
