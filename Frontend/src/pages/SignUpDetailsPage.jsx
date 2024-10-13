@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import Button from '../components/common/Button';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 
 function SignUpDetailsPage() {
   const navigate = useNavigate();
+  
   const [firstName, setFirstName] = useState(''); 
   const [lastName, setLastName] = useState(''); 
+  const { setProfileData } = useAuthStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+      setProfileData({ firstName, lastName });
     navigate('/feed');
   };
 

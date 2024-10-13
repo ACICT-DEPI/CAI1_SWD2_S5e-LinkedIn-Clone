@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Section from "../../../components/common/Section";
 import Button from "../../../components/common/Button";
 import EducationIcon from '../../../assets/images/EducationIcon.svg';
@@ -6,11 +6,16 @@ import { IoMdClose } from "react-icons/io";
 import { IoAddOutline } from "react-icons/io5";
 import { MdOutlineEdit } from "react-icons/md";
 
+import { useAuthStore } from "../../../store/authStore";
+import axios from 'axios'
+
 const EducationSection = () => {
   const months = [
     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
   ];
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
+
+  const {user} = useAuthStore();
 
   const [education, setEducation] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -24,8 +29,16 @@ const EducationSection = () => {
     endMonth: "",
     endYear: "",
     grade: "",
+    activities: "",
     description: "",
   });
+
+  useEffect(() => {
+    if (user && user.education) {
+      setEducation(user.education);
+    }
+  }, [user]);
+  
 
   // handle input changes
   const handleChange = (e) => {
@@ -40,7 +53,7 @@ const EducationSection = () => {
   };
 
   // submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (editingIndex !== null) {
       // update
@@ -49,7 +62,8 @@ const EducationSection = () => {
       setEducation(updatedEducation);
     } else {
       // add new
-      setEducation([...education, formData]);
+      const response = await axios.post("http://localhost:5000/api/users/education", formData);
+      setEducation([...education, response.data.education[response.data.education.length - 1]]);
     }
     resetForm();
   };
@@ -64,6 +78,7 @@ const EducationSection = () => {
       endMonth: "",
       endYear: "",
       grade: "",
+      activities: "",
       description: "",
     });
     setEditingIndex(null);
@@ -104,7 +119,7 @@ const EducationSection = () => {
         <>
           <div className="flex justify-between mb-2">
             <h2 className="text-lg font-semibold text-linkedinDarkGray">Education</h2>
-            <button className="text-xl"><IoAddOutline /></button>
+            <button className="text-xl" onClick={() => setShowModal(true)}><IoAddOutline /></button>
           </div>
           {education.map((edu, index) => (
             <div key={index} className="mb-4 border-b border-gray-200 pb-2">
@@ -233,7 +248,7 @@ const EducationSection = () => {
                 name="grade"
                 placeholder="Grade"
                 className="border p-2 w-full mb-4 text-linkedinDarkGray"
-                value={formData.school}
+                value={formData.grade}
                 onChange={handleChange}
               />
 
@@ -242,7 +257,7 @@ const EducationSection = () => {
                 name="Activities"
                 placeholder="Activities and societies"
                 className="border p-2 w-full mb-4 text-linkedinDarkGray"
-                value={formData.grade}
+                value={formData.activities}
                 onChange={handleChange}
                 rows="2"
               ></textarea>
