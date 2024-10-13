@@ -1,9 +1,10 @@
 import React from "react";
+import { extractTime, extractTimeDuration } from "../../utils/extractTime";
 
 function PostUserInfo({ post }) {
   console.log(post);
 
-  return (
+  return post ? (
     <div className="flex items-center gap-2">
       <img
         src={post.auther.profilePicture}
@@ -20,7 +21,7 @@ function PostUserInfo({ post }) {
           </div>
           <p className="text-linkedinGray text-sm">{post.auther.headline}</p>
           <p className="text-linkedinGray text-sm">
-            {post.updatedAt} &#x2022;{" "}
+            {extractTimeDuration(post.createdAt)} &#x2022;{" "}
             {toString(post.updatedAt) !== toString(post.CreatedAt)
               ? "Edited"
               : "Created"}
@@ -28,6 +29,8 @@ function PostUserInfo({ post }) {
         </div>
       </div>
     </div>
+  ) : (
+    <>loading</>
   );
 }
 

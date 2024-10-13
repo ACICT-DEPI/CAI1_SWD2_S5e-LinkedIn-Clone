@@ -7,9 +7,9 @@ const router = express.Router();
 
 router.get("/admin", verifyTokenAndUserCheck, postController.getAllPosts);
 router.get("/", verifyTokenAndUserCheck, postController.getFeedPosts);
-router.patch("/share", verifyTokenAndUserCheck, postController.sharePost); // takes userId who repost and postId that is been reposted
+router.post("/share", verifyTokenAndUserCheck, postController.sharePost); // takes userId who repost and postId that is been reposted
 router.get("/comments/:id", verifyTokenAndUserCheck, postController.getAllComments);
-router.patch("/", verifyTokenAndUserCheck, postController.createPost);
+router.post("/", verifyTokenAndUserCheck, postController.createPost);
 router.get("/:id", verifyTokenAndUserCheck, postController.getPostById);
 router.delete("/:id", verifyTokenAndUserCheck, postController.deletePost);
 

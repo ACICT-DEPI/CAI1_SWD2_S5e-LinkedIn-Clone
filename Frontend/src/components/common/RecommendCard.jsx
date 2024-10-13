@@ -31,7 +31,7 @@ function UserInfo() {
 }
 function RecommendCard() {
   return (
-    <Section>
+    <Section className="w-[100%]">
       <UserInfo />
       <UserInfo />
       <UserInfo />

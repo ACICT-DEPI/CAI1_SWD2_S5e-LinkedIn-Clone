@@ -280,7 +280,7 @@ const getAllComments = async (req, res) => {
         },
         populate: {
           path: "userId",
-          select: "username profilePicture",
+          select: "firstName lastName headline profilePicture",
         },
         select: "-postId -__v",
       })
