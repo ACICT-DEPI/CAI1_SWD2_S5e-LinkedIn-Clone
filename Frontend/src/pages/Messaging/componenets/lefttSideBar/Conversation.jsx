@@ -15,7 +15,7 @@ const Conversation = ({ conversation }) => {
       <div className="w-10 h-10 rounded-full bg-gray-300"></div>
       <div className="flex-1">
         <h4 className="text-gray-900 font-medium">{conversation.username}</h4>
-        <p className="text-gray-500 text-sm">{`${isOnline ? "online" : ""}`}</p>
+        <p className="text-gray-500 text-sm">{`${isOnline ? "online" : "offline"}`}</p>
       </div>
       {/* <span className="text-gray-500 text-sm">{conversation.date}</span> */}
     </div>

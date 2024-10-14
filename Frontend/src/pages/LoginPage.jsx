@@ -67,9 +67,9 @@ const LoginPage = () => {
             </div>
             
             {/* Forgot Password */}
-            <p className="font-medium text-linkedinBlue hover:underline cursor-pointer">
+            <Link to={'/forgot-password'} className="font-medium text-linkedinBlue hover:underline cursor-pointer">
               Forgot Password?
-            </p>
+            </Link>
 
             {error && <p className="text-red-500 text-xs">{error}</p>}
             <Button label="Sign In" styleType="primary" className="w-full"  disabled={isLoading}/>
