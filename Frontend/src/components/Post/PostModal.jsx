@@ -3,7 +3,7 @@ import ReactPlayer from "react-player";
 import styled from "styled-components";
 import "../Post/style.css";
 import { getFeedPosts } from "../../utils/postApi";
-const base_url = "http://localhost:5001/api";
+const base_url = "http://localhost:5000/api";
 
 const PostModal = ({ showModal, handleClick, handleAddPost }) => {
   const [editorText, setEditorText] = useState("");
@@ -43,15 +43,15 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
         formData.append("videos", videoLink);
       }
 
-      const response = await fetch(`http://localhost:5001/api/posts`, {
+      const response = await fetch(`http://localhost:5000/api/posts`, {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: formData,
       });
-      
+
       if (!response.ok) {
         throw new Error("Failed to submit post");
       }

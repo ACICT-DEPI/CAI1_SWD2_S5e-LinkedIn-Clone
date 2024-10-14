@@ -75,7 +75,6 @@ const getPublicProfile = async (req, res) => {
   }
 };
 
-
 const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.user._id);
