@@ -15,7 +15,7 @@ const EducationSection = () => {
   ];
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
 
-  const {user} = useAuthStore();
+  const {user, updateProfile} = useAuthStore();
 
   const [education, setEducation] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -59,6 +59,7 @@ const EducationSection = () => {
       // update
       const updatedEducation = [...education];
       updatedEducation[editingIndex] = formData;
+      await updateProfile({ education: updatedEducation });
       setEducation(updatedEducation);
     } else {
       // add new
@@ -86,8 +87,9 @@ const EducationSection = () => {
   };
 
   // delete
-  const handleDelete = (index) => {
+  const handleDelete = async(index) => {
     const updatedEducation = education.filter((_, i) => i !== index);
+    await updateProfile({ education: updatedEducation });
     setEducation(updatedEducation);
   };
 

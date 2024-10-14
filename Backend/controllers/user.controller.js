@@ -192,41 +192,28 @@ const UpdateProfile = async (req, res) => {
       "bannerImg",
       "skills",
       "experience",
-      "education"
+      "education",
     ];
     const updatedData = {};
-    for (const field of allowedFields) {
+
+    // Validate input fields
+    allowedFields.forEach((field) => {
       if (req.body[field]) {
         updatedData[field] = req.body[field];
       }
-    }
-
-    // Validate nested experience and education fields (optional)
-    if (req.body.experience) {
-      for (const exp of req.body.experience) {
-        const { error } = validateExperience(exp);
-        if (error) return res.status(400).json({ message: error.details[0].message });
-      }
-    }
-
-    if (req.body.education) {
-      for (const edu of req.body.education) {
-        const { error } = validateEducation(edu);
-        if (error) return res.status(400).json({ message: error.details[0].message });
-      }
-    }
+    });
 
     // Handle profile picture upload
     if (req.files && req.files.profilePicture) {
       try {
         const result = await cloudinary.uploader.upload(
-          req.files.profilePicture[0].path
+          req.files.profilePicture.path
         );
         updatedData.profilePicture = result.secure_url;
       } catch (uploadError) {
         return res
           .status(500)
-          .json({ message: "Error uploading profile picture" });
+          .json({ success: false, message: "Error uploading profile picture" });
       }
     }
 
@@ -234,13 +221,13 @@ const UpdateProfile = async (req, res) => {
     if (req.files && req.files.bannerImg) {
       try {
         const result = await cloudinary.uploader.upload(
-          req.files.bannerImg[0].path
+          req.files.bannerImg.path
         );
         updatedData.bannerImg = result.secure_url;
       } catch (uploadError) {
         return res
           .status(500)
-          .json({ message: "Error uploading banner image" });
+          .json({ success: false, message: "Error uploading banner image" });
       }
     }
 
@@ -250,9 +237,10 @@ const UpdateProfile = async (req, res) => {
       { $set: updatedData },
       { new: true }
     ).select("-password");
-    res.json(user);
+
+    res.json({ success: true, data: user });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 

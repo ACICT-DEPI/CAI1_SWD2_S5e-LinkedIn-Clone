@@ -14,7 +14,7 @@ const ExperienceSection = () => {
   ];
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
   
-  const {user} = useAuthStore();
+  const {user , updateProfile } = useAuthStore();
   const [experience, setExperience] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null); 
@@ -61,6 +61,7 @@ const ExperienceSection = () => {
       // update
       const updatedExperiences = [...experience];
       updatedExperiences[editingIndex] = formData;
+      await updateProfile({ experience: updatedExperiences });
       setExperience(updatedExperiences);
     } else {
       // add new
@@ -90,10 +91,16 @@ const ExperienceSection = () => {
   };
 
   // delete
-  const handleDelete = (index) => {
-    const updatedExperience = experience.filter((_, i) => i !== index);
+  const handleDelete = async (index) => {
+  const updatedExperience = experience.filter((_, i) => i !== index);
+  console.log("Updated Experience:", updatedExperience);
+  try {
+    await updateProfile({ experience: updatedExperience });
     setExperience(updatedExperience);
-  };
+  } catch (error) {
+    console.error("Failed to update profile:", error);
+  }
+};
 
   return (
     <Section>

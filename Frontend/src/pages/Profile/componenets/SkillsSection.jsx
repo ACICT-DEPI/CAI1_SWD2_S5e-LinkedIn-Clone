@@ -7,7 +7,7 @@ import { useAuthStore } from "../../../store/authStore";
 import axios from 'axios'
 
 const SkillsSection = () => {
-  const {user} = useAuthStore();
+  const {user , updateProfile} = useAuthStore();
 
   const [skills, setSkills] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -35,9 +35,14 @@ const SkillsSection = () => {
     }
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = async(index) => {
     const updatedSkills = skills.filter((_, i) => i !== index);
+    try {
+    await updateProfile({ skills: updatedSkills });
     setSkills(updatedSkills);
+  } catch (error) {
+    console.error("Failed to update profile:", error);
+  }
   };
 
   return (
