@@ -54,6 +54,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    about:{type: String, default: "",},
     skills: [{ name: String}],  //, level: String 
     section: [{ name: String, dexcription: String }],
     experience: [
@@ -154,8 +155,14 @@ function validateExperience(experience) {
   const schema = Joi.object({
     title: Joi.string().required(),
     company: Joi.string().required(),
-    startDate: Joi.date().required(),
-    endDate: Joi.date().allow(null),
+    employmentType: Joi.string().allow(""),
+    location: Joi.string().allow(""),
+    locationType: Joi.string().allow(""),
+    startMonth: Joi.string().required(),
+    startYear: Joi.string().required(),
+    endMonth: Joi.string().allow(null),
+    endYear: Joi.string().allow(null),
+    currentlyWorking: Joi.boolean(),
     description: Joi.string().allow("")
   });
   return schema.validate(experience);
