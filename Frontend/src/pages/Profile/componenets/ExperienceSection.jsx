@@ -6,6 +6,7 @@ import { IoMdClose } from "react-icons/io";
 import { IoAddOutline } from "react-icons/io5";
 import { MdOutlineEdit } from "react-icons/md";
 import { useAuthStore } from "../../../store/authStore";
+import ConfirmationModal from "../../../components/common/ConfirmationModal";
 import axios from 'axios'
 
 const ExperienceSection = () => {
@@ -13,6 +14,9 @@ const ExperienceSection = () => {
     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
   ];
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
+
+  const [deleteIndex, setDeleteIndex] = useState(null); // state for delete index
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false); // State for confirmation modal
   
   const {user , updateProfile } = useAuthStore();
   const [experience, setExperience] = useState([]);
@@ -90,17 +94,24 @@ const ExperienceSection = () => {
     setShowModal(false);
   };
 
-  // delete
   const handleDelete = async (index) => {
-  const updatedExperience = experience.filter((_, i) => i !== index);
-  console.log("Updated Experience:", updatedExperience);
-  try {
-    await updateProfile({ experience: updatedExperience });
-    setExperience(updatedExperience);
-  } catch (error) {
-    console.error("Failed to update profile:", error);
-  }
+    setDeleteIndex(index);
+    setConfirmModalOpen(true); 
+
 };
+ // Confirm deletion
+  const confirmDelete = async () => {
+    if (deleteIndex !== null) {
+      const updatedExperience = experience.filter((_, i) => i !== deleteIndex);
+      try {
+        await updateProfile({ experience: updatedExperience });
+        setExperience(updatedExperience);
+      } catch (error) {
+        console.error("Failed to update profile:", error);
+      }
+    }
+    setConfirmModalOpen(false); // Close confirmation modal
+  };
 
   return (
     <Section>
@@ -323,6 +334,13 @@ const ExperienceSection = () => {
           </div>
         </div>
       )}
+        {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        onConfirm={confirmDelete}
+        message="Are you sure you want to delete this experience?"
+      />
     </Section>
   );
 };
