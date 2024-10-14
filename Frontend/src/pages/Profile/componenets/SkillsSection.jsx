@@ -24,7 +24,7 @@ const SkillsSection = () => {
     e.preventDefault();
     if (skillInput.trim()) {
       try {
-        const response = await axios.post('http://localhost:5000/api/users/skill', { name: skillInput });
+        const response = await axios.post('http://localhost:5001/api/users/skill', { name: skillInput });
         console.log("Skill added successfully:", response.data.skills);
         setSkills([...skills, response.data.skills[response.data.skills.length - 1]]);
         setSkillInput("");

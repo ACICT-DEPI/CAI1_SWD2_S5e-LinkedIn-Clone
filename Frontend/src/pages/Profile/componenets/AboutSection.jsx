@@ -18,7 +18,7 @@ function AboutSection() {
       setTempAbout(user.about); // Sync temp input value
     }
   }, [user]);
-
+  
   const handleSave = async () => {
     setIsLoading(true); // Indicate loading state
     try {
@@ -39,7 +39,7 @@ function AboutSection() {
         {/* Edit Button */}
         {!btnClick && about ? (
           <div className="absolute right-0 top-0">
-            <Button
+            <Button className="border-none"
               icon={<EditIcon fill="white" />}
               onClick={() => setBtnClick(true)} // Enable edit mode
             />
