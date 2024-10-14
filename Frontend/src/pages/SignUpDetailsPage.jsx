@@ -5,19 +5,20 @@ import { useAuthStore } from '../store/authStore';
 
 function SignUpDetailsPage() {
   const navigate = useNavigate();
-  
+  const { user, updateProfile } = useAuthStore();
   const [firstName, setFirstName] = useState(''); 
   const [lastName, setLastName] = useState(''); 
-  const { setProfileData } = useAuthStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-      setProfileData({ firstName, lastName });
-    navigate('/feed');
+    updateProfile({ firstName, lastName });
+    setFirstName(firstName);
+    setLastName(lastName);
+    navigate('/profile');
   };
 
   return (
-    <main className="flex-grow flex flex-col justify-center items-center bg-linkedinLightGray space-y-6">
+    <main className="flex-grow flex flex-col justify-center items-center bg-linkedinLightGray min-h-screen space-y-6">
       <h1 className="text-3xl text-gray-800 text-center">
       Make the most of your professional life
       </h1>

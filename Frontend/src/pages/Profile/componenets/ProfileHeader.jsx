@@ -16,7 +16,8 @@ const ProfileHeader = () => {
     </div>
   </div>
   <div className="intro">
-    <div className="intro-name">{user.username} </div>
+    <span className="intro-name">{user.firstName} {' '} {user.lastName}</span>
+    <span>{' ('}{user.username}{')'}</span>
     <div className="intro-desc">
       <p>{user.headline} </p>
       <p>{user.about} </p>

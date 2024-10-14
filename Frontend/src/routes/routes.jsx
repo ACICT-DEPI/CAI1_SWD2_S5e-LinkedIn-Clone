@@ -161,27 +161,27 @@ const routes = createBrowserRouter([
           </RedirectAuthenticatedUser>
         ),
       },
-      {
-        path: "SignUpDetailsPage",
-        element: (
-          // <ProtectedRoute>
-              <Suspense fallback={<h1>Loading...</h1>}>
-                <SignUpDetailsPage />
-              </Suspense>
-          // </ProtectedRoute>
-        ),
-      },
-      {
-        path: "verify-email",
-        element: (
-          <RedirectAuthenticatedUser>
-            <EmailVerificationPage />
-          </RedirectAuthenticatedUser>
-          
-        ),
-      },
     ],
   },
+  {
+      path: "/SignUpDetailsPage",
+      element: (
+        <ProtectedRoute>
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <SignUpDetailsPage />
+            </Suspense>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/verify-email",
+      element: (
+        <RedirectAuthenticatedUser>
+          <EmailVerificationPage />
+        </RedirectAuthenticatedUser>
+
+      ),
+    },
   {
     path: "/forgot-password",
     element: (
