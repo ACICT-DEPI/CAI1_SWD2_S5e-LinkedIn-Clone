@@ -19,9 +19,8 @@ function SignUpPage() {
 
 		try {
 			await signup(email, password, username);
-      navigate("/feed");
-			navigate("signup/SignUpDetailsPage");
-			// navigate("signup/verify-email");
+			// navigate("/SignUpDetailsPage");
+			navigate("/verify-email");
 		} catch (error) {
 			console.log(error);
 		}

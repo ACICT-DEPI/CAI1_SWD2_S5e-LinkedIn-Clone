@@ -43,7 +43,7 @@ module.exports.signup = asyncHandler (async (req,res)=>{
 			username,
 			verificationToken,
 			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-      isVerified: true
+      // isVerified: true
 		});		
     await user.save();
 

@@ -15,6 +15,7 @@ function SignUpDetailsPage() {
     setFirstName(firstName);
     setLastName(lastName);
     navigate('/profile');
+    toast.success("Your Name Enters Successfully");
   };
 
   return (
