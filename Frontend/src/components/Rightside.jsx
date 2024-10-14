@@ -2,6 +2,8 @@ import styled from "styled-components";
 import axios from "axios";
 import userIcon from "../assets/images/nav/user.svg";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 const Rightside = () => {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [connectionStatus, setConnectionStatus] = useState({});
@@ -115,10 +117,13 @@ const Rightside = () => {
           ))}
         </div>
 
-        <Recommendation>
+        <Link
+          to="/networks"
+          className="text-blue-600 flex items-center text-sm"
+        >
           View all recommendations
           <img src="src/assets/images/right-icon.svg" alt="" />
-        </Recommendation>
+        </Link>
       </FollowCard>
       <BannerCard>
         <img src="src/assets/images/banner-image.jpg" alt="" />
@@ -132,7 +137,6 @@ const Container = styled.div`
   @media (max-width: 1200px) {
     display: none;
   }
-
 `;
 
 const FollowCard = styled.div`
