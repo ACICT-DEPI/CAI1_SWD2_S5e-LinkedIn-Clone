@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import PostShortView from "../../../components/Post/PostShortView";
 import Button from "../../../components/common/Button";
 import editIcon from "../../../assets/images/comment-icon.svg";
@@ -7,17 +8,24 @@ import Section from "../../../components/common/Section";
 import { useAuthStore } from "../../../store/authStore";
 
 function ActivitySection({ posts }) {
-  const { user, isLoading } = useAuthStore(); // Access user and loading state
+  const { user, isLoading } = useAuthStore();
+  const navigate = useNavigate(); // Initialize navigate
+
+  const handleFollowersClick = () => {
+    navigate("/followers"); // Navigate to followers page
+  };
 
   return (
     <>
       <Section>
-        {/* Section title and create new post button with edit button */}
         <div className="w-1/2">
           <div className="flex gap-2 justify-between">
             <div>
               <p className="font-bold text-xl">Activity</p>
-              <p className="text-linkedinBlue cursor-pointer">
+              <p
+                className="text-linkedinBlue cursor-pointer"
+                onClick={handleFollowersClick} // Add click handler
+              >
                 {isLoading ? (
                   "Loading followers..."
                 ) : (
