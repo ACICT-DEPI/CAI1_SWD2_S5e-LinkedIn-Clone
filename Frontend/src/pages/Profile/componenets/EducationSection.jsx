@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Section from "../../../components/common/Section";
 import Button from "../../../components/common/Button";
 import EducationIcon from '../../../assets/images/EducationIcon.svg';
 import { IoMdClose } from "react-icons/io";
 import { IoAddOutline } from "react-icons/io5";
 import { MdOutlineEdit } from "react-icons/md";
+import ConfirmationModal from "../../../components/common/ConfirmationModal";
+import { useAuthStore } from "../../../store/authStore";
+import axios from 'axios'
 
 const EducationSection = () => {
   const months = [
@@ -12,6 +15,9 @@ const EducationSection = () => {
   ];
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
 
+  const {user, updateProfile} = useAuthStore();
+  const [deleteIndex, setDeleteIndex] = useState(null); // state for delete index
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false); // State for confirmation modal
   const [education, setEducation] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null); 
@@ -24,9 +30,16 @@ const EducationSection = () => {
     endMonth: "",
     endYear: "",
     grade: "",
+    activities: "",
     description: "",
   });
 
+  useEffect(() => {
+    if (user && user.education) {
+      setEducation(user.education);
+    }
+  }, [user]);
+  
   // handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,16 +53,18 @@ const EducationSection = () => {
   };
 
   // submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (editingIndex !== null) {
       // update
       const updatedEducation = [...education];
       updatedEducation[editingIndex] = formData;
+      await updateProfile({ education: updatedEducation });
       setEducation(updatedEducation);
     } else {
       // add new
-      setEducation([...education, formData]);
+      const response = await axios.post("http://localhost:5001/api/users/education", formData);
+      setEducation([...education, response.data.education[response.data.education.length - 1]]);
     }
     resetForm();
   };
@@ -64,16 +79,29 @@ const EducationSection = () => {
       endMonth: "",
       endYear: "",
       grade: "",
+      activities: "",
       description: "",
     });
     setEditingIndex(null);
     setShowModal(false);
   };
 
-  // delete
-  const handleDelete = (index) => {
-    const updatedEducation = education.filter((_, i) => i !== index);
-    setEducation(updatedEducation);
+  const handleDelete = async (index) => {
+    setDeleteIndex(index);
+    setConfirmModalOpen(true); 
+  };
+
+  const confirmDelete = async() => {
+    if (deleteIndex !== null) {
+      const updatedEducation = education.filter((_, i) => i !== deleteIndex);
+      try {
+        await updateProfile({ education: updatedEducation });
+        setEducation(updatedEducation);
+      }catch (error) {
+        console.error("Failed to update profile:", error);
+      }
+    }
+    setConfirmModalOpen(false); 
   };
 
   return (
@@ -104,7 +132,7 @@ const EducationSection = () => {
         <>
           <div className="flex justify-between mb-2">
             <h2 className="text-lg font-semibold text-linkedinDarkGray">Education</h2>
-            <button className="text-xl"><IoAddOutline /></button>
+            <button className="text-xl" onClick={() => setShowModal(true)}><IoAddOutline /></button>
           </div>
           {education.map((edu, index) => (
             <div key={index} className="mb-4 border-b border-gray-200 pb-2">
@@ -233,7 +261,7 @@ const EducationSection = () => {
                 name="grade"
                 placeholder="Grade"
                 className="border p-2 w-full mb-4 text-linkedinDarkGray"
-                value={formData.school}
+                value={formData.grade}
                 onChange={handleChange}
               />
 
@@ -242,7 +270,7 @@ const EducationSection = () => {
                 name="Activities"
                 placeholder="Activities and societies"
                 className="border p-2 w-full mb-4 text-linkedinDarkGray"
-                value={formData.grade}
+                value={formData.activities}
                 onChange={handleChange}
                 rows="2"
               ></textarea>
@@ -273,6 +301,12 @@ const EducationSection = () => {
           </div>
         </div>
       )}
+      <ConfirmationModal
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        onConfirm={confirmDelete}
+        message="Are you sure you want to delete this experience?"
+      />
     </Section>
   );
 };

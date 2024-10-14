@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import Button from '../components/common/Button';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
+import toast from "react-hot-toast";
 
 function SignUpDetailsPage() {
   const navigate = useNavigate();
+  const { user, updateProfile } = useAuthStore();
   const [firstName, setFirstName] = useState(''); 
   const [lastName, setLastName] = useState(''); 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/feed');
+    updateProfile({ firstName, lastName });
+    setFirstName(firstName);
+    setLastName(lastName);
+    navigate('/profile');
+    toast.success("Your Name Enterd Successfully");
+    toast.success("Welcome to Linkedin!");
   };
 
   return (
-    <main className="flex-grow flex flex-col justify-center items-center bg-linkedinLightGray space-y-6">
+    <main className="flex-grow flex flex-col justify-center items-center bg-linkedinLightGray min-h-screen space-y-6">
       <h1 className="text-3xl text-gray-800 text-center">
       Make the most of your professional life
       </h1>

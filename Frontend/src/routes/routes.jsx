@@ -16,6 +16,7 @@ import AllActivitysPage from "../pages/Profile/AllActivitysPage";
 import AnalyticsPage from '../pages/Profile/AnalyticsPage';
 import ResourcePage from '../pages/Profile/ResourcesPage';
 import MessagingPage from "../pages/Messaging/MessagingPage";
+import FollowersPage from "../pages/Profile/FollowersPage";
 
 const Home = lazy(() => import("../pages/Home"));
 const Jobs = lazy(() => import("../pages/Jobs"));
@@ -124,6 +125,14 @@ const routes = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "followers",
+        element: (
+          <ProtectedRoute>
+              <FollowersPage />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   {
@@ -152,24 +161,27 @@ const routes = createBrowserRouter([
           </RedirectAuthenticatedUser>
         ),
       },
-      {
-        path: "SignUpDetailsPage",
-        element: (
-          // <ProtectedRoute>
-              <Suspense fallback={<h1>Loading...</h1>}>
-                <SignUpDetailsPage />
-              </Suspense>
-          // </ProtectedRoute>
-        ),
-      },
-      {
-        path: "verify-email",
-        element: (
-          <EmailVerificationPage />
-        ),
-      },
     ],
   },
+  {
+      path: "/SignUpDetailsPage",
+      element: (
+        <ProtectedRoute>
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <SignUpDetailsPage />
+            </Suspense>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/verify-email",
+      element: (
+        <RedirectAuthenticatedUser>
+          <EmailVerificationPage />
+        </RedirectAuthenticatedUser>
+
+      ),
+    },
   {
     path: "/forgot-password",
     element: (
@@ -179,7 +191,10 @@ const routes = createBrowserRouter([
   {
     path: "/reset-password/:token",
     element: (
-      <ResetPasswordPage />
+      <RedirectAuthenticatedUser>
+        <ResetPasswordPage />
+      </RedirectAuthenticatedUser>
+      
     ),
   },
   {

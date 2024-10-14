@@ -129,6 +129,10 @@ const Rightside = () => {
 
 const Container = styled.div`
   grid-area: rightside;
+  @media (max-width: 1200px) {
+    display: none;
+  }
+
 `;
 
 const FollowCard = styled.div`
@@ -207,5 +211,4 @@ const BannerCard = styled(FollowCard)`
     height: 100%;
   }
 `;
-
 export default Rightside;

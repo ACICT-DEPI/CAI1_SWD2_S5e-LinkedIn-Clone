@@ -30,17 +30,17 @@ router.get("/connections", verifyTokenAndUserCheck, getUserConnections);
 router.get("/posts", verifyTokenAndUserCheck, getUserPosts);
 router.get("/comments", verifyTokenAndUserCheck, getUserComments);
 router.get("/notifications", verifyTokenAndUserCheck, getNotification); // use pagination  page = 1, limit = 10, isRead, type
-router.get("/:id", verifyTokenAndUserCheck, getPublicProfile); //example api call: http://localhost:5000/api/users/haneen
+router.get("/:id", verifyTokenAndUserCheck, getPublicProfile); //example api call: http://localhost:5001/api/users/haneen
 // router.get("/:id", verifyTokenAndUserCheck, addSection);
 
 //delete
 router.delete("/:id", verifyTokenAndUserCheck, deleteUser); //deleting profile
 
 //post
-router.post("/:id/experience", verifyTokenAndUserCheck, addExperience);
-router.post("/:id/education", verifyTokenAndUserCheck, addEducation);
-router.post("/:id/skill", verifyTokenAndUserCheck, addSkills);
-router.post("/:id/section", verifyTokenAndUserCheck, addSection);
+router.post("/experience", verifyTokenAndUserCheck, addExperience);
+router.post("/education", verifyTokenAndUserCheck, addEducation);
+router.post("/skill", verifyTokenAndUserCheck, addSkills);
+router.post("/section", verifyTokenAndUserCheck, addSection);
 router.post(
   "/:id/notification",
   verifyTokenAndUserCheck,
@@ -54,5 +54,8 @@ router.post(
   upload.fields([{ name: "profilePicture" }, { name: "bannerImg" }]),
   UpdateProfile
 ); //updating profile
+
+
+router.put("/profile", verifyTokenAndUserCheck , UpdateProfile);
 
 module.exports = router;

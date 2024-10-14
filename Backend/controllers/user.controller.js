@@ -75,75 +75,10 @@ const getPublicProfile = async (req, res) => {
   }
 };
 
-const UpdateProfile = async (req, res) => {
-  try {
-
-    const allowedField = [
-      "firstName",
-      "lastName",
-      "username",
-      "headline",
-      "about",
-      "location",
-      "profilePicture",
-      "bannerImg",
-      "skills",
-      "experience",
-      "education",
-    ];
-    const updatedData = {};
-    for (const field of allowedField) {
-      if (req.body[field]) {
-        updatedData[field] = req.body[field];
-      }
-    }
-
-    // Handle profile picture upload
-    if (req.files && req.files.profilePicture) {
-      try {
-        const result = await cloudinary.uploader.upload(
-          req.files.profilePicture[0].path
-        );
-        updatedData.profilePicture = result.secure_url;
-      } catch (uploadError) {
-        console.log("Error uploading profile picture:", uploadError);
-        return res
-          .status(500)
-          .json({ message: "Error uploading profile picture" });
-      }
-    }
-
-    // Handle banner image upload
-    if (req.files && req.files.bannerImg) {
-      try {
-        const result = await cloudinary.uploader.upload(
-          req.files.bannerImg[0].path
-        );
-        updatedData.bannerImg = result.secure_url;
-      } catch (uploadError) {
-        console.log("Error uploading banner image:", uploadError);
-        return res
-          .status(500)
-          .json({ message: "Error uploading banner image" });
-      }
-    }
-
-    // Update the user profile
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { $set: updatedData },
-      { new: true }
-    ).select("-password"); // exclude password field
-    res.json(user);
-  } catch (error) {
-    console.log("Error in UpdateProfile:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
 
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const user = await User.findByIdAndDelete(req.user._id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -262,29 +197,97 @@ const getUserComments = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
+const UpdateProfile = async (req, res) => {
+  try {
+    const allowedFields = [
+      "firstName",
+      "lastName",
+      "username",
+      "headline",
+      "about",
+      "location",
+      "profilePicture",
+      "bannerImg",
+      "skills",
+      "experience",
+      "education",
+    ];
+    const updatedData = {};
+
+    // Validate input fields
+    allowedFields.forEach((field) => {
+      if (req.body[field]) {
+        updatedData[field] = req.body[field];
+      }
+    });
+
+    // Handle profile picture upload
+    if (req.files && req.files.profilePicture) {
+      try {
+        const result = await cloudinary.uploader.upload(
+          req.files.profilePicture.path
+        );
+        updatedData.profilePicture = result.secure_url;
+      } catch (uploadError) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Error uploading profile picture" });
+      }
+    }
+
+    // Handle banner image upload
+    if (req.files && req.files.bannerImg) {
+      try {
+        const result = await cloudinary.uploader.upload(
+          req.files.bannerImg.path
+        );
+        updatedData.bannerImg = result.secure_url;
+      } catch (uploadError) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Error uploading banner image" });
+      }
+    }
+
+    // Update the user profile
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updatedData },
+      { new: true }
+    ).select("-password");
+
+    res.json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 const addExperience = async (req, res) => {
-  const user = await User.findById(req.user);
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
+  try {
+    const user = req.user;
+    user.experience.push(req.body);
+    await user.save();
+    res.status(200).json({ experience: user.experience });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
   }
-
-  user.experience.push(req.body);
-  await user.save();
-  res.status(200).json(user);
 };
+
 const addSkills = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  user.skills.push(req.body);
+  // Make sure the incoming skill is an object
+  const skill = { name: req.body.name };
+  user.skills.push(skill);
   await user.save();
   res.status(200).json(user);
 };
+
 const addEducation = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -295,7 +298,7 @@ const addEducation = async (req, res) => {
 };
 
 const addSection = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -357,7 +360,7 @@ const addNotificationToUser = async (req, res) => {
     console.log("Notification saved:", savedNotification);
 
     // Find the user by ID from req.params
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }

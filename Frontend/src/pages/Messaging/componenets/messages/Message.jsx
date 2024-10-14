@@ -3,11 +3,11 @@ import { AiFillDelete } from "react-icons/ai"; // Delete Icon
 import { useAuthStore } from "../../../../store/authStore";
 import useConversation from "../../../../store/useConversation";
 import { extractTime } from "../../../../utils/extractTime";
-import useDeleteMessage from "../../../../hooks/useDeleteMessage";
-import useEditMessage from "../../../../hooks/useEditMessage";
-import { useState } from "react";
-import toast from "react-hot-toast"; // Import toast
-import ConfirmationModal from "./ConfirmationModal"; // Import the modal
+import useDeleteMessage from '../../../../hooks/useDeleteMessage';
+import useEditMessage from '../../../../hooks/useEditMessage';
+import { useState } from 'react';
+import toast from 'react-hot-toast'; 
+import ConfirmationModal from '../../../../components/common/ConfirmationModal'; 
 
 const Message = ({ message }) => {
   const { user } = useAuthStore();

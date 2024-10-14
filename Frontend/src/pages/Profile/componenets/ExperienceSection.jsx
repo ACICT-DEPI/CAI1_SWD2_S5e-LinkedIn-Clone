@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Section from "../../../components/common/Section";
 import Button from "../../../components/common/Button";
 import ExperienceIcon from '../../../assets/images/ExperienceIcon.svg';
 import { IoMdClose } from "react-icons/io";
 import { IoAddOutline } from "react-icons/io5";
 import { MdOutlineEdit } from "react-icons/md";
+import { useAuthStore } from "../../../store/authStore";
+import ConfirmationModal from "../../../components/common/ConfirmationModal";
+import axios from 'axios'
 
 const ExperienceSection = () => {
   const months = [
@@ -12,6 +15,9 @@ const ExperienceSection = () => {
   ];
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
 
+  const {user , updateProfile } = useAuthStore();
+  const [deleteIndex, setDeleteIndex] = useState(null); // state for delete index
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false); // State for confirmation modal
   const [experience, setExperience] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null); 
@@ -29,6 +35,12 @@ const ExperienceSection = () => {
     description: "",
   });
 
+  useEffect(() => {
+    if (user && user.experience) {
+      setExperience(user.experience);
+    }
+  }, [user]);
+  
   // handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,16 +58,19 @@ const ExperienceSection = () => {
   };
 
   //submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (editingIndex !== null) {
       // update
       const updatedExperiences = [...experience];
       updatedExperiences[editingIndex] = formData;
+      await updateProfile({ experience: updatedExperiences });
       setExperience(updatedExperiences);
     } else {
       // add new
-      setExperience([...experience, formData]);
+      const response = await axios.post("http://localhost:5001/api/users/experience",formData)
+      console.log('exp data',response.data.experience[response.data.experience.length - 1]);
+      setExperience([...experience, response.data.experience[response.data.experience.length - 1]]);
     }
     resetForm();
   };
@@ -78,10 +93,22 @@ const ExperienceSection = () => {
     setShowModal(false);
   };
 
-  // delete
-  const handleDelete = (index) => {
-    const updatedExperience = experience.filter((_, i) => i !== index);
-    setExperience(updatedExperience);
+  const handleDelete = async (index) => {
+    setDeleteIndex(index);
+    setConfirmModalOpen(true); 
+};
+ // Confirm deletion
+  const confirmDelete = async () => {
+    if (deleteIndex !== null) {
+      const updatedExperience = experience.filter((_, i) => i !== deleteIndex);
+      try {
+        await updateProfile({ experience: updatedExperience });
+        setExperience(updatedExperience);
+      } catch (error) {
+        console.error("Failed to update profile:", error);
+      }
+    }
+    setConfirmModalOpen(false); // Close confirmation modal
   };
 
   return (
@@ -305,6 +332,13 @@ const ExperienceSection = () => {
           </div>
         </div>
       )}
+        {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        onConfirm={confirmDelete}
+        message="Are you sure you want to delete this experience?"
+      />
     </Section>
   );
 };

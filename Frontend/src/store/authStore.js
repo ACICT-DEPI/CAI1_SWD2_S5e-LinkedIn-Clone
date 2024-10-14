@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = "http://localhost:5001/api/auth";
 
 axios.defaults.withCredentials = true; 
 
@@ -98,4 +98,17 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
+updateProfile: async (updatedData) => {
+  set({ isLoading: true, error: null });
+  try {
+    const response = await axios.put("http://localhost:5001/api/users/profile", updatedData, {
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log("Profile Updated:", response.data);
+    set({ user: response.data.data, isLoading: false });
+  } catch (error) {
+    console.log("Error updating profile:", error);
+    set({ isLoading: false, error: error.response?.data?.message || "Error updating profile" });
+  }
+},
 }));
