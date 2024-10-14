@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import homeIcon from "../assets/images/nav/home-logo.svg";
 import feedIcon from "../assets/images/nav/nav-home.svg";
-import jobsIcon from "../assets/images/nav/nav-jobs.svg";
 import messagingIcon from "../assets/images/nav/nav-messaging.svg";
 import networkIcon from "../assets/images/nav/nav-network.svg";
 import notificationsIcon from "../assets/images/nav/nav-notifications.svg";
@@ -15,7 +14,6 @@ import { useAuthStore } from "../store/authStore";
 const icons = [
   { src: feedIcon, alt: "feed", label: "Home" },
   { src: networkIcon, alt: "networks", label: "My Networks" },
-  { src: jobsIcon, alt: "jobs", label: "Jobs" },
   { src: messagingIcon, alt: "messaging", label: "Messaging" },
   { src: notificationsIcon, alt: "notifications", label: "Notifications" },
 ];
