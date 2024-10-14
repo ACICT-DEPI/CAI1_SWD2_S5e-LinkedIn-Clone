@@ -19,6 +19,7 @@ I’m excited to share 𝐅𝐀𝐑 𝐀𝐖𝐀𝐘, my 2nd React project desig
 I’d love to connect with others who are passionate about React and front-end development!
 `;
 
+
 function PostShortView() {
   return (
     <>
