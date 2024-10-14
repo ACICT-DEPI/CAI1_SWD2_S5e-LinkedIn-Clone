@@ -20,7 +20,6 @@ const ProfileHeader = () => {
     <span>{' ('}{user.username}{')'}</span>
     <div className="intro-desc">
       <p>{user.headline} </p>
-      <p>{user.about} </p>
     </div>
   </div>
   <div className='flex gap-2'>
