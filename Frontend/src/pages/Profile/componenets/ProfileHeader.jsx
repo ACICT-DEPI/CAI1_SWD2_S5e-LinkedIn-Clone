@@ -1,7 +1,9 @@
 import React from 'react';
 import "../../../assets/style/profile.css"
 import Button from "../../../components/common/Button"
+import { useAuthStore } from '../../../store/authStore';
 const ProfileHeader = () => {
+  const {user} = useAuthStore();
   return (
     <>
       <main className='bg-white rounded-lg w-1/2 mx-auto'>
@@ -14,10 +16,10 @@ const ProfileHeader = () => {
     </div>
   </div>
   <div className="intro">
-    <div className="intro-name">User Name </div>
+    <div className="intro-name">{user.username} </div>
     <div className="intro-desc">
-      <p>Full Stack Developer</p>
-      <p>React | Node | Express | MongoDB</p>
+      <p>{user.headline} </p>
+      <p>{user.about} </p>
     </div>
   </div>
   <div className='flex gap-2'>
