@@ -15,10 +15,9 @@ const ExperienceSection = () => {
   ];
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
 
+  const {user , updateProfile } = useAuthStore();
   const [deleteIndex, setDeleteIndex] = useState(null); // state for delete index
   const [confirmModalOpen, setConfirmModalOpen] = useState(false); // State for confirmation modal
-  
-  const {user , updateProfile } = useAuthStore();
   const [experience, setExperience] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null); 
@@ -97,7 +96,6 @@ const ExperienceSection = () => {
   const handleDelete = async (index) => {
     setDeleteIndex(index);
     setConfirmModalOpen(true); 
-
 };
  // Confirm deletion
   const confirmDelete = async () => {

@@ -5,7 +5,7 @@ import EducationIcon from '../../../assets/images/EducationIcon.svg';
 import { IoMdClose } from "react-icons/io";
 import { IoAddOutline } from "react-icons/io5";
 import { MdOutlineEdit } from "react-icons/md";
-
+import ConfirmationModal from "../../../components/common/ConfirmationModal";
 import { useAuthStore } from "../../../store/authStore";
 import axios from 'axios'
 
@@ -16,7 +16,8 @@ const EducationSection = () => {
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
 
   const {user, updateProfile} = useAuthStore();
-
+  const [deleteIndex, setDeleteIndex] = useState(null); // state for delete index
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false); // State for confirmation modal
   const [education, setEducation] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null); 
@@ -86,11 +87,22 @@ const EducationSection = () => {
     setShowModal(false);
   };
 
-  // delete
-  const handleDelete = async(index) => {
-    const updatedEducation = education.filter((_, i) => i !== index);
-    await updateProfile({ education: updatedEducation });
-    setEducation(updatedEducation);
+  const handleDelete = async (index) => {
+    setDeleteIndex(index);
+    setConfirmModalOpen(true); 
+  };
+
+  const confirmDelete = async() => {
+    if (deleteIndex !== null) {
+      const updatedEducation = education.filter((_, i) => i !== deleteIndex);
+      try {
+        await updateProfile({ education: updatedEducation });
+        setEducation(updatedEducation);
+      }catch (error) {
+        console.error("Failed to update profile:", error);
+      }
+    }
+    setConfirmModalOpen(false); 
   };
 
   return (
@@ -290,6 +302,12 @@ const EducationSection = () => {
           </div>
         </div>
       )}
+      <ConfirmationModal
+        isOpen={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        onConfirm={confirmDelete}
+        message="Are you sure you want to delete this experience?"
+      />
     </Section>
   );
 };
