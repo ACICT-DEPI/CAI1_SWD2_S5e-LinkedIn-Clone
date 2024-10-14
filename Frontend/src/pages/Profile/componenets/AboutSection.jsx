@@ -52,7 +52,7 @@ function AboutSection() {
         {about === "" && !btnClick ? (
           <Button label={"Add Brief about yourself"} onClick={() => setBtnClick(true)} />
         ) : about.length > 100 ? (
-          <LargeText description={about} style="text-lg" />
+          <LargeText description={about} style="" />
         ) : (
           <p className="text-lg">{about}</p>
         )}

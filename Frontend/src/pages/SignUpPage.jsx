@@ -19,8 +19,8 @@ function SignUpPage() {
 
 		try {
 			await signup(email, password, username);
-			// navigate("/SignUpDetailsPage");
-			navigate("/verify-email");
+			navigate("/SignUpDetailsPage");
+			// navigate("/verify-email");
 		} catch (error) {
 			console.log(error);
 		}
