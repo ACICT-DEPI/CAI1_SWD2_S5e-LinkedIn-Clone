@@ -23,7 +23,7 @@ const FollowersPage = () => {
             className="text-linkedinPrimary hover:underline text-sm flex items-center justify-center"
           >
             <MdKeyboardArrowLeft className="text-lg mt-1" />
-            Back to Activity
+            Back to your profile
           </button>
         <h1 className="text-2xl font-bold my-4">Followers</h1>
 
