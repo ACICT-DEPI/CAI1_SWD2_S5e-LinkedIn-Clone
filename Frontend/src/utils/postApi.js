@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const base_url = "http://localhost:5001/api";
+const base_url = "http://localhost:5000/api";
 export const getPostById = async (id, func) => {
   try {
     const response = await axios.get(`${base_url}/posts/${id}`);
@@ -51,15 +51,15 @@ export const getPostComments = async (
   postId
 ) => {
   try {
-    // todo handel pagination call to make sure that each comment send only once 
+    // todo handel pagination call to make sure that each comment send only once
     const res = await axios.get(
       `${base_url}/posts/comments/${postId}?page=${pageParam}&limit=${limit}`
     );
     // Ensure `posts` is an array and append new data to it
     let updatedComments = res.data.comments;
 
-    
-      updatedComments = comments===updatedComments
+    updatedComments =
+      comments === updatedComments
         ? [...comments, ...res.data.comments]
         : res.data.comments;
 

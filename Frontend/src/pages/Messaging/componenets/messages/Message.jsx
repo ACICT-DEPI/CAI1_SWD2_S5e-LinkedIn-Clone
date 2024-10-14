@@ -1,5 +1,5 @@
-import { FiEdit } from 'react-icons/fi'; // Edit Icon
-import { AiFillDelete } from 'react-icons/ai'; // Delete Icon
+import { FiEdit } from "react-icons/fi"; // Edit Icon
+import { AiFillDelete } from "react-icons/ai"; // Delete Icon
 import { useAuthStore } from "../../../../store/authStore";
 import useConversation from "../../../../store/useConversation";
 import { extractTime } from "../../../../utils/extractTime";
@@ -16,7 +16,10 @@ const Message = ({ message }) => {
 
   const formattedTime = extractTime(message.createdAt);
   const chatClassName = fromMe ? "chat-end" : "chat-start";
-  const profilePic = fromMe ? user.profilePicture : selectedConversation?.profilePicture;
+  const profilePic = fromMe
+    ? user.profilePicture
+    : selectedConversation?.profilePicture;
+
   const bubbleBgColor = fromMe ? "bg-linkedinBlue" : "bg-linkedinGray";
 
   const { deleteMessage } = useDeleteMessage();

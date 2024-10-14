@@ -1,26 +1,37 @@
 import React, { useEffect, useState } from "react";
 import Section from "../../../components/common/Section";
 import Button from "../../../components/common/Button";
-import ExperienceIcon from '../../../assets/images/ExperienceIcon.svg';
+import ExperienceIcon from "../../../assets/images/ExperienceIcon.svg";
 import { IoMdClose } from "react-icons/io";
 import { IoAddOutline } from "react-icons/io5";
 import { MdOutlineEdit } from "react-icons/md";
 import { useAuthStore } from "../../../store/authStore";
 import ConfirmationModal from "../../../components/common/ConfirmationModal";
-import axios from 'axios'
+import axios from "axios";
 
 const ExperienceSection = () => {
   const months = [
-    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
 
-  const {user , updateProfile } = useAuthStore();
+  const { user, updateProfile } = useAuthStore();
   const [deleteIndex, setDeleteIndex] = useState(null); // state for delete index
   const [confirmModalOpen, setConfirmModalOpen] = useState(false); // State for confirmation modal
   const [experience, setExperience] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [editingIndex, setEditingIndex] = useState(null); 
+  const [editingIndex, setEditingIndex] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     employmentType: "",
@@ -40,7 +51,7 @@ const ExperienceSection = () => {
       setExperience(user.experience);
     }
   }, [user]);
-  
+
   // handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -58,7 +69,7 @@ const ExperienceSection = () => {
   };
 
   //submit
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (editingIndex !== null) {
       // update
@@ -68,9 +79,18 @@ const ExperienceSection = () => {
       setExperience(updatedExperiences);
     } else {
       // add new
-      const response = await axios.post("http://localhost:5001/api/users/experience",formData)
-      console.log('exp data',response.data.experience[response.data.experience.length - 1]);
-      setExperience([...experience, response.data.experience[response.data.experience.length - 1]]);
+      const response = await axios.post(
+        "http://localhost:5000/api/users/experience",
+        formData
+      );
+      console.log(
+        "exp data",
+        response.data.experience[response.data.experience.length - 1]
+      );
+      setExperience([
+        ...experience,
+        response.data.experience[response.data.experience.length - 1],
+      ]);
     }
     resetForm();
   };
@@ -95,9 +115,9 @@ const ExperienceSection = () => {
 
   const handleDelete = async (index) => {
     setDeleteIndex(index);
-    setConfirmModalOpen(true); 
-};
- // Confirm deletion
+    setConfirmModalOpen(true);
+  };
+  // Confirm deletion
   const confirmDelete = async () => {
     if (deleteIndex !== null) {
       const updatedExperience = experience.filter((_, i) => i !== deleteIndex);
@@ -116,49 +136,80 @@ const ExperienceSection = () => {
       {experience.length === 0 ? (
         <div className="border-2 border-dashed border-linkedinBlue p-4 rounded-lg">
           <div className="flex justify-between mb-2">
-            <h2 className="text-lg font-semibold text-linkedinDarkGray">Experience</h2>
+            <h2 className="text-lg font-semibold text-linkedinDarkGray">
+              Experience
+            </h2>
             <button className="text-2xl text-linkedinDarkGray">
               <IoMdClose />
             </button>
           </div>
           <p className="text-sm text-linkedinGray">
-            Showcase your accomplishments and get up to 2X as many profile views and connections
+            Showcase your accomplishments and get up to 2X as many profile views
+            and connections
           </p>
-    
+
           <div className="flex items-center space-x-4 my-4">
-          <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8"/>
+            <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8" />
             <div className="text-gray-500">
               <p className="font-medium">Job Title</p>
               <p>Organization</p>
               <p>2023 - Present</p>
             </div>
           </div>
-          <Button label="Add experience" styleType="outline" onClick={() => setShowModal(true)} />
+          <Button
+            label="Add experience"
+            styleType="outline"
+            onClick={() => setShowModal(true)}
+          />
         </div>
       ) : (
         <>
           <div className="flex justify-between mb-2">
-            <h2 className="text-lg font-semibold text-linkedinDarkGray">Experience</h2>
-            <button className="text-xl" onClick={() => setShowModal(true)}><IoAddOutline /></button>
+            <h2 className="text-lg font-semibold text-linkedinDarkGray">
+              Experience
+            </h2>
+            <button className="text-xl" onClick={() => setShowModal(true)}>
+              <IoAddOutline />
+            </button>
           </div>
           {experience.map((exp, index) => (
             <div key={index} className="mb-4 border-b border-gray-200 pb-2">
               <div className="flex justify-between items-start mt-8">
                 <div className="flex items-center space-x-4">
-                  <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8"/>
+                  <img
+                    src={ExperienceIcon}
+                    alt="ExperienceIcon"
+                    className="w-8"
+                  />
                   <div>
-                    <h3 className="font-semibold text-linkedinDarkGray">{exp.title}</h3>
-                    <p className="font-medium text-linkedinGray">{exp.company}</p>
+                    <h3 className="font-semibold text-linkedinDarkGray">
+                      {exp.title}
+                    </h3>
+                    <p className="font-medium text-linkedinGray">
+                      {exp.company}
+                    </p>
                     <p className="text-sm text-linkedinGray">
                       {exp.startMonth} {exp.startYear} -{" "}
-                      {exp.currentlyWorking ? "Present" : `${exp.endMonth} ${exp.endYear}`}
+                      {exp.currentlyWorking
+                        ? "Present"
+                        : `${exp.endMonth} ${exp.endYear}`}
                     </p>
                     <p className="text-sm text-linkedinGray">{exp.location}</p>
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="text-xl text-linkedinDarkGray" onClick={() => handleEdit(index)}><MdOutlineEdit /></button>
-                  <button className="text-xl text-linkedinDarkGray" onClick={() => handleDelete(index)}><IoMdClose /></button>
+                  <button
+                    className="text-xl text-linkedinDarkGray"
+                    onClick={() => handleEdit(index)}
+                  >
+                    <MdOutlineEdit />
+                  </button>
+                  <button
+                    className="text-xl text-linkedinDarkGray"
+                    onClick={() => handleDelete(index)}
+                  >
+                    <IoMdClose />
+                  </button>
                 </div>
               </div>
             </div>
@@ -170,12 +221,17 @@ const ExperienceSection = () => {
       {showModal && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center">
           <div className="bg-white px-6 rounded-lg shadow-lg w-1/2 h-3/4 overflow-y-auto">
-          <div className="sticky top-0 py-4 bg-white z-10 flex justify-between">
-            <h2 className="text-lg font-semibold text-linkedinDarkGray mb-4" >Add Experience</h2>
-            <button className="text-3xl text-linkedinGray" onClick={() => setShowModal(false)}>
-              <IoMdClose />
-            </button>
-          </div>
+            <div className="sticky top-0 py-4 bg-white z-10 flex justify-between">
+              <h2 className="text-lg font-semibold text-linkedinDarkGray mb-4">
+                Add Experience
+              </h2>
+              <button
+                className="text-3xl text-linkedinGray"
+                onClick={() => setShowModal(false)}
+              >
+                <IoMdClose />
+              </button>
+            </div>
             <form onSubmit={handleSubmit} className="text-linkedinGray text-sm">
               <label className="block mb-2">Title*</label>
               <input
@@ -196,7 +252,7 @@ const ExperienceSection = () => {
                 onChange={handleChange}
                 required
               >
-                <option value="" >Select Employment Type</option>
+                <option value="">Select Employment Type</option>
                 <option value="Full Time">Full Time</option>
                 <option value="Part Time">Part Time</option>
                 <option value="Intern">Intern</option>
@@ -261,7 +317,9 @@ const ExperienceSection = () => {
                 >
                   <option value="">Month</option>
                   {months.map((month) => (
-                    <option key={month} value={month}>{month}</option>
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
                   ))}
                 </select>
                 <select
@@ -273,7 +331,9 @@ const ExperienceSection = () => {
                 >
                   <option value="">Year</option>
                   {years.map((year) => (
-                    <option key={year} value={year}>{year}</option>
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -289,7 +349,9 @@ const ExperienceSection = () => {
                 >
                   <option value="">Month</option>
                   {months.map((month) => (
-                    <option key={month} value={month}>{month}</option>
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
                   ))}
                 </select>
                 <select
@@ -301,12 +363,13 @@ const ExperienceSection = () => {
                 >
                   <option value="">Year</option>
                   {years.map((year) => (
-                    <option key={year} value={year}>{year}</option>
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
                   ))}
                 </select>
               </div>
 
-            
               <label className="block mb-2">Description</label>
               <textarea
                 name="description"
@@ -322,17 +385,14 @@ const ExperienceSection = () => {
                   styleType="default"
                   className=""
                   onClick={() => setShowModal(false)}
-                  />
-                <Button
-                  label="Save" 
-                  styleType="primary" type="submit"
                 />
+                <Button label="Save" styleType="primary" type="submit" />
               </div>
             </form>
           </div>
         </div>
       )}
-        {/* Confirmation Modal */}
+      {/* Confirmation Modal */}
       <ConfirmationModal
         isOpen={confirmModalOpen}
         onClose={() => setConfirmModalOpen(false)}
