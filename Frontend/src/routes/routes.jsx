@@ -19,7 +19,6 @@ import MessagingPage from "../pages/Messaging/MessagingPage";
 import FollowersPage from "../pages/Profile/FollowersPage";
 
 const Home = lazy(() => import("../pages/Home"));
-const Jobs = lazy(() => import("../pages/Jobs"));
 const Networks = lazy(() => import("../pages/Networks/NetworksPage"));
 const Notifications = lazy(() => import("../pages/Notifications/NotificationsPage"));
 const Profile = lazy(() => import("../pages/Profile/Profile"));
@@ -111,16 +110,6 @@ const routes = createBrowserRouter([
           <ProtectedRoute>
             <Suspense fallback={<h1>Loading...</h1>}>
               <MessagingPage />
-            </Suspense>
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "jobs",
-        element: (
-          <ProtectedRoute>
-            <Suspense fallback={<h1>Loading...</h1>}>
-              <Jobs />
             </Suspense>
           </ProtectedRoute>
         ),
