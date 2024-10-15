@@ -75,22 +75,49 @@ const getFeedPosts = async (req, res) => {
     }
     // Case 2: If the user has connections, fetch posts from both connections and by their interests
     else {
-      const userConnections = await findMyAcceptedConnectionsIds(user);
-      console.log(userConnections);
-
+      // Get connections' posts
       posts = await Posts.find({
-        $or: [
-          { auther: { $in: [...userConnections, user._id] } },
-          { tags: { $in: tagIds } },
-        ],
+        auther: { $in: user.connections }, // Fetch posts from connections
       })
-        .populate("auther", "name firstName lastName profilePicture headline")
+        .populate("auther", "name username profilePicture headline")
         .populate("comments.user", "name profilePicture")
-        .sort({ createdAt: -1 }) // First sort by time
-        .skip(skip) // Skip the calculated number of posts
-        .limit(limit); // Limit the number of posts returned, or null for all
-    }
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
 
+      // Get user's own posts
+      let userPosts = await Posts.find({
+        auther: user._id, // Fetch user's own posts
+      })
+        .populate("auther", "name username profilePicture headline")
+        .populate("comments.user", "name profilePicture")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+
+      // Combine both connections' posts and user posts
+      let combinedPosts = [...posts, ...userPosts];
+
+      // Fetch the rest of the posts excluding connections and user
+      const excludedAuthorIds = [...user.connections, user._id];
+      let restOfPosts = await Posts.find({
+        auther: { $nin: excludedAuthorIds }, // Exclude connections and user's posts
+      })
+        .populate("auther", "name username profilePicture headline")
+        .populate("comments.user", "name profilePicture")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+
+      // Combine all posts
+      combinedPosts = [...combinedPosts, ...restOfPosts];
+
+      // Sort all posts by createdAt
+      combinedPosts.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      posts = combinedPosts;      
+    }
     if (!posts || posts.length === 0) {
       return res.status(404).json({
         message: "No posts found!",
