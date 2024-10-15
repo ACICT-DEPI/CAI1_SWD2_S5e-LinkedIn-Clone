@@ -22,6 +22,7 @@ const Home = lazy(() => import("../pages/Home"));
 const Networks = lazy(() => import("../pages/Networks/NetworksPage"));
 const Notifications = lazy(() => import("../pages/Notifications/NotificationsPage"));
 const Profile = lazy(() => import("../pages/Profile/Profile"));
+const SearchPage = lazy(() => import("../pages/SearchPage"));
 
 const routes = createBrowserRouter([
   {
@@ -34,7 +35,6 @@ const routes = createBrowserRouter([
         element: <Navigate to="/feed" replace />,
       },
       {
-        
         path: "feed",
         element: (
           <ProtectedRoute>
@@ -118,7 +118,17 @@ const routes = createBrowserRouter([
         path: "followers",
         element: (
           <ProtectedRoute>
-              <FollowersPage />
+            <FollowersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "search/searchAll",
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <SearchPage />
+            </Suspense>
           </ProtectedRoute>
         ),
       },
@@ -153,29 +163,26 @@ const routes = createBrowserRouter([
     ],
   },
   {
-      path: "/SignUpDetailsPage",
-      element: (
-        <ProtectedRoute>
-            <Suspense fallback={<h1>Loading...</h1>}>
-              <SignUpDetailsPage />
-            </Suspense>
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: "/verify-email",
-      element: (
-        <RedirectAuthenticatedUser>
-          <EmailVerificationPage />
-        </RedirectAuthenticatedUser>
-
-      ),
-    },
+    path: "/SignUpDetailsPage",
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<h1>Loading...</h1>}>
+          <SignUpDetailsPage />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/verify-email",
+    element: (
+      <RedirectAuthenticatedUser>
+        <EmailVerificationPage />
+      </RedirectAuthenticatedUser>
+    ),
+  },
   {
     path: "/forgot-password",
-    element: (
-      <ForgotPasswordPage />
-    ),
+    element: <ForgotPasswordPage />,
   },
   {
     path: "/reset-password/:token",
@@ -183,7 +190,6 @@ const routes = createBrowserRouter([
       <RedirectAuthenticatedUser>
         <ResetPasswordPage />
       </RedirectAuthenticatedUser>
-      
     ),
   },
   {

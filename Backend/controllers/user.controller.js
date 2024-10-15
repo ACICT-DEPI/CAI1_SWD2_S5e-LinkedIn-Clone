@@ -91,16 +91,28 @@ const deleteUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     // Get page and limit from query parameters, default to 1 and null if not provided
-    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
-    const limit = parseInt(req.query.limit); // Default to undefined if not provided
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit);
 
     // Calculate the number of users to skip based on the current page
-    const skip = limit ? (page - 1) * limit : 0; // Only calculate skip if limit is defined
+    const skip = limit ? (page - 1) * limit : 0;
+    const search = req.query.search || "";
 
-    // Fetch users with optional pagination
-    const users = await User.find()
-      .skip(skip) // Skip the previous pages' users, if limit is defined
-      .limit(limit) // Limit the number of users to be returned, or undefined for all
+    // Construct search query with case-insensitive regex for name, username, etc.
+    const query = search
+      ? {
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { username: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {}; // If no search term, return all users
+
+    // Fetch users with optional pagination and search
+    const users = await User.find(query)
+      .skip(skip)
+      .limit(limit)
       .select("name username profilePicture headline"); // Select desired fields
 
     // Get total number of users for calculating total pages
