@@ -67,7 +67,7 @@ const ProfileHeader = () => {
       <main className="bg-white rounded-lg w-1/2 mx-auto">
         {/* قسم التعديل */}
         {isEditing && (
-          <div className="editing-section bg-gray-200 p-4 f z-20 w-full border rounded-lg ">
+          <div className="editing-section  z-20  border rounded-lg fixed  bg-white px-6 rounded-lg shadow-lg w-1/2 h-3/4 overflow-y-auto ">
             <h2>Edit Profile</h2>
             <div className="flex flex-col mb-4">
               <input

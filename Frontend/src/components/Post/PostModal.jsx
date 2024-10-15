@@ -43,16 +43,13 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
         formData.append("videos", videoLink);
       }
 
-      const response = await fetch(`http://localhost:5001/api/posts`, {
+      const response = await fetch(`${base_url}/posts`, {
         method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
         body: formData,
       });
       
       if (!response.ok) {
+        console.error(`Error: ${response.status} - ${response.statusText}`);
         throw new Error("Failed to submit post");
       }
 
