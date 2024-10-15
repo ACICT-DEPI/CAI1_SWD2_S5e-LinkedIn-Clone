@@ -17,41 +17,63 @@ const getSuggstedConnections = async (req, res) => {
     // Get IDs of users in pending connections
     const pendingConnections = await Connections.find({
       $or: [{ senderId: currentUser._id }, { receiverId: currentUser._id }],
-      status: "pending", // Adjust the status to match your implementation
+      status: "pending",
     });
 
     const pendingUserIds = pendingConnections.map((connection) =>
-      connection.senderId === currentUser._id
+      connection.senderId.toString() === currentUser._id.toString()
         ? connection.receiverId
         : connection.senderId
     );
 
-    const suggestedUsers = await User.find({
+    // Find suggested users (excluding current user, connected users, and pending connections)
+    let suggestedUsers = await User.find({
       _id: {
         $ne: currentUser._id,
         $nin: [...currentUser.connectedUsers, ...pendingUserIds],
       },
     })
       .populate({
-        path: "connectedUsers", // Populating connections of suggested users
-        select: "firstName lastName profilePicture headline", // Selecting fields to return
+        path: "connections", // Populating the connections field
+        select: "senderId receiverId status", // Selecting fields related to connections
       })
-      .select("name username profilePicture headline") // Fields to return from the user itself
+      .select("firstName lastName username profilePicture headline connections") // Fields to return from the user
       .skip(skip)
       .limit(limit);
+
+    // Add connectionStatus for each suggested user
+    suggestedUsers = suggestedUsers.map((user) => {
+      // Check if the current user has a connection with the suggested user
+      const userConnection = user.connections.find(
+        (connection) =>
+          connection.senderId.toString() === currentUser._id.toString() ||
+          connection.receiverId.toString() === currentUser._id.toString()
+      );
+
+      // Convert user to plain JS object to modify it
+      user = user.toObject();
+
+      // Assign connectionStatus based on whether a connection exists
+      user.connectionStatus = userConnection ? userConnection.status : "connect";
+
+      // Remove the connections field from the user object
+      delete user.connections;
+
+      return user;
+    });
 
     // Get total number of suggested users for calculating total pages
     const totalSuggestedUsers = await User.countDocuments({
       _id: {
         $ne: currentUser._id,
-        $nin: [...currentUser.connectedUsers, ...pendingUserIds], // Exclude connected and pending users
+        $nin: [...currentUser.connectedUsers, ...pendingUserIds],
       },
     });
 
     res.status(200).json({
       suggestedUsers,
       currentPage: page,
-      totalPages: Math.ceil(totalSuggestedUsers / limit), // Total pages calculated
+      totalPages: Math.ceil(totalSuggestedUsers / limit),
       totalSuggestedUsers,
     });
   } catch (error) {
@@ -110,12 +132,33 @@ const getAllUsers = async (req, res) => {
         }
       : {}; // If no search term, return all users
 
-    // Fetch users with optional pagination and search
-    const users = await User.find(query)
+    var users = await User.find(query)
       .skip(skip)
       .limit(limit)
-      .select("name username profilePicture headline"); // Select desired fields
+      .select("name username profilePicture headline")
+      .populate({
+        path: "connections", 
+        select: "senderId receiverId status", 
+      }); 
+    users = users.map((user) => {
+      // Check if the logged-in user is part of any connection (either sender or receiver)
+      const userConnection = user.connections.find(
+        (connection) =>
+          connection.senderId.toString() === req.user.id ||
+          connection.receiverId.toString() === req.user.id
+      );
 
+      // If a connection is found, set the status; otherwise, default to "connect"
+      user = user.toObject(); // Convert mongoose document to plain JS object
+      user.connectionStatus = userConnection
+        ? userConnection.status
+        : "connect";
+
+      // Remove connections field if it's not needed in the response
+      delete user.connections;
+
+      return user;
+    });
     // Get total number of users for calculating total pages
     const totalUsers = await User.countDocuments();
 

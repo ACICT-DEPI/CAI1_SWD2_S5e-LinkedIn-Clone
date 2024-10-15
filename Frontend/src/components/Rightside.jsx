@@ -19,10 +19,9 @@ const Rightside = () => {
           }
         );
         setSuggestedUsers(response.data.suggestedUsers);
-        // Initialize the connectionStatus for each user as "Connect"
         const initialStatus = response.data.suggestedUsers.reduce(
           (acc, user) => {
-            acc[user._id] = "Connect"; // default state is "Connect"
+            acc[user._id] = user.connectionStatus;
             return acc;
           },
           {}
@@ -39,10 +38,9 @@ const Rightside = () => {
   const sendConnectionRequest = async (userId) => {
     try {
       const currentStatus = connectionStatus[userId];
+      console.log(currentStatus);
 
-      if (currentStatus === "Connect") {
-        console.log(userId);
-
+      if (currentStatus === "connect") {
         // Send a connection request
         const response = await axios.post(
           "http://localhost:5000/api/connections",
@@ -50,18 +48,14 @@ const Rightside = () => {
             receiverId: userId,
           }
         );
-
         console.log(" request :", response);
         console.log("Connection request sent:", response.data);
-        // Update the connection status to "Pending"
+        // Update the connection status to "pending"
         setConnectionStatus((prevStatus) => ({
           ...prevStatus,
-          [userId]: "Pending",
+          [userId]: "pending",
         }));
-      } else if (currentStatus === "Pending") {
-        console.log("in elseeeeeeeeeeeeee");
-
-        // Call changeStatus API to revert the status back to "Connect"
+      } else if (currentStatus === "pending") {
         const response = await axios.post(
           "http://localhost:5000/api/connections/status",
           {
@@ -71,10 +65,9 @@ const Rightside = () => {
         );
 
         console.log("Status changed back to Connect:", response.data);
-        // Update the connection status to "Connect"
         setConnectionStatus((prevStatus) => ({
           ...prevStatus,
-          [userId]: "Connect",
+          [userId]: "connect",
         }));
       }
     } catch (error) {
@@ -107,10 +100,10 @@ const Rightside = () => {
                   className={`bg-transparent text-black/60 shadow-inner border border-black/60 py-4 px-4 rounded-full flex items-center 
               font-semibold justify-center max-h-8 max-w-[480px] text-center outline-none 
               hover:border-black hover:border-1
-              ${connectionStatus[user._id] === "Pending" ? "bg-gray-400" : ""}`}
+              ${connectionStatus[user._id] === "pending" ? "bg-gray-500" : ""}`}
                   onClick={() => sendConnectionRequest(user._id)}
                 >
-                  {connectionStatus[user._id] || "Connect"}
+                  {connectionStatus[user._id]}
                 </button>
               </div>
             </li>
