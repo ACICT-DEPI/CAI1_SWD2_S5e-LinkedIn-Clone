@@ -8,9 +8,10 @@ const Main = () => {
   const [showModal, setShowModal] = useState(false);
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [change,setchange] = useState("none")
   useEffect(() => {
     getFeedPosts(setPosts);
-  }, []);
+  }, [change]);
 
   const handleClick = () => setShowModal(!showModal);
 
@@ -56,7 +57,9 @@ const Main = () => {
         ))}
         {posts ? (
           posts.length > 0 ? (
-            posts.map((post) => <PostFullView post={post} key={post._id} />)
+            posts.map((post) => (
+              <PostFullView post={post} key={post._id} setChange={setchange} />
+            ))
           ) : (
             <></>
             // <CircularProgress />
@@ -65,7 +68,6 @@ const Main = () => {
           <></>
           // <CircularProgress />
         )}
-        
       </div>
     </div>
   );

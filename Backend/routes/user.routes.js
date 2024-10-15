@@ -55,6 +55,11 @@ router.post(
   UpdateProfile
 ); //updating profile
 
-router.put("/profile", verifyTokenAndUserCheck, UpdateProfile);
+router.put(
+  "/profile",
+  verifyTokenAndUserCheck,
+  upload.fields([{ name: "profilePicture" }, { name: "bannerImg" }]),
+  UpdateProfile
+);
 
 module.exports = router;

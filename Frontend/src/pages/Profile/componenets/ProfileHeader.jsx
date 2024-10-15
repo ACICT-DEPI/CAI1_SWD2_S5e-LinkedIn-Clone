@@ -14,7 +14,9 @@ const ProfileHeader = () => {
   const [lastName, setLastName] = useState(user.lastName);
   const [headline, setHeadline] = useState(user.headline);
   const [isLoading, setIsLoading] = useState(false);
-  const [profileImage, setProfileImage] = useState(user.profileImage || defaultImage);
+  const [profileImage, setProfileImage] = useState(
+    user.profilePicture || defaultImage
+  );
   const [newProfileImage, setNewProfileImage] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState("src/assets/images/card-bg.svg");
   const [newBackgroundImage, setNewBackgroundImage] = useState(null);
@@ -23,12 +25,12 @@ const ProfileHeader = () => {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await updateProfile({ 
-        firstName, 
-        lastName, 
-        headline, 
-        profileImage: newProfileImage || profileImage,
-        backgroundImage: newBackgroundImage || backgroundImage
+      await updateProfile({
+        firstName,
+        lastName,
+        headline,
+        profilePicture: newProfileImage || profileImage,
+        backgroundImage: newBackgroundImage || backgroundImage,
       }); 
       setIsEditing(false);
     } catch (error) {
@@ -42,6 +44,8 @@ const ProfileHeader = () => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
+      console.log("file",reader);
+      
       reader.onloadend = () => {
         setNewProfileImage(reader.result);
         setProfileImage(reader.result);

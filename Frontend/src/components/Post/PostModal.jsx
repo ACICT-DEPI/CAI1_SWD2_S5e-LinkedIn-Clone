@@ -3,6 +3,7 @@ import ReactPlayer from "react-player";
 import styled from "styled-components";
 import "../Post/style.css";
 import { getFeedPosts } from "../../utils/postApi";
+import axios from "axios";
 const base_url = "http://localhost:5000/api";
 
 const PostModal = ({ showModal, handleClick, handleAddPost }) => {
@@ -28,8 +29,8 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
     setError(""); // Clear previous error
 
     const newPost = {
-      image: shareImage ? URL.createObjectURL(shareImage) : null,
-      video: videoLink,
+      imgs: shareImage ? URL.createObjectURL(shareImage) : null,
+      videos: videoLink,
       content: editorText,
     };
 
@@ -42,15 +43,18 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
       if (videoLink) {
         formData.append("videos", videoLink);
       }
+      console.log("form data", formData);
 
-      const response = await fetch(`http://localhost:5000/api/posts`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: formData,
-      });
+      const response = await axios.post(
+        `http://localhost:5000/api/posts`,
+        newPost,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response);
 
       if (!response.ok) {
         throw new Error("Failed to submit post");

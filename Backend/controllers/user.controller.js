@@ -93,7 +93,7 @@ const getAllUsers = async (req, res) => {
     // Get page and limit from query parameters, default to 1 and null if not provided
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit);
-
+    let connectionStatus = "";
     // Calculate the number of users to skip based on the current page
     const skip = limit ? (page - 1) * limit : 0;
     const search = req.query.search || "";
@@ -124,6 +124,7 @@ const getAllUsers = async (req, res) => {
       currentPage: page,
       totalPages: limit ? Math.ceil(totalUsers / limit) : 1, // Total pages calculated only if limit is defined
       totalUsers,
+      connectionstatus:""//pending, accepted, notFriend,
     });
   } catch (error) {
     console.log("error in Up getAllUsers:", error);
@@ -236,7 +237,6 @@ const UpdateProfile = async (req, res) => {
         updatedData[field] = req.body[field];
       }
     });
-
     // Handle profile picture upload
     if (req.files && req.files.profilePicture) {
       try {
@@ -274,7 +274,7 @@ const UpdateProfile = async (req, res) => {
 
     res.json({ success: true, data: user });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: "Server error"});
   }
 };
 

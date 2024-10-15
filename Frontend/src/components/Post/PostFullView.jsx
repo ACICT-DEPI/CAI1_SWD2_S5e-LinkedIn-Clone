@@ -8,13 +8,12 @@ import Comment from "./Comment";
 import LargeText from "../common/LargeText";
 import axios from "axios";
 import { getPostComments } from "../../utils/postApi";
-function PostFullView({ post }) {
+function PostFullView({ post, setChange }) {
   const description = post.content;
 
   const [isVisible, setIsVisible] = useState(false);
   const [comments, setComments] = useState([]);
   const componentRef = useRef(null);
-
   useEffect(() => {
     getPostComments(setComments, 1, 10, comments, post._id);
   }, []);
@@ -39,7 +38,6 @@ function PostFullView({ post }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
   return (
     <div className="bg-gray-100 p-3 rounded my-2">
       {/* title with profile picture */}
@@ -70,13 +68,14 @@ function PostFullView({ post }) {
       {/* Reacts */}
       <Reacts post={post} />
       <hr />
-      <ReactsInteraction post={post} />
+      <ReactsInteraction post={post} setChange={setChange} />
       {isVisible && (
         <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
           <PostFocus
             componentRef={componentRef}
             post={post}
             comments={comments}
+            setChange={setChange}
           />
         </div>
       )}
@@ -84,7 +83,7 @@ function PostFullView({ post }) {
   );
 }
 
-const PostFocus = ({ componentRef, post, comments }) => {
+const PostFocus = ({ componentRef, post, comments, setChange }) => {
   const [showMore, setShowMore] = useState(false);
   console.log("comments", comments);
 
@@ -136,7 +135,7 @@ const PostFocus = ({ componentRef, post, comments }) => {
             )}
           </div>
           <Reacts />
-          <ReactsInteraction />
+          <ReactsInteraction post={post} setChange={setChange} />
           <AddComment />
           {comments ? (
             comments.map((comment, index) => <Comment comment={comment} />)
