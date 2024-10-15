@@ -1,7 +1,6 @@
 const { User } = require("../models/user.model.js");
 const { Notification } = require("../models/notification.model.js");
 const Connections = require("../models/connection.model");
-const { connection } = require("mongoose");
 const sendConnection = async (req, res) => {
   try {
     const { receiverId } = req.body;
