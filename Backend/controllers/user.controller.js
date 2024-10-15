@@ -133,7 +133,11 @@ const getAllUsers = async (req, res) => {
 
 const getUserPosts = async (req, res) => {
   try {
-    const user = req.user;
+    let user = req.user;
+    const userId = req.body.userId;
+    if(userId && userId !== req.user._id){
+      user = await User.findById(userId);
+    }
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
