@@ -7,12 +7,12 @@ function UserInfoCart({ user }) {
       {/* user photos */}
       <div className="relative  mb-5 fixed">
         <img
-          src={user.profilePicture}
+          src={user.bannerImg}
           alt=""
           className="h-[100px] w-[100%] object-cover "
         />
         <img
-          src={user.bannerImg}
+          src={user.profilePicture}
           alt=""
           className="h-[80px] w-[80px] rounded-full absolute top-12 border-2 left-1/2 -translate-x-1/2 cursor-pointer"
         />

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Button from "../common/Button";
-import commentIcon from "../../assets/images/comment-icon.svg";
+import shareIcon from "../../assets/images/share-icon.svg";
 import likeIcon from "../../assets/images/like-icon.svg";
 import { useAuthStore } from "../../store/authStore";
 import axios from "axios";
 import { addLike, deleteLike, sharePost } from "../../utils/postApi";
 import LikeIcon from "../Icons/LikeIcon";
 
-const handelCommentClicked = (post_id) => {};
+const handelCommentClicked = (post) => {
+
+};
 
 const handelShareClicked = (post) => {
   sharePost(post.auther, post._id);
@@ -48,26 +50,26 @@ function ReactsInteraction({ post, setChange }) {
         styleType="outline"
       />
       {/* Comment */}
-      <Button
+      {/* <Button
         label={"Comment"}
         icon={<img src={commentIcon} alt="comment" />}
         onClick={() => console.log("Comment button clicked")}
         styleType="outline"
-      />
+      /> */}
       {/* Repost */}
       <Button
         label={"Share"}
-        icon={<img src={commentIcon} alt="repost" />}
+        icon={<img src={shareIcon} alt="repost" />}
         onClick={() => handelShareClicked(post)}
         styleType="outline"
       />
       {/* Send */}
-      <Button
+      {/* <Button
         label={"Send"}
         icon={<img src={commentIcon} alt="send" />}
         onClick={() => console.log("Send button clicked")}
         styleType="outline"
-      />
+      /> */}
     </div>
   );
 }

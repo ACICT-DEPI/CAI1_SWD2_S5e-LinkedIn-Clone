@@ -7,3 +7,6 @@
 input{
   background-color: #fff !important;
 }
+.custom-popup {
+  z-index: 5002 !important; /* Ensure it's above everything */
+}

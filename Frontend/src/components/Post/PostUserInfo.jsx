@@ -2,8 +2,6 @@ import React from "react";
 import { extractTime, extractTimeDuration } from "../../utils/extractTime";
 
 function PostUserInfo({ post }) {
-  console.log(post);
-
   return post ? (
     <div className="flex items-center gap-2">
       <img

@@ -6,17 +6,46 @@ import AddComment from "./AddComment";
 import PostUserInfo from "./PostUserInfo";
 import Comment from "./Comment";
 import LargeText from "../common/LargeText";
-import axios from "axios";
-import { getPostComments } from "../../utils/postApi";
-function PostFullView({ post, setChange }) {
-  const description = post.content;
+import deleteIcon from "../../assets/images/delete.svg";
 
+import axios from "axios";
+import { deletePost, getPostComments } from "../../utils/postApi";
+import { useAuthStore } from "../../store/authStore";
+import Swal from "sweetalert2";
+function PostFullView({ post, setChange, setPosts }) {
+  const description = post.content;
+  const { user } = useAuthStore();
   const [isVisible, setIsVisible] = useState(false);
   const [comments, setComments] = useState([]);
+  const [commentAdded, setCommentAdded] = useState(0);
+  const [page, setPage] = useState(1);
+  const [hasMoreComments, setHasMoreComments] = useState(true);
   const componentRef = useRef(null);
+  const loaderRef = useRef(null);
+  const limit = 3;
+  const loadMoreComments = async () => {
+    if (hasMoreComments) {
+      const newPage = page + 1;
+      const response = await getPostComments(
+        setComments,
+        newPage,
+        limit,
+        comments,
+        post._id
+      );
+      if (response.length === 0) {
+        console.log("no more comments");
+
+        setHasMoreComments(false); // No more comments
+      } else {
+        setPage(newPage);
+      }
+    }
+  };
+
   useEffect(() => {
-    getPostComments(setComments, 1, 10, comments, post._id);
-  }, []);
+    getPostComments(setComments, 1, limit, comments, post._id);
+  }, [commentAdded]);
   // Function to open the PostFocus component when the image is clicked
   const handleImageClick = () => {
     setIsVisible(true);
@@ -30,6 +59,36 @@ function PostFullView({ post, setChange }) {
       document.body.style.overflow = "";
     }
   };
+  const handleDeletePost = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deletePost(post._id, setPosts)
+          .then(() => {
+            // Update your state or handle UI changes after deletion
+            setCommentAdded((prev) => prev - 1); // If you need to refresh comments
+
+            Swal.fire("Deleted!", "Your post has been deleted.", "success");
+          })
+          .catch((error) => {
+            Swal.fire(
+              "Error!",
+              "There was an issue deleting your post.",
+              "error"
+            );
+            console.error("Error deleting post:", error);
+          });
+      }
+    });
+  };
 
   // Add event listener to detect clicks outside the component
   useEffect(() => {
@@ -38,8 +97,16 @@ function PostFullView({ post, setChange }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
   return (
-    <div className="bg-gray-100 p-3 rounded my-2">
+    <div className="bg-gray-100 p-3 rounded my-2 relative">
+      {user._id === post.auther._id?<button
+        className="absolute right-0 top-0 m-2 hover:bg-red-500 p-3 rounded-full duration-300"
+        onClick={handleDeletePost}
+      >
+        <img src={deleteIcon} alt="deleteIcon" />
+      </button>:<></>}
+      
       {/* title with profile picture */}
       <div className="flex gap-2 justify-between items-start pb-3 ">
         <PostUserInfo post={post} />
@@ -73,12 +140,18 @@ function PostFullView({ post, setChange }) {
       <hr />
       <ReactsInteraction post={post} setChange={setChange} />
       {isVisible && (
-        <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)] flex justify-center items-center z-[5000]">
+        <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)] flex justify-center items-center z-[500]">
           <PostFocus
             componentRef={componentRef}
             post={post}
             comments={comments}
             setChange={setChange}
+            commentAdded={commentAdded}
+            setCommentAdded={setCommentAdded}
+            setComments={setComments}
+            loaderRef={loaderRef}
+            loadMoreComments={loadMoreComments}
+            hasMoreComments={hasMoreComments}
           />
         </div>
       )}
@@ -86,9 +159,34 @@ function PostFullView({ post, setChange }) {
   );
 }
 
-const PostFocus = ({ componentRef, post, comments, setChange }) => {
+const PostFocus = ({
+  componentRef,
+  post,
+  comments,
+  setChange,
+  commentAdded,
+  setCommentAdded,
+  setComments,
+  loadMoreComments,
+  loaderRef,
+  hasMoreComments,
+}) => {
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        loadMoreComments(); // Load more comments when the loader is visible
+      }
+    });
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+    return () => {
+      if (loaderRef.current) {
+        observer.unobserve(loaderRef.current);
+      }
+    };
+  }, [comments, hasMoreComments]);
   const [showMore, setShowMore] = useState(false);
-
   const description = post.content;
   return post ? (
     <div
@@ -145,12 +243,24 @@ const PostFocus = ({ componentRef, post, comments, setChange }) => {
             <Reacts post={post} />
           </div>
           <ReactsInteraction post={post} setChange={setChange} />
-          <AddComment />
+          <AddComment
+            post={post}
+            setCommentAdded={setCommentAdded}
+            commentAdded={commentAdded}
+          />
           {comments ? (
-            comments.map((comment, index) => <Comment comment={comment} />)
+            comments.map((comment, index) => (
+              <Comment
+                comment={comment}
+                commentAdded={commentAdded}
+                setCommentAdded={setCommentAdded}
+              />
+            ))
           ) : (
             <>No Comments</>
           )}
+          <div ref={loaderRef} className="h-10"></div>
+          {!hasMoreComments && <p>No more comments to load</p>}
         </div>
       </div>
     </div>
