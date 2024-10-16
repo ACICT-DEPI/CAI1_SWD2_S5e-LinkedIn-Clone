@@ -135,10 +135,10 @@ const getAllUsers = async (req, res) => {
     var users = await User.find(query)
       .skip(skip)
       .limit(limit)
-      .select("name username profilePicture headline")
+      .select("firstName lastName username profilePicture headline")
       .populate({
-        path: "connections", 
-        select: "senderId receiverId status", 
+        path: "connections",
+        select: "senderId receiverId status",
       }); 
     users = users.map((user) => {
       // Check if the logged-in user is part of any connection (either sender or receiver)

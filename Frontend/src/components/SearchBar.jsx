@@ -1,10 +1,9 @@
 // SearchBar.js
 import React, { useState } from "react";
 import searchIcon from "../assets/images/nav/search-icon.svg";
-import { Link  } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SearchBar = ({ onSearch, filteredUsers }) => {
-
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -13,12 +12,12 @@ const SearchBar = ({ onSearch, filteredUsers }) => {
     onSearch(e.target.value); // Call the parent function to update the search term
   };
 
-    const handleUserClick = (username) => {
-      // Optionally handle user selection if needed
-      console.log(`User clicked: ${username}`);
-      setSearchTerm(username);
-      setIsDropdownOpen(false);
-    };
+  const handleUserClick = (username) => {
+    // Optionally handle user selection if needed
+    console.log(`User clicked: ${username}`);
+    setSearchTerm(username);
+    setIsDropdownOpen(false);
+  };
 
   return (
     <div className="relative flex">
@@ -47,7 +46,9 @@ const SearchBar = ({ onSearch, filteredUsers }) => {
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => handleUserClick(user.username)}
                   >
-                    {user.username}
+                    {user.firstName
+                      ? `${user.firstName} ${user.lastName}`
+                      : user.username}
                   </li>
                 ))}
               </ul>

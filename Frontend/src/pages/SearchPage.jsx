@@ -97,7 +97,7 @@ const SearchPage = () => {
               <div className="flex items-center w-full gap-4">
                 <div className="flex-grow">
                   <span className="font-semibold text-black">
-                    {user.FirsName
+                    {user.firstName
                       ? `${user.firstName} ${user.lastName}`
                       : user.username}
                   </span>
@@ -107,7 +107,7 @@ const SearchPage = () => {
                 <button
                   className={`bg-transparent text-black/60 shadow-inner border border-black/60 py-4 px-4 rounded-full flex items-center 
               font-semibold justify-center max-h-8 max-w-[480px] text-center outline-none 
-              hover:border-black hover:border-1${
+              hover:border-black hover:border-1 ${
                 connectionStatus[user._id] === "accepted" ? "hidden" : "block"
               }
               ${connectionStatus[user._id] === "pending" ? "bg-gray-500" : ""}`}
