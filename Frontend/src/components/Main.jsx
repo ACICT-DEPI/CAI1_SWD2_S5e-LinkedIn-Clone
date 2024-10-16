@@ -16,7 +16,7 @@ const Main = () => {
   const handleClick = () => setShowModal(!showModal);
 
   const handleAddPost = (post) => {
-    setPosts([post, ...posts]);
+    // setPosts([post, ...posts]);
     setShowModal(false);
   };
 

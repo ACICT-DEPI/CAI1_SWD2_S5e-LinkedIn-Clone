@@ -47,19 +47,22 @@ function PostFullView({ post, setChange }) {
       </div>
       {/* Description */}
       <div>
-        <LargeText description={description} />
+        <LargeText description={description} style="text-linkedinDarkGray" />
       </div>
       {/* Photos -videos */}
       {/* todo make it slider ! */}
-      <div className="relative group cursor-pointer" onClick={handleImageClick}>
-        {post.images.map((img, index) => {
+      <div
+        className="relative group cursor-pointer w-full object-cover flex justify-center"
+        onClick={handleImageClick}
+      >
+        {post.images.map((img, index) => (
           <img
             key={index}
             src={img}
             alt=""
-            className="w-[100vw] rounded-xl my-3 object-cover"
-          />;
-        })}
+            className="w-[400px]  rounded-xl my-3 object-cover"
+          />
+        ))}
         <div className="absolute bottom-5 right-5 bg-[rgba(255,255,255,0.6)] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           {post.images.length}
         </div>

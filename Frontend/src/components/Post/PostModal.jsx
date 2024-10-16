@@ -20,16 +20,21 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
       alert(`not an image, the file is a ${typeof image}`);
       return;
     }
-    setShareImage(image);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setShareImage(reader.result);
+    };
+    reader.readAsDataURL(image);
   };
 
   const handlePostArticles = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(""); // Clear previous error
-
+    console.log("shareImage", shareImage);
+    
     const newPost = {
-      imgs: shareImage ? URL.createObjectURL(shareImage) : null,
+      imgs: shareImage ? [shareImage] : [], // Wrap single image in an array
       videos: videoLink,
       content: editorText,
     };
@@ -44,7 +49,8 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
         formData.append("videos", videoLink);
       }
       console.log("form data", formData);
-
+      console.log(newPost);
+      
       const response = await axios.post(
         `http://localhost:5000/api/posts`,
         newPost,
@@ -181,7 +187,7 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
                       </label>
                     </p>
                     {shareImage && (
-                      <img src={URL.createObjectURL(shareImage)} alt="img" />
+                      <img src={shareImage} alt="img" />
                     )}
                   </UploadImage>
                 ) : assetArea === "media" ? (

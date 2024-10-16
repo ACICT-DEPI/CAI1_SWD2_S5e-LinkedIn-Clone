@@ -1,7 +1,9 @@
 const express = require("express");
 
 const postController = require("../controllers/post.controller.js");
-
+const multer = require("multer");
+const path = require("path");
+const upload = multer({ dest: path.join(__dirname, "../uploads/") });
 const { verifyTokenAndUserCheck } = require("../middleware/verifyToken");
 
 const router = express.Router();
@@ -13,6 +15,7 @@ router.get("/comments/:id", verifyTokenAndUserCheck, postController.getAllCommen
 router.post(
   "/",
   verifyTokenAndUserCheck,
+  upload.fields([{ name: "Images" }]),
   postController.createPost
 );
 router.get("/:id", verifyTokenAndUserCheck, postController.getPostById);

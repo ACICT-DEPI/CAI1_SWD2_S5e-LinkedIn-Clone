@@ -5,6 +5,7 @@ import PostFullView from "../../components/Post/PostFullView";
 import UserInfoCart from "../../components/common/UserInfoCart";
 import RecommendCard from "../../components/common/RecommendCard";
 import { getUserPosts } from "../../utils/postApi";
+import Rightside from "../../components/Rightside";
 function AllActivitysPage() {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
@@ -39,6 +40,7 @@ function AllActivitysPage() {
         {/* Right Sidebar */}
         <aside className="hidden lg:block lg:col-span-3 p-4">
           <RecommendCard />
+          {/* <Rightside /> */}
         </aside>
       </div>
     </div>

@@ -3,6 +3,8 @@ const Tag = require("../models/tag.model.js");
 const { User } = require("../models/user.model.js");
 const { Notification } = require("../models/notification.model.js");
 const Connections = require("../models/connection.model.js");
+const cloudinary = require("../db/cloudinary.js");
+
 const findMyAcceptedConnectionsIds = async (user) => {
   try {
     let acceptedUsers = [];
@@ -124,6 +126,7 @@ const createPost = async (req, res) => {
   try {
     const { content, imgs, videos } = req.body;
     let newPost;
+    let imgsList = [];
     const user = req.user;
     console.log(user);
     if (!user) {
@@ -136,28 +139,38 @@ const createPost = async (req, res) => {
         // auther: req.user._id, // Fix typo (use -> req.user)
         auther: user._id,
         content,
-        media: {
-          images: imgs, // Fix typo: images -> imgs
-          videos: videos,
-        },
+        images: imgsList, // Fix typo: images -> imgs
+        videos: videos,
       });
     } else if (imgs) {
+      try {
+        const uploadResults = await Promise.all(
+          imgs.map(async (img) => {
+            const result = await cloudinary.uploader.upload(img);
+            return result.secure_url; // Collect secure URLs
+          })
+        );
+        imgsList.push(...uploadResults);
+      } catch (uploadError) {
+        return res.status(500).json({
+          success: false,
+          message: "Error uploading profile picture",
+          imgs: imgs,
+          imgsList: imgsList,
+        });
+      }
       newPost = new Posts({
         auther: req.user._id, // Fix typo (use -> req.user)
         content,
-        media: {
-          images: imgs, // Fix typo: imags -> imgs
-          videos: [],
-        },
+        images: imgsList, // Fix typo: imags -> imgs
+        videos: [],
       });
     } else if (videos) {
       newPost = new Posts({
         auther: req.user._id, // Fix typo (use -> req.user)
         content,
-        media: {
-          images: [],
-          videos: videos,
-        },
+        images: imgsList,
+        videos: videos,
       });
     } else {
       newPost = new Posts({
@@ -193,7 +206,7 @@ const createPost = async (req, res) => {
     // Wait for all notifications to be processed
     await Promise.all(notifications);
 
-    res.status(201).json(newPost);
+    res.status(201).json({ data: newPost, imgs: imgs, imgsList: imgsList });
   } catch (error) {
     console.error("Error creating post:", error);
     res.status(500).json({
@@ -207,7 +220,10 @@ const getPostById = async (req, res) => {
   try {
     const postId = req.params.id;
     const post = await Posts.findById(postId)
-      .populate("auther", "name firstName lastName username profilePicture headline")
+      .populate(
+        "auther",
+        "name firstName lastName username profilePicture headline"
+      )
       .populate("comments.user", "name profilePicture username headline");
 
     if (!post) {
