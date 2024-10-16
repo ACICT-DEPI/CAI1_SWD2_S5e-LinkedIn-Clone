@@ -22,7 +22,7 @@ const icons = [
 
 export default function Navbar() {
   //states
-  const { logout,user } = useAuthStore();
+  const { logout, user } = useAuthStore();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [visibleIcons, setVisibleIcons] = useState(icons.length);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -105,23 +105,20 @@ export default function Navbar() {
   // Fetch search results from backend when search term changes
   useEffect(() => {
     const fetchSearchResults = async () => {
-      const page = 1; // You can set this dynamically if you're paginating
-      const limit = 10; // You can adjust this to fit your needs
+      const page = 1;
+      const limit = 10;
 
       if (searchTerm === "") {
-        setFilteredUsers(suggestedUsers); // Show suggested users when no search term
+        setFilteredUsers(suggestedUsers);
       } else {
         try {
-          const response = await axios.get(
-            `http://localhost:5000/api/users`, // Your backend route for fetching users
-            {
-              params: {
-                search: searchTerm,
-                page,
-                limit,
-              },
-            }
-          );
+          const response = await axios.get(`http://localhost:5000/api/users`, {
+            params: {
+              search: searchTerm,
+              page,
+              limit,
+            },
+          });
 
           const { users } = response.data;
           setFilteredUsers(users);
@@ -248,11 +245,19 @@ export default function Navbar() {
                 className="flex flex-col items-center text-gray-500 hover:text-black px-3 py-2 rounded-md text-xs font-medium cursor-pointer"
                 ref={userDropdown}
               >
-                <img
-                  src={user.profilePicture?user.profilePicture:userIcon}
-                  alt="user icon"
-                  className="rounded-full h-5 w-5"
-                />
+                {user ? (
+                  <img
+                    src={user.profilePicture ? user.profilePicture : userIcon}
+                    alt="user icon"
+                    className="rounded-full h-5 w-5"
+                  />
+                ) : (
+                  <img
+                    src={ userIcon}
+                    alt="user icon"
+                    className="rounded-full h-5 w-5"
+                  />
+                )}
                 <div className="flex items-center">
                   <span className="hidden sm:inline">Me</span>
                   <svg

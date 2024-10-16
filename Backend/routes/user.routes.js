@@ -53,7 +53,7 @@ router.post(
   "/:id",
   upload.fields([{ name: "profilePicture" }, { name: "bannerImg" }]),
   UpdateProfile
-); //updating profile
+); 
 
 router.put(
   "/profile",

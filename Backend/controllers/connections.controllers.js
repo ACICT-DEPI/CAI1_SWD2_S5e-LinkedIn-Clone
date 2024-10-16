@@ -14,6 +14,13 @@ const sendConnection = async (req, res) => {
         message: "Bad request - user and receiverId are required!",
       });
     }
+    const receiver = await User.findById(receiverId);
+
+    if (!receiver) {
+      return res.status(404).json({
+        message: "Receiver not found!",
+      });
+    }
 
     // Check if a connection already exists
     const existingConnection = await Connections.findOne({
@@ -23,6 +30,25 @@ const sendConnection = async (req, res) => {
     console.log(existingConnection);
 
     if (existingConnection) {
+      // && existingConnection.status == "pending"
+      // existingConnection.status == "accepted";
+
+      // const notification = new Notification({
+      //   type: "connectionRequest",
+      //   message: notificationMessage,
+      //   relatedId: newConnection._id,
+      //   isRead: false,
+      // });
+
+      // const savedNotification = await notification.save();
+
+      // receiver.notifications.push(savedNotification._id);
+      // await receiver.save();
+
+      // res.status(201).json({
+      //   message: `Connection request successfully sent from ${user.username} to ${receiver.username}`,
+      //   connection: newConnection,
+      // });
       return res.status(400).json({
         message:
           "Connection request already sent or users are already connected!",
@@ -41,15 +67,6 @@ const sendConnection = async (req, res) => {
     user.connections.push(newConnection._id);
     // user.pendingUsers.push(receiverId);
     await user.save();
-
-    // Update receiver's connections
-    const receiver = await User.findById(receiverId);
-
-    if (!receiver) {
-      return res.status(404).json({
-        message: "Receiver not found!",
-      });
-    }
 
     receiver.connections.push(newConnection._id); // Add new connection to receiver's connections
     await receiver.save(); // Save receiver after updating connections
@@ -136,7 +153,7 @@ const changeConnectionStatus = async (req, res) => {
 
     if (status === "rejected") {
       console.log("hereeeeeeeeeeeeeeeeeeee");
-      
+
       // If rejected, delete the connection from the database
       await Connections.findByIdAndDelete(connection._id);
 

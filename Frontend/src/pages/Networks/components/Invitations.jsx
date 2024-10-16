@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Button from "../../../components/common/Button";
 import axios from "axios";
-
+import { useAuthStore } from "../../../store/authStore.js";
 const Invitations = () => {
   const [invitations, setInvitations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuthStore();
+  const loggeduser = user;
+  console.log(loggeduser);
 
   //Hooks
 
@@ -11,22 +15,33 @@ const Invitations = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(`http://localhost:5000/api/users`);
-
         const { users } = response.data;
-        console.log(response.data);
-        const filteredUsers = users.filter(
-          (user) => user.connectionStatus === "pending"
-        );
+
+        const filteredUsers = users.filter((user) => {
+            return user.connections.some(
+            (connection) =>
+              connection.receiverId === loggeduser._id &&
+              connection.status === "pending"
+          );
+        });
+        console.log(filteredUsers);
 
         setInvitations(filteredUsers);
       } catch (error) {
         console.error("Error fetching search results", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchData();
-  }, []);
 
+    fetchData();
+  }, [loggeduser]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   // Handle Ignore button
   const handleIgnore = async (id) => {
     try {
@@ -66,7 +81,7 @@ const Invitations = () => {
       ) : (
         invitations.map((invite) => (
           <div
-            key={invite.id}
+            key={invite._id}
             className="flex justify-between items-center my-4"
           >
             <div className="flex items-center gap-3">
@@ -86,9 +101,9 @@ const Invitations = () => {
                     : invite.username}
                 </h4>
                 <p className="text-sm text-linkedinGray">{invite.headline}</p>
-                <p className="text-xs text-linkedinGray">
+                {/* <p className="text-xs text-linkedinGray">
                   Connected with {invite.connections}
-                </p>
+                </p> */}
               </div>
             </div>
             <div className="flex gap-4">

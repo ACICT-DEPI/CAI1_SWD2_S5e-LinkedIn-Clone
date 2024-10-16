@@ -117,22 +117,24 @@ const getAllUsers = async (req, res) => {
     // Get page and limit from query parameters, default to 1 and null if not provided
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit);
-    let connectionStatus = "";
     // Calculate the number of users to skip based on the current page
     const skip = limit ? (page - 1) * limit : 0;
     const search = req.query.search || "";
 
     // Construct search query with case-insensitive regex for name, username, etc.
-    const query = search
-      ? {
-          $or: [
-            { username: { $regex: search, $options: "i" } },
-            { firstName: { $regex: search, $options: "i" } },
-            { lastName: { $regex: search, $options: "i" } },
-            { email: { $regex: search, $options: "i" } },
-          ],
-        }
-      : {}; // If no search term, return all users
+    const query = {
+      ...(search
+        ? {
+            $or: [
+              { username: { $regex: search, $options: "i" } },
+              { firstName: { $regex: search, $options: "i" } },
+              { lastName: { $regex: search, $options: "i" } },
+              { email: { $regex: search, $options: "i" } },
+            ],
+          }
+        : {}),
+      _id: { $ne: req.user.id },
+    }; // If no search term, return all users
 
     var users = await User.find(query)
       .skip(skip)
@@ -141,10 +143,9 @@ const getAllUsers = async (req, res) => {
       .populate({
         path: "connections",
         select: "senderId receiverId status",
-      }); 
+      });
 
     users = users.map((user) => {
-      // Check if the logged-in user is part of any connection (either sender or receiver)
       const userConnection = user.connections.find(
         (connection) =>
           connection.senderId.toString() === req.user.id ||
@@ -156,9 +157,6 @@ const getAllUsers = async (req, res) => {
       user.connectionStatus = userConnection
         ? userConnection.status
         : "connect";
-
-      // Remove connections field if it's not needed in the response
-      delete user.connections;
 
       return user;
     });
@@ -285,10 +283,10 @@ const UpdateProfile = async (req, res) => {
       }
     });
     // Handle profile picture upload
-    if (req.files && req.files.profilePicture) {
+    if (req.files && req.files.profilePicture[0]) {
       try {
         const result = await cloudinary.uploader.upload(
-          req.files.profilePicture.path
+          req.files.profilePicture[0].path
         );
         updatedData.profilePicture = result.secure_url;
       } catch (uploadError) {

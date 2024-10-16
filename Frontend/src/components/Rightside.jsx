@@ -3,7 +3,9 @@ import axios from "axios";
 import userIcon from "../assets/images/nav/user.svg";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import Button from "./common/Button";
+import { TiDelete } from "react-icons/ti";
+import { IoPersonAdd, IoHourglassOutline } from "react-icons/io5";
 const Rightside = () => {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [connectionStatus, setConnectionStatus] = useState({});
@@ -96,15 +98,31 @@ const Rightside = () => {
                   {user.username}
                 </span>
                 <div className="text-gray-500">{user.headline}</div>
-                <button
-                  className={`bg-transparent text-black/60 shadow-inner border border-black/60 py-4 px-4 rounded-full flex items-center 
-              font-semibold justify-center max-h-8 max-w-[480px] text-center outline-none 
-              hover:border-black hover:border-1
-              ${connectionStatus[user._id] === "pending" ? "bg-gray-500" : ""}`}
-                  onClick={() => sendConnectionRequest(user._id)}
-                >
-                  {connectionStatus[user._id]}
-                </button>
+                <Button
+                  label={
+                    connectionStatus[user._id] === "pending"
+                      ? "Pending"
+                      : "Connect"
+                  }
+                  icon={
+                    connectionStatus[user._id] === "pending" ? (
+                      <IoHourglassOutline />
+                    ) : (
+                      <IoPersonAdd />
+                    )
+                  }
+                  styleType={
+                    connectionStatus[user._id] === "pending"
+                      ? "default"
+                      : "outline"
+                  }
+                  className={`my-5 py-1 ${
+                    connectionStatus[user._id] === "accepted"
+                      ? "hidden"
+                      : "block"
+                  }`}
+                  onClick={() => sendConnectionRequest(user._id)} // Pass user._id here
+                />
               </div>
             </li>
           ))}
