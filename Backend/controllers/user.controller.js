@@ -54,7 +54,9 @@ const getSuggstedConnections = async (req, res) => {
       user = user.toObject();
 
       // Assign connectionStatus based on whether a connection exists
-      user.connectionStatus = userConnection ? userConnection.status : "connect";
+      user.connectionStatus = userConnection
+        ? userConnection.status
+        : "connect";
 
       // Remove the connections field from the user object
       delete user.connections;
@@ -137,9 +139,9 @@ const getAllUsers = async (req, res) => {
       .limit(limit)
       .select("firstName lastName username profilePicture headline")
       .populate({
-        path: "connections", 
-        select: "senderId receiverId status", 
-      }); 
+        path: "connections",
+        select: "senderId receiverId status",
+      });
     users = users.map((user) => {
       // Check if the logged-in user is part of any connection (either sender or receiver)
       const userConnection = user.connections.find(
@@ -167,7 +169,7 @@ const getAllUsers = async (req, res) => {
       currentPage: page,
       totalPages: limit ? Math.ceil(totalUsers / limit) : 1, // Total pages calculated only if limit is defined
       totalUsers,
-      connectionstatus:""//pending, accepted, notFriend,
+      connectionstatus: "", //pending, accepted, notFriend,
     });
   } catch (error) {
     console.log("error in Up getAllUsers:", error);
@@ -179,7 +181,7 @@ const getUserPosts = async (req, res) => {
   try {
     let user = req.user;
     const userId = req.body.userId;
-    if(userId && userId !== req.user._id){
+    if (userId && userId !== req.user._id) {
       user = await User.findById(userId);
     }
     if (!user) {
@@ -205,7 +207,8 @@ const getUserPosts = async (req, res) => {
       .populate("auther") // Example: populate the user who created the post
       .select("-password")
       .skip((page - 1) * limit) // Skip posts for the current page
-      .limit(limit); // Limit the number of posts per page
+      .limit(limit) // Limit the number of posts per page
+      .sort({ createdAt: -1 });
 
     // Count total posts for pagination
     const totalPosts = user.posts.length;
@@ -317,7 +320,7 @@ const UpdateProfile = async (req, res) => {
 
     res.json({ success: true, data: user });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server error"});
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 

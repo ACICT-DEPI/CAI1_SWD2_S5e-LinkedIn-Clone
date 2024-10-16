@@ -111,7 +111,7 @@ const PostFocus = ({ componentRef, post, comments, setChange }) => {
           {/* Changed from fixed to sticky */}
           <PostUserInfo post={post} />
         </div>
-        <div className="">
+        <div className="text-black">
           {/* description */}
           {description.length > 400 ? (
             <div className="my-5">
@@ -119,7 +119,7 @@ const PostFocus = ({ componentRef, post, comments, setChange }) => {
                 <p>
                   {description}
                   <span
-                    className="text-linkedinGray hover:text-linkedinBlue cursor-pointer"
+                    className="text-linkedinGray hover:text-linkedinBlue cursor-pointer ml-3"
                     onClick={() => setShowMore(false)}
                   >
                     less
@@ -129,7 +129,7 @@ const PostFocus = ({ componentRef, post, comments, setChange }) => {
                 <p>
                   {description.substring(0, description.length / 4)}
                   <span
-                    className="text-linkedinGray hover:text-linkedinBlue cursor-pointer"
+                    className="text-linkedinGray hover:text-linkedinBlue cursor-pointer ml-3"
                     onClick={() => setShowMore(true)}
                   >
                     ...more
