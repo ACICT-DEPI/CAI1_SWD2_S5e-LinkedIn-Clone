@@ -101,7 +101,7 @@ export const useAuthStore = create((set) => ({
 updateProfile: async (updatedData) => {
   set({ isLoading: true, error: null });
   try {
-    const response = await axios.put("http://localhost:5000/api/users/profile", updatedData, {
+    const response = await axios.put("http://localhost:5001/api/users/profile", updatedData, {
       headers: { "Content-Type": "application/json" },
     });
     console.log("Profile Updated:", response.data);

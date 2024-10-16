@@ -68,7 +68,7 @@ const ExperienceSection = () => {
       setExperience(updatedExperiences);
     } else {
       // add new
-      const response = await axios.post("http://localhost:5000/api/users/experience",formData)
+      const response = await axios.post("http://localhost:5001/api/users/experience",formData)
       console.log('exp data',response.data.experience[response.data.experience.length - 1]);
       setExperience([...experience, response.data.experience[response.data.experience.length - 1]]);
     }

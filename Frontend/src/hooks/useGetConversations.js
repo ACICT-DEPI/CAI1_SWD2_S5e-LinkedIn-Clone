@@ -12,7 +12,7 @@ const useGetConversations = () => {
       console.log("getConversations");
 			setLoading(true);
 			try {
-				const res = await axios.get("http://localhost:5000/api/conversations/chat-users");
+				const res = await axios.get("http://localhost:5001/api/conversations/chat-users");
 			
         console.log(res);
 				setConversations(res.data);
