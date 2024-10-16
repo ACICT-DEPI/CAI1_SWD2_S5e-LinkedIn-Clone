@@ -40,7 +40,6 @@ const EducationSection = () => {
     }
   }, [user]);
   
-
   // handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -64,7 +63,7 @@ const EducationSection = () => {
       setEducation(updatedEducation);
     } else {
       // add new
-      const response = await axios.post("http://localhost:5000/api/users/education", formData);
+      const response = await axios.post("http://localhost:5001/api/users/education", formData);
       setEducation([...education, response.data.education[response.data.education.length - 1]]);
     }
     resetForm();

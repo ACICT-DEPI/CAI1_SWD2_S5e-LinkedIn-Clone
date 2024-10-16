@@ -2,42 +2,77 @@ import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import styled from "styled-components";
 import "../Post/style.css";
+import { getFeedPosts } from "../../utils/postApi";
+const base_url = "http://localhost:5001/api";
 
-const PostModal = ({ showModal, handleClick, handleAddPost, }) => {
+const PostModal = ({ showModal, handleClick, handleAddPost }) => {
   const [editorText, setEditorText] = useState("");
   const [assetArea, setAssetArea] = useState("");
-  const [shareImage, setShareImage] = useState("");
+  const [shareImage, setShareImage] = useState(null);
   const [videoLink, setVideoLink] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const image = e.target.files[0];
-    if (!image) {
-      alert(`not an image , the file is a ${typeof image}`);
+    if (!image || !image.type.startsWith("image/")) {
+      alert(`not an image, the file is a ${typeof image}`);
       return;
     }
     setShareImage(image);
   };
 
-  const handlePostArticles = (e) => {
+  const handlePostArticles = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(""); // Clear previous error
+
     const newPost = {
       image: shareImage ? URL.createObjectURL(shareImage) : null,
       video: videoLink,
       content: editorText,
     };
-    handleAddPost(newPost);
-    reset(e);
+
+    try {
+      const formData = new FormData();
+      if (shareImage) {
+        formData.append("images", shareImage);
+      }
+      formData.append("content", editorText);
+      if (videoLink) {
+        formData.append("videos", videoLink);
+      }
+
+      const response = await fetch(`${base_url}/posts`, {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        console.error(`Error: ${response.status} - ${response.statusText}`);
+        throw new Error("Failed to submit post");
+      }
+
+      const result = await response.json();
+      handleAddPost(result);
+      reset(e);
+    } catch (error) {
+      console.error("Error while posting:", error);
+      setError("There was an error submitting your post.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const switchAssetArea = (area) => {
-    setShareImage("");
+    setShareImage(null);
     setVideoLink("");
     setAssetArea(area);
   };
 
   const reset = (e) => {
     setEditorText("");
-    setShareImage("");
+    setShareImage(null);
     setVideoLink("");
     setAssetArea("");
     handleClick(e);
@@ -45,7 +80,10 @@ const PostModal = ({ showModal, handleClick, handleAddPost, }) => {
 
   return (
     <>
-      <div className="middle-main-1" style={{ display: "flex", flexDirection: "column"}}>
+      <div
+        className="middle-main-1"
+        style={{ display: "flex", flexDirection: "column" }}
+      >
         <div className="post-1">
           <img
             className="middle-pic"
@@ -57,27 +95,32 @@ const PostModal = ({ showModal, handleClick, handleAddPost, }) => {
             type="text"
             placeholder="Start a post"
             onClick={(e) => reset(e)}
-            style={{height: "40px", width: "100%", fontSize: "16px",marginBlock: "10px"}}
+            style={{
+              height: "40px",
+              width: "100%",
+              fontSize: "16px",
+              marginBlock: "10px",
+            }}
           />
         </div>
         <div className="linked-input" onClick={(e) => reset(e)}>
-          <div className="input">
+          <div className="input" onClick={() => switchAssetArea("image")}>
             <img
               className="upload"
-              src="/src/assets/images/share-image.svg "
+              src="/src/assets/images/share-image.svg"
               alt="Upload"
             />
             <p>Photo</p>
           </div>
-          <div className="input" onClick={(e) => reset(e)}>
+          <div className="input" onClick={() => switchAssetArea("job")}>
             <img
               className="upload"
               src="/src/assets/images/ExperienceIcon.svg"
               alt="Upload"
             />
-            <p>Jop</p>
+            <p>Job</p>
           </div>
-          <div className="input" onClick={(e) => reset(e)}>
+          <div className="input" onClick={() => switchAssetArea("media")}>
             <img
               className="upload"
               src="/src/assets/images/share-video.svg"
@@ -96,6 +139,7 @@ const PostModal = ({ showModal, handleClick, handleAddPost, }) => {
                 <img src="/src/assets/images/close-icon.svg" alt="Close" />
               </button>
             </Header>
+            {error && <ErrorMessage>{error}</ErrorMessage>}
             <ShareContent>
               <UserInfo>
                 <img src="src/assets/images/photo.svg" alt="User" />
@@ -136,7 +180,11 @@ const PostModal = ({ showModal, handleClick, handleAddPost, }) => {
                 ) : assetArea === "media" ? (
                   <>
                     <input
-                      style={{ width: "100%", height: "30px",background: "#fff" }}
+                      style={{
+                        width: "100%",
+                        height: "30px",
+                        background: "#fff",
+                      }}
                       type="text"
                       value={videoLink}
                       onChange={(e) => setVideoLink(e.target.value)}
@@ -145,14 +193,13 @@ const PostModal = ({ showModal, handleClick, handleAddPost, }) => {
                     {videoLink && <ReactPlayer width="100%" url={videoLink} />}
                   </>
                 ) : null}
-
               </Editor>
             </ShareContent>
             <ShareCreation>
               <AttachAssets>
                 <AssetButton onClick={() => switchAssetArea("image")}>
                   <img
-                    src="/src/assets/images/share-image.svg "
+                    src="/src/assets/images/share-image.svg"
                     alt="Share Image"
                   />
                 </AssetButton>
@@ -165,15 +212,18 @@ const PostModal = ({ showModal, handleClick, handleAddPost, }) => {
               </AttachAssets>
               <ShareComment>
                 <AssetButton>
-                  <img src="/src/assets/images/article-icon.svg" alt="Share Comment" />
+                  <img
+                    src="/src/assets/images/article-icon.svg"
+                    alt="Share Comment"
+                  />
                   Anyone
                 </AssetButton>
               </ShareComment>
               <PostButton
                 onClick={(e) => handlePostArticles(e)}
-                disabled={!editorText}
+                disabled={!editorText || loading}
               >
-                Post
+                {loading ? "Posting..." : "Post"}
               </PostButton>
             </ShareCreation>
           </Content>
@@ -242,9 +292,9 @@ const Header = styled.div`
     cursor: pointer;
     text-align: center;
     &:hover {
-    background-color: rgba(0, 0, 0, 0.08);
-    border-radius: 50%;
-  }
+      background-color: rgba(0, 0, 0, 0.08);
+      border-radius: 50%;
+    }
     img {
       width: 16px;
       height: 16px;
@@ -279,6 +329,11 @@ const UserInfo = styled.div`
   }
 `;
 
+const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
+  margin: 10px 0;
+`;
 const Editor = styled.div`
   padding: 12px 24px;
 
