@@ -27,7 +27,7 @@ const Main = () => {
   };
 
   return (
-    <div>
+    <div className="w-[100%] xl:w-[50%] text-left">
       <PostModal
         showModal={showModal}
         handleClick={handleClick}
@@ -35,7 +35,7 @@ const Main = () => {
       />
       {selectedPost && <PostFullView post={selectedPost} />}
 
-      <div className="post-list">
+      <div className="post-list ">
         {posts.map((post, index) => (
           <div
             key={index}
