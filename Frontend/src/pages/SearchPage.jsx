@@ -109,7 +109,6 @@ const SearchPage = () => {
                   </span>
                   <div className="text-gray-500">{user.headline}</div>
                 </div>
-
                 <Button
                   label={
                     connectionStatus[user._id] === "pending"
@@ -135,6 +134,7 @@ const SearchPage = () => {
                   }`}
                   onClick={() => sendConnectionRequest(user._id)} // Pass user._id here
                 />
+
               </div>
             </li>
           ))}

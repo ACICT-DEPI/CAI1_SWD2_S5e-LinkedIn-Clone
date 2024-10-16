@@ -54,7 +54,9 @@ const getSuggstedConnections = async (req, res) => {
       user = user.toObject();
 
       // Assign connectionStatus based on whether a connection exists
-      user.connectionStatus = userConnection ? userConnection.status : "connect";
+      user.connectionStatus = userConnection
+        ? userConnection.status
+        : "connect";
 
       // Remove the connections field from the user object
       delete user.connections;
@@ -115,7 +117,7 @@ const getAllUsers = async (req, res) => {
     // Get page and limit from query parameters, default to 1 and null if not provided
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit);
-
+    let connectionStatus = "";
     // Calculate the number of users to skip based on the current page
     const skip = limit ? (page - 1) * limit : 0;
     const search = req.query.search || "";
@@ -140,6 +142,7 @@ const getAllUsers = async (req, res) => {
         path: "connections",
         select: "senderId receiverId status",
       }); 
+
     users = users.map((user) => {
       // Check if the logged-in user is part of any connection (either sender or receiver)
       const userConnection = user.connections.find(
@@ -167,6 +170,7 @@ const getAllUsers = async (req, res) => {
       currentPage: page,
       totalPages: limit ? Math.ceil(totalUsers / limit) : 1, // Total pages calculated only if limit is defined
       totalUsers,
+      connectionstatus: "", //pending, accepted, notFriend,
     });
   } catch (error) {
     console.log("error in Up getAllUsers:", error);
@@ -176,7 +180,11 @@ const getAllUsers = async (req, res) => {
 
 const getUserPosts = async (req, res) => {
   try {
-    const user = req.user;
+    let user = req.user;
+    const userId = req.body.userId;
+    if (userId && userId !== req.user._id) {
+      user = await User.findById(userId);
+    }
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -200,7 +208,8 @@ const getUserPosts = async (req, res) => {
       .populate("auther") // Example: populate the user who created the post
       .select("-password")
       .skip((page - 1) * limit) // Skip posts for the current page
-      .limit(limit); // Limit the number of posts per page
+      .limit(limit) // Limit the number of posts per page
+      .sort({ createdAt: -1 });
 
     // Count total posts for pagination
     const totalPosts = user.posts.length;
@@ -275,7 +284,6 @@ const UpdateProfile = async (req, res) => {
         updatedData[field] = req.body[field];
       }
     });
-
     // Handle profile picture upload
     if (req.files && req.files.profilePicture) {
       try {

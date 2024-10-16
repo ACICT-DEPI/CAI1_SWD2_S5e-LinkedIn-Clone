@@ -1,11 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import likeIcon from "../../assets/images/like-icon.svg";
-const handelCommentsClick = async()=>{
-  
-};
-const handelLikesClick = async () => {
-  
-};
+const handelCommentsClick = async () => {};
+const handelLikesClick = async () => {};
 function Reacts({ post }) {
   return post ? (
     <div className="flex justify-between">
@@ -35,12 +31,20 @@ function Reacts({ post }) {
         </p>
       </div>
       <div>
-        <p
-          className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer"
-          onClick={handelCommentsClick}
-        >
-          {post.comments.length} comments
-        </p>
+        <div className="flex gap-5">
+          <p
+            className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer"
+            onClick={handelCommentsClick}
+          >
+            {post.shares.length} shares
+          </p>
+          <p
+            className="text-linkedinGray hover:text-linkedinBlue hover:underline cursor-pointer"
+            onClick={handelCommentsClick}
+          >
+            {post.comments.length} comments
+          </p>
+        </div>
       </div>
     </div>
   ) : (

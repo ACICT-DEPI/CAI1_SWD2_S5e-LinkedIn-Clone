@@ -8,13 +8,12 @@ import Comment from "./Comment";
 import LargeText from "../common/LargeText";
 import axios from "axios";
 import { getPostComments } from "../../utils/postApi";
-function PostFullView({ post }) {
+function PostFullView({ post, setChange }) {
   const description = post.content;
 
   const [isVisible, setIsVisible] = useState(false);
   const [comments, setComments] = useState([]);
   const componentRef = useRef(null);
-
   useEffect(() => {
     getPostComments(setComments, 1, 10, comments, post._id);
   }, []);
@@ -39,7 +38,6 @@ function PostFullView({ post }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
   return (
     <div className="bg-gray-100 p-3 rounded my-2">
       {/* title with profile picture */}
@@ -49,19 +47,22 @@ function PostFullView({ post }) {
       </div>
       {/* Description */}
       <div>
-        <LargeText description={description} />
+        <LargeText description={description} style="text-linkedinDarkGray" />
       </div>
       {/* Photos -videos */}
       {/* todo make it slider ! */}
-      <div className="relative group cursor-pointer" onClick={handleImageClick}>
-        {post.images.map((img, index) => {
+      <div
+        className="relative group cursor-pointer w-full object-cover flex justify-center"
+        onClick={handleImageClick}
+      >
+        {post.images.map((img, index) => (
           <img
             key={index}
             src={img}
             alt=""
-            className="w-[100vw] rounded-xl my-3 object-cover"
-          />;
-        })}
+            className="w-[400px]  rounded-xl my-3 object-cover"
+          />
+        ))}
         <div className="absolute bottom-5 right-5 bg-[rgba(255,255,255,0.6)] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           {post.images.length}
         </div>
@@ -70,13 +71,14 @@ function PostFullView({ post }) {
       {/* Reacts */}
       <Reacts post={post} />
       <hr />
-      <ReactsInteraction post={post} />
+      <ReactsInteraction post={post} setChange={setChange} />
       {isVisible && (
-        <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)] flex justify-center items-center">
+        <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)] flex justify-center items-center z-[5000]">
           <PostFocus
             componentRef={componentRef}
             post={post}
             comments={comments}
+            setChange={setChange}
           />
         </div>
       )}
@@ -84,18 +86,17 @@ function PostFullView({ post }) {
   );
 }
 
-const PostFocus = ({ componentRef, post, comments }) => {
+const PostFocus = ({ componentRef, post, comments, setChange }) => {
   const [showMore, setShowMore] = useState(false);
-  console.log("comments", comments);
 
   const description = post.content;
   return post ? (
     <div
-      className="bg-white rounded-xl shadow-lg max-w-[100%] h-[95%] grid grid-cols-4 2xl:w-[80%] "
+      className="bg-white rounded-xl shadow-lg max-w-[100%] h-[80%] grid grid-rows-2 xl:grid-rows-1 xl:grid-cols-6 2xl:w-[80%] "
       ref={componentRef}
     >
       {/* Left Column (Image - 75%) */}
-      <div className="col-span-3 bg-black flex items-center justify-center relative rounded-l-xl">
+      <div className="row-start-2 xl:row-start-1 col-span-4 bg-black flex items-center justify-center relative rounded-l-xl">
         {/* todo make a slider */}
         <img
           src={post.images[0]}
@@ -104,44 +105,51 @@ const PostFocus = ({ componentRef, post, comments }) => {
         />
       </div>
       {/* Right Column (Extra Info - 25%) */}
-      <div className="col-span-1 bg-gray-100 p-4 pt-0 overflow-auto  flex-col flex-nowrap rounded-r-xl">
+      <div className="row-start-1 xl:row-start-1 col-span-2 bg-gray-100 p-4 pt-0 overflow-auto  flex-col flex-nowrap rounded-r-xl">
         {/* header */}
         <div className="sticky top-0 bg-gray-100 py-2 z-10 w-full">
           {/* Changed from fixed to sticky */}
-          <PostUserInfo />
+          <PostUserInfo post={post} />
         </div>
-        <div className="">
+        <div className="text-black">
           {/* description */}
-          <div>
-            {showMore ? (
-              <p>
-                {description}
-                <span
-                  className="text-linkedinGray hover:text-linkedinBlue cursor-pointer"
-                  onClick={() => setShowMore(false)}
-                >
-                  less
-                </span>
-              </p>
-            ) : (
-              <p>
-                {description.substring(0, description.length / 4)}
-                <span
-                  className="text-linkedinGray hover:text-linkedinBlue cursor-pointer"
-                  onClick={() => setShowMore(true)}
-                >
-                  ...more
-                </span>
-              </p>
-            )}
+          {description.length > 400 ? (
+            <div className="my-5">
+              {showMore ? (
+                <p>
+                  {description}
+                  <span
+                    className="text-linkedinGray hover:text-linkedinBlue cursor-pointer ml-3"
+                    onClick={() => setShowMore(false)}
+                  >
+                    less
+                  </span>
+                </p>
+              ) : (
+                <p>
+                  {description.substring(0, description.length / 4)}
+                  <span
+                    className="text-linkedinGray hover:text-linkedinBlue cursor-pointer ml-3"
+                    onClick={() => setShowMore(true)}
+                  >
+                    ...more
+                  </span>
+                </p>
+              )}
+            </div>
+          ) : (
+            <p className="my-5">{description}</p>
+          )}
+
+          <div className="mt-5">
+            <Reacts post={post} />
           </div>
-          <Reacts />
-          <ReactsInteraction />
+          <ReactsInteraction post={post} setChange={setChange} />
           <AddComment />
           {comments ? (
             comments.map((comment, index) => <Comment comment={comment} />)
           ) : (
-            <>loading</>
+            <>No Comments</>
           )}
         </div>
       </div>

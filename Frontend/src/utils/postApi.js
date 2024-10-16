@@ -5,12 +5,33 @@ export const getPostById = async (id, func) => {
   try {
     const response = await axios.get(`${base_url}/posts/${id}`);
     func(response.data); // Update state with the data
-    console.log(response.data); // Log the fetched data
   } catch (error) {
     console.error("Error fetching post:", error); // Handle errors if any
   }
 };
 
+export const addLike = async (id, type) => {
+  try {
+    const res = await axios.post(`${base_url}/likes`, {
+      typeId: id,
+      type: type,
+    });
+  } catch (error) {
+    console.error("Error fetching feed posts:", error); // Handle errors if any
+  }
+};
+export const deleteLike = async (id, type) => {
+  try {
+    const res = await axios.delete(`${base_url}/likes`, {
+      data: {
+        typeId: id,
+        type: type,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching feed posts:", error); // Handle errors if any
+  }
+};
 export const getFeedPosts = async (func, pageParam, limit = 10, posts = []) => {
   try {
     const res = await axios.get(
@@ -31,7 +52,6 @@ export const getUserPosts = async (func, pageParam, limit = 10, posts = []) => {
     const res = await axios.get(
       `${base_url}/users/posts?page=${pageParam}&limit=${limit}`
     );
-    console.log(res);
 
     // Ensure `posts` is an array and append new data to it
     const updatedPosts = Array.isArray(posts)
@@ -67,5 +87,17 @@ export const getPostComments = async (
     return updatedComments;
   } catch (error) {
     console.error("Error fetching feed comments:", error); // Handle errors if any
+  }
+};
+export const sharePost = async (userId,postId) => {
+  try {
+    const res = await axios.patch(`${base_url}/posts/share`, {
+      userId: userId,
+      postId:postId
+    });
+    console.log(res);
+    
+  } catch (error) {
+    console.error("Error fetching feed posts:", error); // Handle errors if any
   }
 };

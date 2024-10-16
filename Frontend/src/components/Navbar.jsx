@@ -22,7 +22,7 @@ const icons = [
 
 export default function Navbar() {
   //states
-  const { logout } = useAuthStore();
+  const { logout,user } = useAuthStore();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [visibleIcons, setVisibleIcons] = useState(icons.length);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -249,7 +249,7 @@ export default function Navbar() {
                 ref={userDropdown}
               >
                 <img
-                  src={userIcon}
+                  src={user.profilePicture?user.profilePicture:userIcon}
                   alt="user icon"
                   className="rounded-full h-5 w-5"
                 />

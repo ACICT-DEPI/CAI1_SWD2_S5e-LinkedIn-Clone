@@ -14,7 +14,7 @@ function PostUserInfo({ post }) {
       <div>
         <div className="cursor-pointer">
           <div className="flex gap-2">
-            <p className="text-bold text-black hover:text-linkedinBlue hover:underline">
+            <p className="font-semibold text-black hover:text-linkedinBlue hover:underline">
               {post.auther.firstName} {post.auther.lastName}
             </p>
             <p className=" text-linkedinGray">&#x2022; 1st</p>

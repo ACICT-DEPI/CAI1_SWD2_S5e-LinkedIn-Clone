@@ -3,6 +3,7 @@ import ReactPlayer from "react-player";
 import styled from "styled-components";
 import "../Post/style.css";
 import { getFeedPosts } from "../../utils/postApi";
+import axios from "axios";
 const base_url = "http://localhost:5000/api";
 
 const PostModal = ({ showModal, handleClick, handleAddPost }) => {
@@ -19,17 +20,22 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
       alert(`not an image, the file is a ${typeof image}`);
       return;
     }
-    setShareImage(image);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setShareImage(reader.result);
+    };
+    reader.readAsDataURL(image);
   };
 
   const handlePostArticles = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(""); // Clear previous error
-
+    console.log("shareImage", shareImage);
+    
     const newPost = {
-      image: shareImage ? URL.createObjectURL(shareImage) : null,
-      video: videoLink,
+      imgs: shareImage ? [shareImage] : [], // Wrap single image in an array
+      videos: videoLink,
       content: editorText,
     };
 
@@ -42,15 +48,19 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
       if (videoLink) {
         formData.append("videos", videoLink);
       }
-
-      const response = await fetch(`http://localhost:5000/api/posts`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: formData,
-      });
+      console.log("form data", formData);
+      console.log(newPost);
+      
+      const response = await axios.post(
+        `http://localhost:5000/api/posts`,
+        newPost,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response);
 
       if (!response.ok) {
         throw new Error("Failed to submit post");
@@ -177,7 +187,7 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
                       </label>
                     </p>
                     {shareImage && (
-                      <img src={URL.createObjectURL(shareImage)} alt="img" />
+                      <img src={shareImage} alt="img" />
                     )}
                   </UploadImage>
                 ) : assetArea === "media" ? (
