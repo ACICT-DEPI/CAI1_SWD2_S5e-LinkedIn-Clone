@@ -180,7 +180,7 @@ const getAllUsers = async (req, res) => {
 const getUserPosts = async (req, res) => {
   try {
     let user = req.user;
-    const userId = req.body.userId;
+    const userId = req.params.userId;
     if (userId && userId !== req.user._id) {
       user = await User.findById(userId);
     }
