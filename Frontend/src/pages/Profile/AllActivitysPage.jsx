@@ -32,7 +32,7 @@ function AllActivitysPage() {
 
             {posts ? (
               posts.map((post, index) => (
-                <PostFullView post={post} key={index} />
+                <PostFullView parentPost={post} key={index} />
               ))
             ) : (
               <>...loading</>

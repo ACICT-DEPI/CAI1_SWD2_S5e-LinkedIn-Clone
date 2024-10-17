@@ -12,7 +12,8 @@ import axios from "axios";
 import { deletePost, getPostComments } from "../../utils/postApi";
 import { useAuthStore } from "../../store/authStore";
 import Swal from "sweetalert2";
-function PostFullView({ post, setChange, setPosts }) {
+function PostFullView({ parentPost, setChange }) {
+  const [post, setPost] = useState(parentPost);
   const description = post.content;
   const { user } = useAuthStore();
   const [isVisible, setIsVisible] = useState(false);
@@ -20,7 +21,7 @@ function PostFullView({ post, setChange, setPosts }) {
   const [commentAdded, setCommentAdded] = useState(0);
   const [page, setPage] = useState(1);
   const [hasMoreComments, setHasMoreComments] = useState(true);
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const componentRef = useRef(null);
   const loaderRef = useRef(null);
   const limit = 3;
@@ -133,7 +134,7 @@ function PostFullView({ post, setChange, setPosts }) {
             key={index}
             src={img}
             alt=""
-            className="w-[400px]  rounded-xl my-3 object-cover"
+            className="rounded-xl my-3 object-cover"
           />
         ))}
         <div className="absolute bottom-5 right-5 bg-[rgba(255,255,255,0.6)] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -144,7 +145,7 @@ function PostFullView({ post, setChange, setPosts }) {
       {/* Reacts */}
       <Reacts post={post} />
       <hr />
-      <ReactsInteraction post={post} setChange={setChange} />
+      <ReactsInteraction post={post} setPost={setPost} />
       {loading && (
         <div className="flex justify-center">
           <span className="loading loading-spinner mx-auto text"></span>
@@ -155,6 +156,7 @@ function PostFullView({ post, setChange, setPosts }) {
           <PostFocus
             componentRef={componentRef}
             post={post}
+            setPost={setPost}
             comments={comments}
             setChange={setChange}
             commentAdded={commentAdded}
@@ -173,6 +175,7 @@ function PostFullView({ post, setChange, setPosts }) {
 const PostFocus = ({
   componentRef,
   post,
+  setPost,
   comments,
   setChange,
   commentAdded,
@@ -253,9 +256,10 @@ const PostFocus = ({
           <div className="mt-5">
             <Reacts post={post} />
           </div>
-          <ReactsInteraction post={post} setChange={setChange} />
+          <ReactsInteraction post={post} setPost={setPost} />
           <AddComment
             post={post}
+            setPost={setPost}
             setCommentAdded={setCommentAdded}
             commentAdded={commentAdded}
           />

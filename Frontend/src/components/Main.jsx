@@ -51,9 +51,8 @@ const Main = () => {
     };
   }, [posts, hasMoreComments]);
   useEffect(() => {
-    const newPage = page + 1;
 
-    getFeedPosts(setPosts, newPage, limit, posts, setLoading);
+    getFeedPosts(setPosts, 1, limit, posts, setLoading);
   }, [change]);
 
   const handleClick = () => setShowModal(!showModal);
@@ -102,10 +101,9 @@ const Main = () => {
           posts.length > 0 ? (
             posts.map((post) => (
               <PostFullView
-                post={post}
+                parentPost={post}
                 key={post._id}
                 setChange={setchange}
-                setPosts={setPosts}
               />
             ))
           ) : (

@@ -22,8 +22,8 @@ function ActivitySection({ isOwnProfile }) {
   const handleFollowersClick = () => {
     navigate("/followers"); // Navigate to followers page
   };
-  const handelShowPost = (id) => {
-    navigate(`/profile/allactivity/${profileId}`); // Navigate to followers page
+  const handelShowPost = () => {
+    navigate(`/profile/allactivity/${profileId ? profileId : user._id}`); // Navigate to followers page
   };
   return (
     <div className="bg-white rounded-lg mt-3 w-1/2 mx-auto">

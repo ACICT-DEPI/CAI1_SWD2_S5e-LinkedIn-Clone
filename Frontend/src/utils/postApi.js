@@ -128,7 +128,7 @@ export const addComment = async (postId, comment) => {
       postId: postId,
       comment: comment,
     });
-    console.log(res);
+    return res.data.comment
   } catch (error) {
     console.error("Error on Adding comment:", error); // Handle errors if any
   }
