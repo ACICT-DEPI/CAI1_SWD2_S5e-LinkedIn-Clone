@@ -3,6 +3,7 @@ const Connections = require("../models/connection.model");
 const Posts = require("../models/post.model");
 const { User } = require("../models/user.model");
 
+//post search is not working
 const search = async (req, res) => {
   const module = req.params.module;
   const page = parseInt(req.query.page) || 1;
