@@ -27,6 +27,7 @@ const router = express.Router();
 router.get("/", verifyTokenAndUserCheck, getAllUsers);
 router.get("/suggestions", verifyTokenAndUserCheck, getSuggstedConnections);
 router.get("/connections", verifyTokenAndUserCheck, getUserConnections);
+router.get("/posts/:userId", verifyTokenAndUserCheck, getUserPosts);
 router.get("/posts", verifyTokenAndUserCheck, getUserPosts);
 router.get("/comments", verifyTokenAndUserCheck, getUserComments);
 router.get("/notifications", verifyTokenAndUserCheck, getNotification); // use pagination  page = 1, limit = 10, isRead, type

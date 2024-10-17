@@ -93,7 +93,7 @@ const getPublicProfile = async (req, res) => {
     );
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
-    } catch (error) {
+  } catch (error) {
     console.error("Error fetching user profile:", error);
     res.status(500).json({ message: "Server error" });
   }
@@ -180,7 +180,7 @@ const getAllUsers = async (req, res) => {
 const getUserPosts = async (req, res) => {
   try {
     let user = req.user;
-    const userId = req.body.userId;
+    const userId = req.params.userId;
     if (userId && userId !== req.user._id) {
       user = await User.findById(userId);
     }

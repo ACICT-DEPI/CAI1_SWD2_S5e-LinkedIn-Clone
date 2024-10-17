@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate, useParams } from "react-router-dom"; // Import useNavigate
 import PostShortView from "../../../components/Post/PostShortView";
 import Button from "../../../components/common/Button";
 import editIcon from "../../../assets/images/comment-icon.svg";
@@ -9,11 +9,12 @@ import { useAuthStore } from "../../../store/authStore";
 import { FaArrowRight } from "react-icons/fa";
 import { getUserPosts } from "../../../utils/postApi";
 
-function ActivitySection({isOwnProfile}) {
+function ActivitySection({ isOwnProfile }) {
+  const { profileId } = useParams();
   const [select, setSelect] = useState("posts");
   const [posts, setPosts] = useState([]);
   useEffect(() => {
-    getUserPosts(setPosts, 1, 3);
+    getUserPosts(setPosts, 1, 3, [], profileId);
   }, []);
   const { user, isLoading } = useAuthStore();
   const navigate = useNavigate(); // Initialize navigate
@@ -21,15 +22,15 @@ function ActivitySection({isOwnProfile}) {
   const handleFollowersClick = () => {
     navigate("/followers"); // Navigate to followers page
   };
-  const handelShowPost = () => {
-    navigate("/profile/allactivity"); // Navigate to followers page
+  const handelShowPost = (id) => {
+    navigate(`/profile/allactivity/${profileId}`); // Navigate to followers page
   };
   return (
     <div className="bg-white rounded-lg mt-3  mx-auto  w-[95%] md:w-[68%]">
       <div className="flex gap-2 justify-between">
         <div className="my-5">
           <h2 className="text-lg font-semibold px-5 text-linkedinDarkGray">
-            {isOwnProfile ?('Activity'): ('Activity')}
+            {isOwnProfile ? "Activity" : "Activity"}
           </h2>
           <p
             className="text-linkedinBlue cursor-pointer px-5"
@@ -55,7 +56,6 @@ function ActivitySection({isOwnProfile}) {
               />
             </>
           )}
-          
         </div>
       </div>
       {/* <div className="w-1/2"></div> */}
@@ -84,13 +84,7 @@ function ActivitySection({isOwnProfile}) {
       ) : (
         <></>
       )}
-      {select === "posts" ? (
-        <div className="px-5">
-          
-        </div>
-      ) : (
-        <></>
-      )}
+      {select === "posts" ? <div className="px-5"></div> : <></>}
       <hr />
       <button
         onClick={handelShowPost}

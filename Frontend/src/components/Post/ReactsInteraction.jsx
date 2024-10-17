@@ -31,8 +31,8 @@ function ReactsInteraction({ post, setChange }) {
   const handleLikeClick = () => {
     if (!isLike) {
       addLike(post._id, "post");
+      post.likes.push(user._id);
       setIsLike(true);
-      setChange("add like");
     } else {
       deleteLike(post._id, "post");
       setIsLike(false);

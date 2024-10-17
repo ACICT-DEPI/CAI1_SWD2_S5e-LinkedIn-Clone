@@ -1,5 +1,6 @@
 import React from "react";
 import { extractTime, extractTimeDuration } from "../../utils/extractTime";
+import { Link } from "react-router-dom";
 
 function PostUserInfo({ post }) {
   return post ? (
@@ -13,7 +14,9 @@ function PostUserInfo({ post }) {
         <div className="cursor-pointer">
           <div className="flex gap-2">
             <p className="font-semibold text-black hover:text-linkedinBlue hover:underline">
-              {post.auther.firstName} {post.auther.lastName}
+              <Link to={`/profile/${post.auther._id}`}>
+                {post.auther.firstName} {post.auther.lastName}
+              </Link>
             </p>
             <p className=" text-linkedinGray">&#x2022; 1st</p>
           </div>

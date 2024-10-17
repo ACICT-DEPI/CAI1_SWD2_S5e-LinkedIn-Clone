@@ -20,6 +20,7 @@ function PostFullView({ post, setChange, setPosts }) {
   const [commentAdded, setCommentAdded] = useState(0);
   const [page, setPage] = useState(1);
   const [hasMoreComments, setHasMoreComments] = useState(true);
+  const [loading,setLoading] = useState(false);
   const componentRef = useRef(null);
   const loaderRef = useRef(null);
   const limit = 3;
@@ -31,7 +32,8 @@ function PostFullView({ post, setChange, setPosts }) {
         newPage,
         limit,
         comments,
-        post._id
+        post._id,
+        setLoading
       );
       if (response.length === 0) {
         console.log("no more comments");
@@ -44,7 +46,7 @@ function PostFullView({ post, setChange, setPosts }) {
   };
 
   useEffect(() => {
-    getPostComments(setComments, 1, limit, comments, post._id);
+    getPostComments(setComments, 1, limit, comments, post._id, setLoading);
   }, [commentAdded]);
   // Function to open the PostFocus component when the image is clicked
   const handleImageClick = () => {
@@ -100,13 +102,17 @@ function PostFullView({ post, setChange, setPosts }) {
 
   return (
     <div className="bg-gray-100 p-3 rounded my-2 relative">
-      {user._id === post.auther._id?<button
-        className="absolute right-0 top-0 m-2 hover:bg-red-500 p-3 rounded-full duration-300"
-        onClick={handleDeletePost}
-      >
-        <img src={deleteIcon} alt="deleteIcon" />
-      </button>:<></>}
-      
+      {user._id === post.auther._id ? (
+        <button
+          className="absolute right-0 top-0 m-2 hover:bg-red-500 p-3 rounded-full duration-300"
+          onClick={handleDeletePost}
+        >
+          <img src={deleteIcon} alt="deleteIcon" />
+        </button>
+      ) : (
+        <></>
+      )}
+
       {/* title with profile picture */}
       <div className="flex gap-2 justify-between items-start pb-3 ">
         <PostUserInfo post={post} />
@@ -139,6 +145,11 @@ function PostFullView({ post, setChange, setPosts }) {
       <Reacts post={post} />
       <hr />
       <ReactsInteraction post={post} setChange={setChange} />
+      {loading && (
+        <div className="flex justify-center">
+          <span className="loading loading-spinner mx-auto text"></span>
+        </div>
+      )}
       {isVisible && (
         <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.5)] flex justify-center items-center z-[500]">
           <PostFocus
