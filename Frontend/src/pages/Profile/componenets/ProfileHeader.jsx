@@ -174,11 +174,16 @@ const ProfileHeader = ({isOwnProfile}) => {
               )}
             <div className="flex gap-2 mt-6 cursor-pointer text-center justify-center">
               <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8" />
-              <h2 className="text-linkedinDarkGray mt-2">{firstExperience.title} </h2>
+              <p className= 'text-sm text-linkedinGray'>
+                {firstExperience.title ? firstExperience.title : "No Experience added"}
+              </p>
+                
             </div>
             <div className="flex gap-2 cursor-pointer text-center justify-center">
               <img src={EducationIcon} alt="EducationIcon" className="w-8" />
-              <h2 className="text-linkedinDarkGray mt-2">{firstEducation.school}</h2>
+              <p className="text-sm text-linkedinGray mt-2">
+                {firstEducation.school ? firstEducation.school : "No Education added"}
+              </p>
             </div>
           </div>
         </div>
