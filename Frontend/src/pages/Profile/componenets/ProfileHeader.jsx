@@ -198,7 +198,7 @@ const ProfileHeader = ({ isOwnProfile }) => {
             )}
             <div className="flex gap-2 mt-6 cursor-pointer text-center justify-center">
               <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8" />
-              <p className="text-sm text-linkedinGray mt-1">
+              <p className="text-sm text-linkedinGray mt-2">
                 {firstExperience.title
                   ? firstExperience.title
                   : "No Experience added"}
