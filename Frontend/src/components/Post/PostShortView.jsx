@@ -4,7 +4,7 @@ import { extractTimeDuration } from "../../utils/extractTime";
 
 
 function PostShortView({post}) {
-  const description = post.content;
+  const description = post.content
   return (
     <>
       <div className="cursor-pointer">

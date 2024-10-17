@@ -10,9 +10,12 @@ const useEditMessage = () => {
   const editMessage = async (messageId, newContent) => {
     setLoading(true);
     try {
-      const res = await axios.put(`http://localhost:5000/api/messages/edit/${messageId}`, {
-        message: newContent,
-      });
+      const res = await axios.put(
+        `http://localhost:5000/api/messages/edit/${messageId}`,
+        {
+          message: newContent,
+        }
+      );
 
       const updatedMessage = res.data;
       const updatedMessages = messages.map((msg) =>

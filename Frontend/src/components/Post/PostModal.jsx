@@ -2,42 +2,90 @@ import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import styled from "styled-components";
 import "../Post/style.css";
+import { getFeedPosts } from "../../utils/postApi";
+import axios from "axios";
+const base_url = "http://localhost:5000/api";
 
 const PostModal = ({ showModal, handleClick, handleAddPost }) => {
   const [editorText, setEditorText] = useState("");
   const [assetArea, setAssetArea] = useState("");
-  const [shareImage, setShareImage] = useState("");
+  const [shareImage, setShareImage] = useState(null);
   const [videoLink, setVideoLink] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const image = e.target.files[0];
-    if (!image) {
-      alert(`not an image , the file is a ${typeof image}`);
+    if (!image || !image.type.startsWith("image/")) {
+      alert(`not an image, the file is a ${typeof image}`);
       return;
     }
-    setShareImage(image);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setShareImage(reader.result);
+    };
+    reader.readAsDataURL(image);
   };
 
-  const handlePostArticles = (e) => {
+  const handlePostArticles = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(""); // Clear previous error
+    console.log("shareImage", shareImage);
+    
     const newPost = {
-      image: shareImage ? URL.createObjectURL(shareImage) : null,
-      video: videoLink,
-      description: editorText,
+      imgs: shareImage ? [shareImage] : [], // Wrap single image in an array
+      videos: videoLink,
+      content: editorText,
     };
-    handleAddPost(newPost);
-    reset(e);
+
+    try {
+      const formData = new FormData();
+      if (shareImage) {
+        formData.append("images", shareImage);
+      }
+      formData.append("content", editorText);
+      if (videoLink) {
+        formData.append("videos", videoLink);
+      }
+      console.log("form data", formData);
+      console.log(newPost);
+      
+      const response = await axios.post(
+        `http://localhost:5000/api/posts`,
+        newPost,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response);
+
+      if (!response.ok) {
+        throw new Error("Failed to submit post");
+      }
+
+      const result = await response.json();
+      handleAddPost(result);
+      reset(e);
+    } catch (error) {
+      console.error("Error while posting:", error);
+      setError("There was an error submitting your post.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const switchAssetArea = (area) => {
-    setShareImage("");
+    setShareImage(null);
     setVideoLink("");
     setAssetArea(area);
   };
 
   const reset = (e) => {
     setEditorText("");
-    setShareImage("");
+    setShareImage(null);
     setVideoLink("");
     setAssetArea("");
     handleClick(e);
@@ -45,7 +93,10 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
 
   return (
     <>
-      <div className="middle-main-1">
+      <div
+        className="middle-main-1"
+        style={{ display: "flex", flexDirection: "column" }}
+      >
         <div className="post-1">
           <img
             className="middle-pic"
@@ -57,33 +108,35 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
             type="text"
             placeholder="Start a post"
             onClick={(e) => reset(e)}
+            style={{
+              height: "40px",
+              width: "100%",
+              fontSize: "16px",
+              marginBlock: "10px",
+            }}
           />
         </div>
-        <div className="linked-input"
-        onClick={(e) => reset(e)}>
-          <div className="input"
-          >
+        <div className="linked-input" onClick={(e) => reset(e)}>
+          <div className="input" onClick={() => switchAssetArea("image")}>
             <img
               className="upload"
-              src="src/assets/images/photo.svg"
+              src="/src/assets/images/share-image.svg"
               alt="Upload"
             />
             <p>Photo</p>
           </div>
-          <div className="input"
-          onClick={(e) => reset(e)}>
+          <div className="input" onClick={() => switchAssetArea("job")}>
             <img
               className="upload"
-              src="src/assets/images/photo.svg"
+              src="/src/assets/images/ExperienceIcon.svg"
               alt="Upload"
             />
-            <p>Write article</p>
+            <p>Job</p>
           </div>
-          <div className="input"
-          onClick={(e) => reset(e)}>
+          <div className="input" onClick={() => switchAssetArea("media")}>
             <img
               className="upload"
-              src="src/assets/images/photo.svg"
+              src="/src/assets/images/share-video.svg"
               alt="Video"
             />
             <p>Video</p>
@@ -96,9 +149,10 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
             <Header>
               <h2>Create a post</h2>
               <button onClick={(e) => reset(e)}>
-                <img src="/images/close-icon.svg" alt="Close" />
+                <img src="/src/assets/images/close-icon.svg" alt="Close" />
               </button>
             </Header>
+            {error && <ErrorMessage>{error}</ErrorMessage>}
             <ShareContent>
               <UserInfo>
                 <img src="src/assets/images/photo.svg" alt="User" />
@@ -133,13 +187,17 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
                       </label>
                     </p>
                     {shareImage && (
-                      <img src={URL.createObjectURL(shareImage)} alt="img" />
+                      <img src={shareImage} alt="img" />
                     )}
                   </UploadImage>
                 ) : assetArea === "media" ? (
                   <>
                     <input
-                      style={{ width: "100%", height: "30px" }}
+                      style={{
+                        width: "100%",
+                        height: "30px",
+                        background: "#fff",
+                      }}
                       type="text"
                       value={videoLink}
                       onChange={(e) => setVideoLink(e.target.value)}
@@ -153,30 +211,37 @@ const PostModal = ({ showModal, handleClick, handleAddPost }) => {
             <ShareCreation>
               <AttachAssets>
                 <AssetButton onClick={() => switchAssetArea("image")}>
-                  <img src="/images/share-image.svg" alt="Share Image" />
+                  <img
+                    src="/src/assets/images/share-image.svg"
+                    alt="Share Image"
+                  />
                 </AssetButton>
                 <AssetButton onClick={() => switchAssetArea("media")}>
-                  <img src="/images/share-video.svg" alt="Share Video" />
+                  <img
+                    src="/src/assets/images/share-video.svg"
+                    alt="Share Video"
+                  />
                 </AssetButton>
               </AttachAssets>
               <ShareComment>
                 <AssetButton>
-                  <img src="/images/share-comment.svg" alt="Share Comment" />
+                  <img
+                    src="/src/assets/images/article-icon.svg"
+                    alt="Share Comment"
+                  />
                   Anyone
                 </AssetButton>
               </ShareComment>
               <PostButton
                 onClick={(e) => handlePostArticles(e)}
-                disabled={!editorText}
+                disabled={!editorText || loading}
               >
-                Post
+                {loading ? "Posting..." : "Post"}
               </PostButton>
-              
             </ShareCreation>
           </Content>
         </Container>
       )}
-      
     </>
   );
 };
@@ -238,11 +303,11 @@ const Header = styled.div`
     background: none;
     border-radius: 50%;
     cursor: pointer;
-
+    text-align: center;
     &:hover {
       background-color: rgba(0, 0, 0, 0.08);
+      border-radius: 50%;
     }
-
     img {
       width: 16px;
       height: 16px;
@@ -277,6 +342,11 @@ const UserInfo = styled.div`
   }
 `;
 
+const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
+  margin: 10px 0;
+`;
 const Editor = styled.div`
   padding: 12px 24px;
 
@@ -289,6 +359,8 @@ const Editor = styled.div`
     border: none;
     outline: none;
     line-height: 1.5;
+    color: #000 !important;
+    background-color: #fff !important;
   }
 `;
 
@@ -314,6 +386,7 @@ const AttachAssets = styled.div`
 
 const AssetButton = styled.button`
   height: 40px;
+  width: 40px !important;
   min-width: auto;
   color: rgba(0, 0, 0, 0.6);
   font-size: 14px;
@@ -344,10 +417,11 @@ const PostButton = styled.button`
   background: #0a66c2;
   border: none;
   color: white;
-  padding: 8px 16px;
+  padding: 12px 16px;
   border-radius: 20px;
   font-size: 14px;
   font-weight: 600;
+  transform: translateY(-10px);
   cursor: pointer;
   transition: background 0.3s ease;
 

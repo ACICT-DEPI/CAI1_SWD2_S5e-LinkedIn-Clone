@@ -8,7 +8,14 @@ const sendConnection = async (req, res) => {
     // Validate request body
     if (!senderId || !receiverId) {
       return res.status(400).json({
-        message: "Bad request - senderId and receiverId are required!",
+        message: "Bad request - user and receiverId are required!",
+      });
+    }
+    const receiver = await User.findById(receiverId);
+
+    if (!receiver) {
+      return res.status(404).json({
+        message: "Receiver not found!",
       });
     }
 
@@ -19,6 +26,25 @@ const sendConnection = async (req, res) => {
     });
 
     if (existingConnection) {
+      // && existingConnection.status == "pending"
+      // existingConnection.status == "accepted";
+
+      // const notification = new Notification({
+      //   type: "connectionRequest",
+      //   message: notificationMessage,
+      //   relatedId: newConnection._id,
+      //   isRead: false,
+      // });
+
+      // const savedNotification = await notification.save();
+
+      // receiver.notifications.push(savedNotification._id);
+      // await receiver.save();
+
+      // res.status(201).json({
+      //   message: `Connection request successfully sent from ${user.username} to ${receiver.username}`,
+      //   connection: newConnection,
+      // });
       return res.status(400).json({
         message:
           "Connection request already sent or users are already connected!",
@@ -33,30 +59,9 @@ const sendConnection = async (req, res) => {
     });
 
     // Update sender's connections
-    const sender = await User.findByIdAndUpdate(
-      senderId,
-      { $push: { connections: newConnection._id } },
-      { new: true }
-    );
-
-    if (!sender) {
-      return res.status(404).json({
-        message: "Sender not found!",
-      });
-    }
-
-    // Update receiver's connections
-    const receiver = await User.findByIdAndUpdate(
-      receiverId,
-      { $push: { connections: newConnection._id } },
-      { new: true }
-    );
-
-    if (!receiver) {
-      return res.status(404).json({
-        message: "Receiver not found!",
-      });
-    }
+    user.connections.push(newConnection._id);
+    // user.pendingUsers.push(receiverId);
+    await user.save();
 
     // Save the new connection
     await newConnection.save();
@@ -135,7 +140,9 @@ const changeConnectionStatus = async (req, res) => {
 
     const { senderId, receiverId } = connection;
 
-    if (newStatus === "rejected") {
+    if (status === "rejected") {
+      console.log("hereeeeeeeeeeeeeeeeeeee");
+
       // If rejected, delete the connection from the database
       await Connections.findByIdAndDelete(connectionId);
 
