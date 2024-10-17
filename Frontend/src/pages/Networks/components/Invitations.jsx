@@ -17,7 +17,7 @@ const Invitations = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/users`);
+        const response = await axios.get(`http://localhost:5001/api/users`);
         const { users } = response.data;
 
         const filteredUsers = users.filter((user) => {
@@ -46,7 +46,7 @@ const Invitations = () => {
   // Handle Ignore button
   const handleIgnore = async (id) => {
     try {
-      await axios.post("http://localhost:5000/api/connections/status", {
+      await axios.post("http://localhost:5001/api/connections/status", {
         userId: id,
         status: "rejected",
       });
@@ -62,7 +62,7 @@ const Invitations = () => {
   // Handle Accept button
   const handleAccept = async (id) => {
     try {
-      await axios.post("http://localhost:5000/api/connections/status", {
+      await axios.post("http://localhost:5001/api/connections/status", {
         userId: id,
         status: "accepted",
       });

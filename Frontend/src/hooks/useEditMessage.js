@@ -11,7 +11,7 @@ const useEditMessage = () => {
     setLoading(true);
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/messages/edit/${messageId}`,
+        `http://localhost:5001/api/messages/edit/${messageId}`,
         {
           message: newContent,
         }

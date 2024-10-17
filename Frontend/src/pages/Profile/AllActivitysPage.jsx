@@ -12,7 +12,7 @@ function AllActivitysPage() {
     getUserPosts(setPosts, 1, 10);
   }, []);
   return posts.length > 0 ? (
-    <div className="bg-linkedinLightGray min-h-screen py-3 mt-16">
+    <div className="bg-linkedinLightGray min-h-screen py-3 mt-16 ">
       <div className="mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Left Sidebar */}
         <aside className="hidden lg:block lg:col-span-3  p-4">

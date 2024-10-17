@@ -3,13 +3,14 @@ import "../../../assets/style/profile.css";
 import Button from "../../../components/common/Button";
 import { useAuthStore } from "../../../store/authStore";
 import EditIcon from "../../../components/Icons/editIcon";
-import ExperienceIcon from '../../../assets/images/ExperienceIcon.svg';
-import EducationIcon from '../../../assets/images/EducationIcon.svg';
-import defaultImage from '../../../assets/images/user.svg';
+import ExperienceIcon from "../../../assets/images/ExperienceIcon.svg";
+import EducationIcon from "../../../assets/images/EducationIcon.svg";
+import defaultImage from "../../../assets/images/user.svg";
 import defaultBG from "../../../assets/images/card-bg.svg";
 import { useViewProfile } from "../../../store/useViewProfile";
+import { IoMdClose } from "react-icons/io";
 
-const ProfileHeader = ({isOwnProfile}) => {
+const ProfileHeader = ({ isOwnProfile }) => {
   const { user, updateProfile } = useAuthStore();
   const { viewedUser } = useViewProfile();
   const [profileData, setProfileData] = useState({});
@@ -31,12 +32,13 @@ const ProfileHeader = ({isOwnProfile}) => {
       setLastName(data.lastName);
       setHeadline(data.headline);
       setProfileImage(data.profilePicture || defaultImage);
+      setBackgroundImage(data.bannerImg || defaultBG);
     }
   }, [user, viewedUser, isOwnProfile]);
 
   const firstEducation = profileData.education?.slice(-1)[0] || {};
   const firstExperience = profileData.experience?.slice(-1)[0] || {};
-  
+
   const handleSave = async () => {
     setIsLoading(true);
     try {
@@ -45,8 +47,8 @@ const ProfileHeader = ({isOwnProfile}) => {
         lastName,
         headline,
         profilePicture: newProfileImage || profileImage,
-        backgroundImage: newBackgroundImage || backgroundImage,
-      }); 
+        bannerImg: newBackgroundImage || backgroundImage,
+      });
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -59,8 +61,8 @@ const ProfileHeader = ({isOwnProfile}) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      console.log("file",reader);
-      
+      console.log("file", reader);
+
       reader.onloadend = () => {
         setNewProfileImage(reader.result);
         setProfileImage(reader.result);
@@ -83,11 +85,17 @@ const ProfileHeader = ({isOwnProfile}) => {
 
   return (
     <>
-      <main className="bg-white rounded-lg w-1/2 mx-auto">
-        {/* قسم التعديل */}
+      <main className="bg-white rounded-lg  w-[95%] md:w-[70%] relative">
         {isEditing && (
-          <div className="editing-section bg-gray-200 p-4 f z-20 w-full border rounded-lg ">
-            <h2>Edit Profile</h2>
+          <div className="editing-section w-4/6 p-5  z-20   border rounded-lg fixed  bg-white  shadow-lg  h-3/4  overflow-y-auto ">
+              <div className="flex justify-between mb-5">
+                <h2>Edit Profile</h2>
+              <button
+                    className="text-xl text-linkedinDarkGray"
+                    onClick={() => setIsEditing(false)} >
+                    <IoMdClose />
+                    </button>
+              </div>
             <div className="flex flex-col mb-4">
               <input
                 type="text"
@@ -120,7 +128,11 @@ const ProfileHeader = ({isOwnProfile}) => {
                 onChange={handleImageChange}
                 className="mt-2"
               />
-              <img src={profileImage} alt="Profile Preview" className="w-20 h-20 mt-2" />
+              <img
+                src={profileImage}
+                alt="Profile Preview"
+                className="w-20 h-20 mt-2"
+              />
             </div>
 
             <div className="flex flex-col mb-4">
@@ -131,10 +143,18 @@ const ProfileHeader = ({isOwnProfile}) => {
                 onChange={handleBackgroundChange}
                 className="mt-2"
               />
-              <img src={backgroundImage} alt="Background Preview" className="w-20 h-20 mt-2" />
+              <img
+                src={backgroundImage}
+                alt="Background Preview"
+                className="w-20 h-20 mt-2"
+              />
             </div>
 
-            <Button label={isLoading ? "Saving..." : "Save"} onClick={handleSave} disabled={isLoading} />
+            <Button
+              label={isLoading ? "Saving..." : "Save"}
+              onClick={handleSave}
+              disabled={isLoading}
+            />
           </div>
         )}
 
@@ -154,7 +174,11 @@ const ProfileHeader = ({isOwnProfile}) => {
                 <span className="intro-name">
                   {profileData.firstName} {profileData.lastName}
                 </span>
-                <span>{" ("}{profileData.username}{")"}</span>
+                <span>
+                  {" ("}
+                  {profileData.username}
+                  {")"}
+                </span>
                 <div className="intro-desc">
                   <p>{profileData.headline}</p>
                 </div>
@@ -164,25 +188,28 @@ const ProfileHeader = ({isOwnProfile}) => {
 
           <div className="flex items-start gap-5 flex-col relative py-8 px-4">
             {isOwnProfile && (
-                <div className="absolute right-0 top-0 cursor-pointer">
-                  <Button
-                    className="border-none"
-                    icon={<EditIcon fill="white" />}
-                    onClick={() => setIsEditing(!isEditing)}
-                  />
-                </div>
-              )}
+              <div className="absolute right-0 top-0 cursor-pointer">
+                <Button
+                  className="border-none"
+                  icon={<EditIcon fill="white" />}
+                  onClick={() => setIsEditing(!isEditing)}
+                />
+              </div>
+            )}
             <div className="flex gap-2 mt-6 cursor-pointer text-center justify-center">
               <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8" />
-              <p className= 'text-sm text-linkedinGray'>
-                {firstExperience.title ? firstExperience.title : "No Experience added"}
+              <p className="text-sm text-linkedinGray">
+                {firstExperience.title
+                  ? firstExperience.title
+                  : "No Experience added"}
               </p>
-                
             </div>
             <div className="flex gap-2 cursor-pointer text-center justify-center">
               <img src={EducationIcon} alt="EducationIcon" className="w-8" />
               <p className="text-sm text-linkedinGray mt-2">
-                {firstEducation.school ? firstEducation.school : "No Education added"}
+                {firstEducation.school
+                  ? firstEducation.school
+                  : "No Education added"}
               </p>
             </div>
           </div>
@@ -190,10 +217,22 @@ const ProfileHeader = ({isOwnProfile}) => {
 
         {isOwnProfile && (
           <div className="flex gap-2">
-          <Button label="Open to" styleType="primary" className="w-53 h-9 font-bold " />
-          <Button label="Add Profile section" styleType="default" className="w-99 h-9 text-linkedinBlue font-bold" />
-          <Button label="More" styleType="default" className="w-53 h-9 font-bold" />
-        </div>
+            <Button
+              label="Open to"
+              styleType="primary"
+              className="w-53 h-10 font-bold text-sm  md:text-base "
+            />
+            <Button
+              label="Add Profile section"
+              styleType="default"
+              className="w-99 h-10 text-linkedinBlue font-bold text-sm  md:text-base"
+            />
+            <Button
+              label="More"
+              styleType="default"
+              className="w-53 h-10 font-bold"
+            />
+          </div>
         )}
       </main>
     </>

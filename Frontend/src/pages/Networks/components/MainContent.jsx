@@ -12,7 +12,7 @@ const MainContent = () => {
     const fetchSuggestedUsers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/users/suggestions",
+          "http://localhost:5001/api/users/suggestions",
           {
             params: { page: 1, limit: 10 },
           }
@@ -38,7 +38,7 @@ const MainContent = () => {
   
   const handleIgnore = async (id) => {
     try {
-      await axios.post("http://localhost:5000/api/connections/status", {
+      await axios.post("http://localhost:5001/api/connections/status", {
         userId: id,
         status: "rejected",
       });

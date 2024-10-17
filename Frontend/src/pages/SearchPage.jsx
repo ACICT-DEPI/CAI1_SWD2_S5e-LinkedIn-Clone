@@ -19,7 +19,7 @@ const SearchPage = () => {
       const page = 1;
       const limit = 10;
       try {
-        const response = await axios.get(`http://localhost:5000/api/users`, {
+        const response = await axios.get(`http://localhost:5001/api/users`, {
           params: {
             search: searchTerm,
             page,
@@ -52,7 +52,7 @@ const SearchPage = () => {
       if (currentStatus === "connect") {
         // Send a connection request
         const response = await axios.post(
-          "http://localhost:5000/api/connections",
+          "http://localhost:5001/api/connections",
           {
             receiverId: userId,
           }
@@ -67,7 +67,7 @@ const SearchPage = () => {
         }));
       } else if (currentStatus === "pending") {
         const response = await axios.post(
-          "http://localhost:5000/api/connections/status",
+          "http://localhost:5001/api/connections/status",
           {
             userId,
             status: "rejected",

@@ -31,7 +31,7 @@ const ProfileCard = ({ profile, handleIgnore }) => {
       if (currentStatus === "connect") {
         // Send a connection request
         const response = await axios.post(
-          "http://localhost:5000/api/connections",
+          "http://localhost:5001/api/connections",
           {
             receiverId: profile._id,
           }
@@ -47,7 +47,7 @@ const ProfileCard = ({ profile, handleIgnore }) => {
         }));
       } else if (currentStatus === "pending") {
         const response = await axios.post(
-          "http://localhost:5000/api/connections/status",
+          "http://localhost:5001/api/connections/status",
           {
             userId: profile._id,
             status: "rejected",

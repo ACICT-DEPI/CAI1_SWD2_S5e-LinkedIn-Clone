@@ -84,7 +84,7 @@ const ExperienceSection = ({isOwnProfile}) => {
     } else {
       // add new
       const response = await axios.post(
-        "http://localhost:5000/api/users/experience",
+        "http://localhost:5001/api/users/experience",
         formData
       );
       console.log(
@@ -136,7 +136,7 @@ const ExperienceSection = ({isOwnProfile}) => {
   };
 
   return (
-    <Section>
+    <Section className=" w-[95%] md:w-[68%]">
       {experience.length === 0 ? (
         <div className={isOwnProfile ? "border-2 border-dashed border-linkedinBlue p-4 rounded-lg" : ""}>
           <div className="flex justify-between mb-2">

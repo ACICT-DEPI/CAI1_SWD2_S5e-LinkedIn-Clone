@@ -80,7 +80,7 @@ const EducationSection = ({isOwnProfile}) => {
     } else {
       // add new
       const response = await axios.post(
-        "http://localhost:5000/api/users/education",
+        "http://localhost:5001/api/users/education",
         formData
       );
       setEducation([
@@ -127,7 +127,7 @@ const EducationSection = ({isOwnProfile}) => {
   };
 
   return (
-    <Section>
+    <Section className=" w-[95%] md:w-[68%]">
       {education.length === 0 ? (
         <div className={isOwnProfile ? "border-2 border-dashed border-linkedinBlue p-4 rounded-lg" : ""}>
           <div className="flex justify-between mb-2">

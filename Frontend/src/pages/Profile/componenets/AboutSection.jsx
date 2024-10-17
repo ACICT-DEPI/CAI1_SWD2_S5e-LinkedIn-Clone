@@ -39,7 +39,7 @@ function AboutSection({ isOwnProfile }) {
   };
 
   return (
-    <Section>
+    <Section className=" w-[95%] md:w-[68%]">
       <div className="relative py-4">
         {/* Edit Button (only if it's the user's own profile) */}
         {isOwnProfile && !btnClick && about && (

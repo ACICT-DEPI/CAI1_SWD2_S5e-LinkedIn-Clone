@@ -88,7 +88,7 @@ export default function Navbar() {
     const fetchSuggestedUsers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/users/suggestions",
+          "http://localhost:5001/api/users/suggestions",
           {
             params: { page: 1, limit: 5 },
           }
@@ -112,7 +112,7 @@ export default function Navbar() {
         setFilteredUsers(suggestedUsers);
       } else {
         try {
-          const response = await axios.get(`http://localhost:5000/api/users`, {
+          const response = await axios.get(`http://localhost:5001/api/users`, {
             params: {
               search: searchTerm,
               page,

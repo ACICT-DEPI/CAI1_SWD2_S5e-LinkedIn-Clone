@@ -15,7 +15,7 @@ const Rightside = () => {
     const fetchSuggestedUsers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/users/suggestions",
+          "http://localhost:5001/api/users/suggestions",
           {
             params: { page: 1, limit: 3 },
           }
@@ -45,7 +45,7 @@ const Rightside = () => {
       if (currentStatus === "connect") {
         // Send a connection request
         const response = await axios.post(
-          "http://localhost:5000/api/connections",
+          "http://localhost:5001/api/connections",
           {
             receiverId: userId,
           }
@@ -59,7 +59,7 @@ const Rightside = () => {
         }));
       } else if (currentStatus === "pending") {
         const response = await axios.post(
-          "http://localhost:5000/api/connections/status",
+          "http://localhost:5001/api/connections/status",
           {
             userId,
             status: "rejected",

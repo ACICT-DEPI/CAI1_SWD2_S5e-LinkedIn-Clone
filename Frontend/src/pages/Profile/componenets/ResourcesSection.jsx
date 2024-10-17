@@ -14,7 +14,7 @@ const ResourcesSection = ({isOwnProfile}) => {
 
   return (
     isOwnProfile &&(
-      <div div className='bg-white rounded-lg mt-3 w-1/2 mx-auto pt-5'>
+      <div div className='bg-white rounded-lg mt-3  w-[95%] md:w-[68%] mx-auto pt-5'>
       <h2 className='text-lg font-semibold px-5 text-linkedinDarkGray'>Resources</h2>
       <div className='flex items-center gap-2 px-5'>
         <FaEye className='text-linkedinsecondGray' />

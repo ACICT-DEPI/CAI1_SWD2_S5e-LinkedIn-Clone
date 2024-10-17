@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const base_url = "http://localhost:5000/api";
+const base_url = "http://localhost:5001/api";
 
 const pagination = async (data, newData, func) => {
   let updatedData = [];

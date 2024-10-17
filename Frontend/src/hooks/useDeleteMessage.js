@@ -11,7 +11,7 @@ const useDeleteMessage = () => {
     setLoading(true);
     try {
       await axios.delete(
-        `http://localhost:5000/api/messages/delete/${messageId}`
+        `http://localhost:5001/api/messages/delete/${messageId}`
       );
 
       const updatedMessages = messages.filter((msg) => msg._id !== messageId);

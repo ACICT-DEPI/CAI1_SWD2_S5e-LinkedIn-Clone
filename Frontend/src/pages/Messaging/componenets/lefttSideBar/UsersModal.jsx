@@ -10,7 +10,7 @@ const UsersModal = ({ onClose }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/users");
+        const res = await axios.get("http://localhost:5001/api/users");
         setUsers(res.data.users);
       } catch (error) {
         toast.error(error.message);

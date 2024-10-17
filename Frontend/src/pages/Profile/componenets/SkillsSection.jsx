@@ -29,7 +29,7 @@ const SkillsSection = ({isOwnProfile}) => {
     if (skillInput.trim()) {
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/users/skill",
+          "http://localhost:5001/api/users/skill",
           { name: skillInput }
         );
         console.log("Skill added successfully:", response.data.skills);
@@ -56,7 +56,7 @@ const SkillsSection = ({isOwnProfile}) => {
   };
 
   return (
-    <Section>
+    <Section className=" w-[95%] md:w-[68%]">
       {skills.length === 0 ? (
         <div className={isOwnProfile ? "border-2 border-dashed border-linkedinBlue p-4 rounded-lg" : ""}>
           <div className="flex justify-between mb-2">

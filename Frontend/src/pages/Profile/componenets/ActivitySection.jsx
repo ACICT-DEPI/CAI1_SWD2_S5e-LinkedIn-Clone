@@ -25,7 +25,7 @@ function ActivitySection({isOwnProfile}) {
     navigate("/profile/allactivity"); // Navigate to followers page
   };
   return (
-    <div className="bg-white rounded-lg mt-3 w-1/2 mx-auto">
+    <div className="bg-white rounded-lg mt-3  mx-auto  w-[95%] md:w-[68%]">
       <div className="flex gap-2 justify-between">
         <div className="my-5">
           <h2 className="text-lg font-semibold px-5 text-linkedinDarkGray">
