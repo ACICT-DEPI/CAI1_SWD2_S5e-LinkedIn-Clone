@@ -187,7 +187,7 @@ const createPost = async (req, res) => {
 
     const notifications = user.connectedUsers.map(async (connectionId) => {
       const notification = new Notification({
-        type: "post",
+        type: "posts:all",
         message: notificationMessage,
         relatedId: newPost._id,
         isRead: false,
@@ -396,7 +396,7 @@ const sharePost = async (req, res) => {
 
     //send notification to auther
     const notification = new Notification({
-      type: "post",
+      type: "posts:reposts",
       message: `${user.username} reposted your post`,
       relatedId: post._id,
       isRead: false,

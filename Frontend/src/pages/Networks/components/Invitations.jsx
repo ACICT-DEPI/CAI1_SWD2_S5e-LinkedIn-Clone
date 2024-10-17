@@ -27,8 +27,6 @@ const Invitations = () => {
               connection.status === "pending"
           );
         });
-        console.log(filteredUsers);
-
         setInvitations(filteredUsers);
       } catch (error) {
         console.error("Error fetching search results", error);
