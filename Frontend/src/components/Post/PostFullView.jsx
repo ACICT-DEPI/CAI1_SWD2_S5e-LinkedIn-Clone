@@ -12,7 +12,7 @@ import axios from "axios";
 import { deletePost, getPostComments } from "../../utils/postApi";
 import { useAuthStore } from "../../store/authStore";
 import Swal from "sweetalert2";
-function PostFullView({ parentPost, setChange }) {
+function PostFullView({ parentPost, setPosts }) {
   const [post, setPost] = useState(parentPost);
   const description = post.content;
   const { user } = useAuthStore();
@@ -74,7 +74,10 @@ function PostFullView({ parentPost, setChange }) {
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        deletePost(post._id, setPosts)
+        deletePost(post._id, setPosts);
+        setPosts((prevPosts) =>
+          prevPosts.filter((p) => p._id !== post._id)
+        )
           .then(() => {
             // Update your state or handle UI changes after deletion
             setCommentAdded((prev) => prev - 1); // If you need to refresh comments
@@ -158,7 +161,6 @@ function PostFullView({ parentPost, setChange }) {
             post={post}
             setPost={setPost}
             comments={comments}
-            setChange={setChange}
             commentAdded={commentAdded}
             setCommentAdded={setCommentAdded}
             setComments={setComments}
@@ -177,7 +179,6 @@ const PostFocus = ({
   post,
   setPost,
   comments,
-  setChange,
   commentAdded,
   setCommentAdded,
   setComments,

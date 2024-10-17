@@ -8,7 +8,6 @@ const Main = () => {
   const [showModal, setShowModal] = useState(false);
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
-  const [change, setchange] = useState("none");
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [hasMoreComments, setHasMoreComments] = useState(true);
@@ -53,12 +52,12 @@ const Main = () => {
   useEffect(() => {
 
     getFeedPosts(setPosts, 1, limit, posts, setLoading);
-  }, [change]);
+  }, []);
 
   const handleClick = () => setShowModal(!showModal);
 
   const handleAddPost = (post) => {
-    // setPosts([post, ...posts]);
+    setPosts([post, ...posts]);
     setShowModal(false);
   };
 
@@ -103,7 +102,7 @@ const Main = () => {
               <PostFullView
                 parentPost={post}
                 key={post._id}
-                setChange={setchange}
+                setPosts={setPosts}
               />
             ))
           ) : (

@@ -117,7 +117,7 @@ export const sharePost = async (userId, postId) => {
       userId: userId,
       postId: postId,
     });
-    console.log(res);
+    console.log("share",res);
   } catch (error) {
     console.error("Error fetching feed posts:", error); // Handle errors if any
   }
