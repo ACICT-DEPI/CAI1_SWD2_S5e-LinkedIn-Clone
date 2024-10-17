@@ -1,16 +1,15 @@
 const { User } = require("../models/user.model.js");
+const Posts = require("../models/post.model.js");
+const Connections = require("../models/connection.model.js");
 const { Notification } = require("../models/notification.model.js");
 const cloudinary = require("../db/cloudinary.js");
 const multer = require("multer");
-const Posts = require("../models/post.model.js");
 const upload = multer({ dest: "uploads/" });
+
 const getSuggstedConnections = async (req, res) => {
   try {
-    // Get page and limit from query parameters, default to 1 and 3 if not provided
-    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
-    const limit = parseInt(req.query.limit) || 3; // Default to limit 3 if not provided
-
-    // Calculate the number of users to skip based on the current page
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 3;
     const skip = (page - 1) * limit;
 
     const currentUser = req.user;
@@ -89,14 +88,14 @@ const getPublicProfile = async (req, res) => {
   try {
     console.log("Received request for id:", req.params.id);
     // edit it because it was not working with findOne
-    const user = await User.findById(req.params.id).select(
-      "-password -notifications"
-    );
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const user = req.user;
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
+    }
     res.json(user);
-    } catch (error) {
-    console.error("Error fetching user profile:", error);
-    res.status(500).json({ message: "Server error" });
+  } catch (error) {
+    console.log("error in  getPublicProfile:", error);
+    res.status(500).json({ message: "server error" });
   }
 };
 
@@ -118,24 +117,22 @@ const getAllUsers = async (req, res) => {
     // Get page and limit from query parameters, default to 1 and null if not provided
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit);
+    let connectionStatus = "";
     // Calculate the number of users to skip based on the current page
     const skip = limit ? (page - 1) * limit : 0;
     const search = req.query.search || "";
 
     // Construct search query with case-insensitive regex for name, username, etc.
-    const query = {
-      ...(search
-        ? {
-            $or: [
-              { username: { $regex: search, $options: "i" } },
-              { firstName: { $regex: search, $options: "i" } },
-              { lastName: { $regex: search, $options: "i" } },
-              { email: { $regex: search, $options: "i" } },
-            ],
-          }
-        : {}),
-      _id: { $ne: req.user.id },
-    }; // If no search term, return all users
+    const query = search
+      ? {
+          $or: [
+            { username: { $regex: search, $options: "i" } },
+            { firstName: { $regex: search, $options: "i" } },
+            { lastName: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {}; // If no search term, return all users
 
     var users = await User.find(query)
       .skip(skip)
@@ -145,8 +142,8 @@ const getAllUsers = async (req, res) => {
         path: "connections",
         select: "senderId receiverId status",
       });
-
     users = users.map((user) => {
+      // Check if the logged-in user is part of any connection (either sender or receiver)
       const userConnection = user.connections.find(
         (connection) =>
           connection.senderId.toString() === req.user.id ||
@@ -158,6 +155,9 @@ const getAllUsers = async (req, res) => {
       user.connectionStatus = userConnection
         ? userConnection.status
         : "connect";
+
+      // Remove connections field if it's not needed in the response
+      delete user.connections;
 
       return user;
     });
@@ -176,7 +176,6 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 const getUserPosts = async (req, res) => {
   try {
@@ -204,6 +203,7 @@ const getUserPosts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10; // Default to 10 posts per page
 
     const posts = await Posts.find({ _id: { $in: user.posts } })
+
       .populate("auther") // Example: populate the user who created the post
       .select("-password")
       .skip((page - 1) * limit) // Skip posts for the current page
@@ -227,6 +227,7 @@ const getUserPosts = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
+
 const getUserComments = async (req, res) => {
   try {
     const user = req.user;
@@ -283,10 +284,10 @@ const UpdateProfile = async (req, res) => {
       }
     });
     // Handle profile picture upload
-    if (req.files && req.files.profilePicture[0]) {
+    if (req.files && req.files.profilePicture) {
       try {
         const result = await cloudinary.uploader.upload(
-          req.files.profilePicture[0].path
+          req.files.profilePicture.path
         );
         updatedData.profilePicture = result.secure_url;
       } catch (uploadError) {
@@ -370,7 +371,6 @@ const addSection = async (req, res) => {
 };
 
 const getNotification = async (req, res) => {
-
   const userId = req.user._id;
   const user = req.user;
   const { page = 1, limit = 10, isRead, type } = req.query;
@@ -385,7 +385,9 @@ const getNotification = async (req, res) => {
       query.type = type;
     }
 
-    const notifications = await Notification.find({ _id: { $in: user.notifications } })
+    const notifications = await Notification.find({
+      _id: { $in: user.notifications },
+    })
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
       .exec();
