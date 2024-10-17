@@ -268,7 +268,7 @@ const addExperience = async (req, res) => {
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
-
+  try{
     user.experience.push(req.body);
     await user.save();
     res.status(200).json({ experience: user.experience });
