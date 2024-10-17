@@ -34,7 +34,7 @@ const Profile = () => {
       <AboutSection isOwnProfile={isOwnProfile}/>
       <AnalyticsSection isOwnProfile={isOwnProfile}/>
       <ResourcesSection isOwnProfile={isOwnProfile}/>
-      <ActivitySection user={user} />
+      <ActivitySection user={user} isOwnProfile={isOwnProfile}/>
       <ExperienceSection isOwnProfile={isOwnProfile}/>
       <EducationSection isOwnProfile={isOwnProfile}/>
       <SkillsSection isOwnProfile={isOwnProfile}/>

@@ -6,7 +6,7 @@ import { getFeedPosts } from "../../utils/postApi";
 import axios from "axios";
 const base_url = "http://localhost:5000/api";
 
-const PostModal = ({ showModal, handleClick, handleAddPost }) => {
+const PostModal = ({ showModal, handleClick, handleAddPost, isOwnProfile}) => {
   const [editorText, setEditorText] = useState("");
   const [assetArea, setAssetArea] = useState("");
   const [shareImage, setShareImage] = useState(null);

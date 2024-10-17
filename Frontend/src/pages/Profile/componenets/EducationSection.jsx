@@ -8,8 +8,9 @@ import { MdOutlineEdit } from "react-icons/md";
 import ConfirmationModal from "../../../components/common/ConfirmationModal";
 import { useAuthStore } from "../../../store/authStore";
 import axios from "axios";
+import { useViewProfile } from "../../../store/useViewProfile";
 
-const EducationSection = () => {
+const EducationSection = ({isOwnProfile}) => {
   const months = [
     "January",
     "February",
@@ -27,6 +28,7 @@ const EducationSection = () => {
   const years = Array.from(new Array(50), (val, index) => 2024 - index);
 
   const { user, updateProfile } = useAuthStore();
+  const { viewedUser } = useViewProfile();
   const [deleteIndex, setDeleteIndex] = useState(null); // state for delete index
   const [confirmModalOpen, setConfirmModalOpen] = useState(false); // State for confirmation modal
   const [education, setEducation] = useState([]);
@@ -46,10 +48,13 @@ const EducationSection = () => {
   });
 
   useEffect(() => {
-    if (user && user.education) {
-      setEducation(user.education);
+    if (isOwnProfile && user ) {
+      setEducation(user.education || []);
     }
-  }, [user]);
+    else if (viewedUser) {
+      setEducation(viewedUser.education || []);
+    }
+  }, [user,viewedUser, isOwnProfile]);
 
   // handle input changes
   const handleChange = (e) => {
@@ -124,18 +129,21 @@ const EducationSection = () => {
   return (
     <Section>
       {education.length === 0 ? (
-        <div className="border-2 border-dashed border-linkedinBlue p-4 rounded-lg">
+        <div className={isOwnProfile ? "border-2 border-dashed border-linkedinBlue p-4 rounded-lg" : ""}>
           <div className="flex justify-between mb-2">
             <h2 className="text-lg font-semibold text-linkedinDarkGray">
               Education
             </h2>
-            <button className="text-2xl text-linkedinDarkGray">
-              <IoMdClose />
-            </button>
+            {isOwnProfile && (
+              <button className="text-2xl text-linkedinDarkGray">
+                <IoMdClose />
+              </button>
+            )}
+          
           </div>
           <p className="text-sm text-linkedinGray">
-            Show your qualifications and be up to 2X more likely to receive a
-            recruiter InMail
+            {isOwnProfile ?("Show your qualifications and be up to 2X more likely to receive a recruiter InMail")
+            :("No Education Added Yet")}
           </p>
 
           <div className="flex items-center space-x-4 my-4">
@@ -146,11 +154,13 @@ const EducationSection = () => {
               <p>2021 - 2025</p>
             </div>
           </div>
-          <Button
-            label="Add education"
-            styleType="outline"
-            onClick={() => setShowModal(true)}
-          />
+          {isOwnProfile && (
+            <Button
+              label="Add education"
+              styleType="outline"
+              onClick={() => setShowModal(true)}
+            />
+          )}
         </div>
       ) : (
         <>
@@ -158,9 +168,11 @@ const EducationSection = () => {
             <h2 className="text-lg font-semibold text-linkedinDarkGray">
               Education
             </h2>
-            <button className="text-xl" onClick={() => setShowModal(true)}>
+            {isOwnProfile && (
+              <button className="text-xl" onClick={() => setShowModal(true)}>
               <IoAddOutline />
             </button>
+            )}
           </div>
           {education.map((edu, index) => (
             <div key={index} className="mb-4 border-b border-gray-200 pb-2">
@@ -185,18 +197,22 @@ const EducationSection = () => {
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button
-                    className="text-xl text-linkedinDarkGray"
-                    onClick={() => handleEdit(index)}
-                  >
+                  {isOwnProfile && (
+                      <button
+                      className="text-xl text-linkedinDarkGray"
+                      onClick={() => handleEdit(index)}>
                     <MdOutlineEdit />
                   </button>
-                  <button
+                  )}
+                
+                  {isOwnProfile && (
+                    <button
                     className="text-xl text-linkedinDarkGray"
-                    onClick={() => handleDelete(index)}
-                  >
+                    onClick={() => handleDelete(index)} >
                     <IoMdClose />
-                  </button>
+                    </button>
+                  )}
+                  
                 </div>
               </div>
             </div>

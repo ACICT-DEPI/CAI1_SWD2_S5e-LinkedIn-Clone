@@ -5,7 +5,7 @@ import { FaArrowRight } from "react-icons/fa";
 import saveIcon from '../../../assets/images/item-icon.svg'
 import { useNavigate } from 'react-router-dom';
 
-const ResourcesSection = () => {
+const ResourcesSection = ({isOwnProfile}) => {
   const navigate = useNavigate();
 
   const handleShowResources = () => {
@@ -13,7 +13,8 @@ const ResourcesSection = () => {
   };
 
   return (
-    <div div className='bg-white rounded-lg mt-3 w-1/2 mx-auto pt-5'>
+    isOwnProfile &&(
+      <div div className='bg-white rounded-lg mt-3 w-1/2 mx-auto pt-5'>
       <h2 className='text-lg font-semibold px-5 text-linkedinDarkGray'>Resources</h2>
       <div className='flex items-center gap-2 px-5'>
         <FaEye className='text-linkedinsecondGray' />
@@ -52,6 +53,7 @@ const ResourcesSection = () => {
         
       </button>
     </div>
+    )
   )
 }
 

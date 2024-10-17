@@ -5,19 +5,23 @@ import { IoMdClose } from "react-icons/io";
 import { IoAddOutline } from "react-icons/io5";
 import { useAuthStore } from "../../../store/authStore";
 import axios from "axios";
+import { useViewProfile } from "../../../store/useViewProfile";
 
-const SkillsSection = () => {
+const SkillsSection = ({isOwnProfile}) => {
   const { user, updateProfile } = useAuthStore();
-
+  const { viewedUser } = useViewProfile();
   const [skills, setSkills] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [skillInput, setSkillInput] = useState("");
 
   useEffect(() => {
-    if (user && user.skills) {
-      setSkills(user.skills);
+    if (isOwnProfile && user ) {
+      setSkills(user.skills || []);
     }
-  }, [user]);
+    else if (viewedUser) {
+      setSkills(viewedUser.skills || []);
+    }
+  }, [user, viewedUser, isOwnProfile]); 
 
   // add new skill
   const handleSubmit = async (e) => {
@@ -54,24 +58,33 @@ const SkillsSection = () => {
   return (
     <Section>
       {skills.length === 0 ? (
-        <div className="border-2 border-dashed border-linkedinBlue p-4 rounded-lg">
+        <div className={isOwnProfile ? "border-2 border-dashed border-linkedinBlue p-4 rounded-lg" : ""}>
           <div className="flex justify-between mb-2">
             <h2 className="text-lg font-semibold text-linkedinDarkGray">
               Skills
             </h2>
-            <button className="text-2xl text-linkedinDarkGray">
-              <IoMdClose />
-            </button>
+            {isOwnProfile && (
+              <button className="text-2xl text-linkedinDarkGray">
+                <IoMdClose />
+              </button>
+            )}
+            
           </div>
-          <p className="text-sm text-linkedinGray mb-4">
-            Communicate your fit for new opportunities – 50% of hirers use
-            skills data to fill their roles.
+            <p className="text-sm text-linkedinGray mb-4">
+              {isOwnProfile ? (
+              "Communicate your fit for new opportunities – 50% of hirers use skills data to fill their roles."
+            ) : (
+              "No Skills Added Yet"
+            )}
           </p>
-          <Button
+          {isOwnProfile && (
+            <Button
             label="Add skills"
             styleType="outline"
             onClick={() => setShowModal(true)}
           />
+          )}
+          
         </div>
       ) : (
         <>
@@ -79,9 +92,11 @@ const SkillsSection = () => {
             <h2 className="text-lg font-semibold text-linkedinDarkGray">
               Skills
             </h2>
-            <button className="text-xl" onClick={() => setShowModal(true)}>
-              <IoAddOutline />
-            </button>
+            {isOwnProfile && (
+              <button className="text-2xl text-linkedinDarkGray" onClick={() => setShowModal(true)}>
+                <IoAddOutline />
+              </button>
+            )}
           </div>
           <ul className="list-disc my-4">
             {skills.map((skill, index) => (
@@ -90,12 +105,15 @@ const SkillsSection = () => {
                 className="flex justify-between items-center mb-2 mb-4 border-b border-gray-200 pb-2"
               >
                 <span className="text-linkedinDarkGray">{skill.name}</span>
-                <button
+                {isOwnProfile &&(
+                    <button
                   className="text-xl text-linkedinDarkGray"
                   onClick={() => handleDelete(index)}
                 >
                   <IoMdClose />
                 </button>
+                )}
+              
               </li>
             ))}
           </ul>
@@ -134,6 +152,7 @@ const SkillsSection = () => {
                   onClick={() => setShowModal(false)}
                 />
                 <Button label="Add Skill" styleType="primary" type="submit" />
+               
               </div>
             </form>
           </div>

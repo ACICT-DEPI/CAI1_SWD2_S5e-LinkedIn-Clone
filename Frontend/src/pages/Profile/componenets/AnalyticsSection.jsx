@@ -6,14 +6,15 @@ import { BsPeopleFill } from "react-icons/bs";
 import { IoSearch } from "react-icons/io5";
 import { FaArrowRight } from "react-icons/fa";
 
-function AnalyticsSection() {
+function AnalyticsSection({isOwnProfile}) {
   const navigate = useNavigate();
 
   const handleShowAnalytics = () => {
     navigate('/dashboard');
   };
   return (
-    <div className='bg-white rounded-lg mt-3 w-1/2 mx-auto pt-5'>
+    isOwnProfile &&(
+       <div className='bg-white rounded-lg mt-3 w-1/2 mx-auto pt-5'>
       <h2 className='text-lg font-semibold px-5 text-linkedinDarkGray'>Analytics</h2>
       <div className='flex items-center gap-2 px-5'>
         <FaEye className='text-linkedinsecondGray' />
@@ -62,6 +63,7 @@ function AnalyticsSection() {
         
       </button>
     </div>
+    )
   )
 }
 
