@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../../assets/style/profile.css";
 import Button from "../../../components/common/Button";
 import { useAuthStore } from "../../../store/authStore";
@@ -6,22 +6,36 @@ import EditIcon from "../../../components/Icons/editIcon";
 import ExperienceIcon from '../../../assets/images/ExperienceIcon.svg';
 import EducationIcon from '../../../assets/images/EducationIcon.svg';
 import defaultImage from '../../../assets/images/user.svg';
+import defaultBG from "../../../assets/images/card-bg.svg";
+import { useViewProfile } from "../../../store/useViewProfile";
 
-const ProfileHeader = () => {
+const ProfileHeader = ({isOwnProfile}) => {
   const { user, updateProfile } = useAuthStore();
+  const { viewedUser } = useViewProfile();
+  const [profileData, setProfileData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
-  const [firstName, setFirstName] = useState(user.firstName);
-  const [lastName, setLastName] = useState(user.lastName);
-  const [headline, setHeadline] = useState(user.headline);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [headline, setHeadline] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [profileImage, setProfileImage] = useState(
-    user.profilePicture || defaultImage
-  );
+  const [profileImage, setProfileImage] = useState(defaultImage);
   const [newProfileImage, setNewProfileImage] = useState(null);
-  const [backgroundImage, setBackgroundImage] = useState("src/assets/images/card-bg.svg");
+  const [backgroundImage, setBackgroundImage] = useState(defaultBG);
   const [newBackgroundImage, setNewBackgroundImage] = useState(null);
-  const firstEducation =user.education[user.education.length-1] || ' ';
-  const firstExperience =user.experience[user.experience.length-1] || ' ' ;
+
+  useEffect(() => {
+    const data = isOwnProfile ? user : viewedUser;
+    if (data) {
+      setProfileData(data);
+      setFirstName(data.firstName);
+      setLastName(data.lastName);
+      setHeadline(data.headline);
+      setProfileImage(data.profilePicture || defaultImage);
+    }
+  }, [user, viewedUser, isOwnProfile]);
+
+  const firstEducation = profileData.education?.slice(-1)[0] || {};
+  const firstExperience = profileData.experience?.slice(-1)[0] || {};
   
   const handleSave = async () => {
     setIsLoading(true);
@@ -138,25 +152,26 @@ const ProfileHeader = () => {
             {!isEditing ? (
               <div>
                 <span className="intro-name">
-                  {user.firstName} {user.lastName}
+                  {profileData.firstName} {profileData.lastName}
                 </span>
-                <span>{" ("}{user.username}{")"}</span>
+                <span>{" ("}{profileData.username}{")"}</span>
                 <div className="intro-desc">
-                  <p>{user.headline}</p>
+                  <p>{profileData.headline}</p>
                 </div>
               </div>
             ) : null}
           </div>
 
           <div className="flex items-start gap-5 flex-col relative py-8 px-4">
-            <div className="absolute right-0 top-0 cursor-pointer">
-              <Button
-                className="border-none"
-                icon={<EditIcon fill="white" />}
-                onClick={() => setIsEditing(!isEditing)}
-              />
-            </div>
-
+            {isOwnProfile && (
+                <div className="absolute right-0 top-0 cursor-pointer">
+                  <Button
+                    className="border-none"
+                    icon={<EditIcon fill="white" />}
+                    onClick={() => setIsEditing(!isEditing)}
+                  />
+                </div>
+              )}
             <div className="flex gap-2 mt-6 cursor-pointer text-center justify-center">
               <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8" />
               <h2 className="text-linkedinDarkGray mt-2">{firstExperience.title} </h2>
@@ -168,11 +183,13 @@ const ProfileHeader = () => {
           </div>
         </div>
 
-        <div className="flex gap-2">
+        {isOwnProfile && (
+          <div className="flex gap-2">
           <Button label="Open to" styleType="primary" className="w-53 h-9 font-bold " />
           <Button label="Add Profile section" styleType="default" className="w-99 h-9 text-linkedinBlue font-bold" />
           <Button label="More" styleType="default" className="w-53 h-9 font-bold" />
         </div>
+        )}
       </main>
     </>
   );

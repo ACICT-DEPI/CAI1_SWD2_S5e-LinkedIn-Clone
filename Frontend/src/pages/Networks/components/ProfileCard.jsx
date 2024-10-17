@@ -3,6 +3,7 @@ import { TiDelete } from "react-icons/ti";
 import { IoPersonAdd, IoHourglassOutline } from "react-icons/io5";
 import Button from "../../../components/common/Button";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const ProfileCard = ({ profile, handleIgnore }) => {
   const [isPending, setIsPending] = useState(false);
@@ -92,11 +93,14 @@ const ProfileCard = ({ profile, handleIgnore }) => {
           <TiDelete />
         </button>
       </div>
-      <h3 className="text-lg font-semibold px-4 mt-4 text-linkedinDarkGray text-center">
-        {profile.firstName
-          ? `${profile.firstName} ${profile.lastName}`
-          : profile.username}
-      </h3>
+      <Link to={`/profile/${profile._id}`}>
+          <h3 className="text-lg font-semibold px-4 mt-4 text-linkedinDarkGray text-center">
+            {profile.firstName
+              ? `${profile.firstName} ${profile.lastName}`
+              : profile.username}
+          </h3>
+      </Link>
+      
       <p className="text-sm text-linkedinGray px-4 text-center">
         {profile.headline}
       </p>

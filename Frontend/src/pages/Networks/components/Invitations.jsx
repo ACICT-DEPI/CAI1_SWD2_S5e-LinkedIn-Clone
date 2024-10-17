@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "../../../components/common/Button";
 import axios from "axios";
 import { useAuthStore } from "../../../store/authStore.js";
+import { Link } from "react-router-dom";
 const Invitations = () => {
   const [invitations, setInvitations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -96,9 +97,12 @@ const Invitations = () => {
               />
               <div>
                 <h4 className="font-semibold text-linkedinDarkGray">
+                  <Link to={`/profile/${invite._id}`}>
                   {invite.firstName
                     ? `${invite.firstName} ${invite.lastName}`
                     : invite.username}
+                  </Link>
+                  
                 </h4>
                 <p className="text-sm text-linkedinGray">{invite.headline}</p>
                 {/* <p className="text-xs text-linkedinGray">

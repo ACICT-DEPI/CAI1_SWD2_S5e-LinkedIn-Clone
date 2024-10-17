@@ -94,9 +94,12 @@ const Rightside = () => {
                 />
               </a>
               <div className="flex flex-col gap-0">
-                <span className="font-semibold text-black">
-                  {user.username}
-                </span>
+                <Link to={`/profile/${user._id}`}>
+                  <span className="font-semibold text-black">
+                    {user.username}
+                  </span>
+                </Link>
+                
                 <div className="text-gray-500">{user.headline}</div>
                 <Button
                   label={

@@ -133,7 +133,7 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "search/searchAll",
+        path: "searchAll",
         element: (
           <ProtectedRoute>
             <Suspense fallback={<h1>Loading...</h1>}>

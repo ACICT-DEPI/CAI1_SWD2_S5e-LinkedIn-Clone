@@ -1,9 +1,9 @@
-// SearchBar.js
 import React, { useState } from "react";
 import searchIcon from "../assets/images/nav/search-icon.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SearchBar = ({ onSearch, filteredUsers }) => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -12,10 +12,9 @@ const SearchBar = ({ onSearch, filteredUsers }) => {
     onSearch(e.target.value); // Call the parent function to update the search term
   };
 
-  const handleUserClick = (username) => {
-    // Optionally handle user selection if needed
-    console.log(`User clicked: ${username}`);
-    setSearchTerm(username);
+  const handleUserClick = (username, userId) => {
+    navigate(`/profile/${userId}`);
+    setSearchTerm(username); 
     setIsDropdownOpen(false);
   };
 
@@ -44,7 +43,7 @@ const SearchBar = ({ onSearch, filteredUsers }) => {
                   <li
                     key={user.id}
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => handleUserClick(user.username)}
+                    onClick={() => handleUserClick(user.username, user._id)}
                   >
                     {user.firstName
                       ? `${user.firstName} ${user.lastName}`
@@ -55,7 +54,7 @@ const SearchBar = ({ onSearch, filteredUsers }) => {
               <hr />
               <div className="flex justify-center py-2 hover:bg-gray-100">
                 <Link
-                  to="/search/searchAll"
+                  to="/searchAll"
                   className="text-blue-600 font-medium "
                   state={{ searchTerm }}
                 >

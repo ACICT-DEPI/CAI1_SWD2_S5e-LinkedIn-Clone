@@ -103,9 +103,10 @@ const SearchPage = () => {
               <div className="flex items-center w-full gap-4">
                 <div className="flex-grow">
                   <span className="font-semibold text-black">
-                    {user.firstName
-                      ? `${user.firstName} ${user.lastName}`
-                      : user.username}
+                    <Link to={`/profile/${user._id}`}>
+                      {user.firstName ? `${user.firstName} ${user.lastName}` : user.username}
+                    </Link>
+                    
                   </span>
                   <div className="text-gray-500">{user.headline}</div>
                 </div>
