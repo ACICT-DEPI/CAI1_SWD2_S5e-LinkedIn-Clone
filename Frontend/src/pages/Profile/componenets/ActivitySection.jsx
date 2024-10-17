@@ -9,7 +9,7 @@ import { useAuthStore } from "../../../store/authStore";
 import { FaArrowRight } from "react-icons/fa";
 import { getUserPosts } from "../../../utils/postApi";
 
-function ActivitySection() {
+function ActivitySection({isOwnProfile}) {
   const [select, setSelect] = useState("posts");
   const [posts, setPosts] = useState([]);
   useEffect(() => {
@@ -29,7 +29,7 @@ function ActivitySection() {
       <div className="flex gap-2 justify-between">
         <div className="my-5">
           <h2 className="text-lg font-semibold px-5 text-linkedinDarkGray">
-            Activity
+            {isOwnProfile ?('Activity'): ('Activity')}
           </h2>
           <p
             className="text-linkedinBlue cursor-pointer px-5"
@@ -41,16 +41,21 @@ function ActivitySection() {
           </p>
         </div>
         <div className="flex px-5 my-5">
-          <Button
-            label={"Create a Post"}
-            onClick={() => console.log("Post button clicked")}
-            styleType="outline"
-          />
-          <Button
-            icon={<img src={editIcon} alt="Edit" />}
-            onClick={() => console.log("Edit button clicked")}
-            styleType="outline"
-          />
+          {isOwnProfile && (
+            <>
+              <Button
+                label={"Create a Post"}
+                onClick={() => console.log("Post button clicked")}
+                styleType="outline"
+              />
+              <Button
+                icon={<img src={editIcon} alt="Edit" />}
+                onClick={() => console.log("Edit button clicked")}
+                styleType="outline"
+              />
+            </>
+          )}
+          
         </div>
       </div>
       {/* <div className="w-1/2"></div> */}
