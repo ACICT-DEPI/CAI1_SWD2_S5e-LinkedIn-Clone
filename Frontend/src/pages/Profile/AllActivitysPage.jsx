@@ -6,10 +6,13 @@ import UserInfoCart from "../../components/common/UserInfoCart";
 import RecommendCard from "../../components/common/RecommendCard";
 import { getUserPosts } from "../../utils/postApi";
 import Rightside from "../../components/Rightside";
+import { useAuthStore } from "../../store/authStore";
+import { useParams } from "react-router-dom";
 function AllActivitysPage() {
   const [posts, setPosts] = useState([]);
+  const { id } = useParams();
   useEffect(() => {
-    getUserPosts(setPosts, 1, 10);
+    getUserPosts(setPosts, 1, 10,[], id);
   }, []);
   return posts.length > 0 ? (
     <div className="bg-linkedinLightGray min-h-screen py-3 mt-16">

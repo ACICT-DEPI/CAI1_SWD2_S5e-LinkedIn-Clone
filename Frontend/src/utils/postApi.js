@@ -71,11 +71,15 @@ export const getFeedPosts = async (
     console.error("Error fetching feed posts:", error); // Handle errors if any
   }
 };
-export const getUserPosts = async (func, pageParam, limit = 10, posts = []) => {
+export const getUserPosts = async (func, pageParam, limit = 10, posts = [], userId = "") => {
   try {
+    console.log(userId);
+    
     const res = await axios.get(
-      `${base_url}/users/posts?page=${pageParam}&limit=${limit}`
+      `${base_url}/users/posts/${userId}?page=${pageParam}&limit=${limit}`
     );
+    console.log(res);
+    
 
     // Ensure `posts` is an array and append new data to it
     const updatedPosts = Array.isArray(posts)

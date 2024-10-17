@@ -65,7 +65,7 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "profile/allActivity",
+        path: "profile/allActivity/:id",
         element: (
           <ProtectedRoute>
             <Suspense fallback={<h1>Loading...</h1>}>
