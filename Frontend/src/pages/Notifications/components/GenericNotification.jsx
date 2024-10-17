@@ -40,12 +40,13 @@ const GenericNotification = ({ key, notification, onDelete }) => {
               </span>
             )}
             <span>{notification.message} </span>
-
-            <div className="mx-auto w-[100%] cursor-default border-linkedin-darkhover-gray bg-linkedin-lighthover-blue rounded-xl shadow-xs border-2 my-2 overflow-hidden">
-              <div className="line-clamp-2 max-w-xs p-1 text-linkedinGray">
-                {notification.relatedId.content}
+            {notification.type.includes("post") && (
+              <div className="mx-auto w-[100%] cursor-default border-linkedin-darkhover-gray bg-linkedin-lighthover-blue rounded-xl shadow-xs border-2 my-2 overflow-hidden">
+                <div className="line-clamp-2 max-w-xs p-1 text-linkedinGray">
+                  {notification.relatedId.content}
+                </div>
               </div>
-            </div>
+            )}
           </div>
           <div className="text-gray-500 text-sm">{notification.date}</div>
         </div>

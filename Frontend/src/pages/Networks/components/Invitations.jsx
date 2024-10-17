@@ -19,14 +19,17 @@ const Invitations = () => {
         setLoading(true);
         const response = await axios.get(`http://localhost:5000/api/users`);
         const { users } = response.data;
-
+        
         const filteredUsers = users.filter((user) => {
-            return user.connections.some(
+          console.log(user);
+          
+          return user.connections.some(
             (connection) =>
               connection.receiverId === loggeduser._id &&
               connection.status === "pending"
           );
         });
+        console.log(filteredUsers);
         setInvitations(filteredUsers);
       } catch (error) {
         console.error("Error fetching search results", error);

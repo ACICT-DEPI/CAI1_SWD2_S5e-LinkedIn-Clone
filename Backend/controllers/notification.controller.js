@@ -22,8 +22,8 @@ const getAllNotification = async (req, res) => {
     });
     console.log(notifications);
 
-    const page = parseInt(req.query.page) || 1; 
-    const limit = parseInt(req.query.limit) || notifications.length; 
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || notifications.length;
 
     // Pagination logic
     const startIndex = (page - 1) * limit;
