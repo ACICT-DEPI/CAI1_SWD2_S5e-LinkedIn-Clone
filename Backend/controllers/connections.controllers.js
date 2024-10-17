@@ -1,27 +1,22 @@
 const { User } = require("../models/user.model.js");
 const { Notification } = require("../models/notification.model.js");
 const Connections = require("../models/connection.model");
-const { connection } = require("mongoose");
 const sendConnection = async (req, res) => {
   try {
     const { receiverId } = req.body;
-    const user = req.user;
-    console.log(receiverId);
-    console.log(user.id);
-
+    const senderId = req.user._id;
     // Validate request body
-    if (!user || !receiverId) {
+    if (!senderId || !receiverId) {
       return res.status(400).json({
-        message: "Bad request - user and receiverId are required!",
+        message: "Bad request - senderId and receiverId are required!",
       });
     }
 
     // Check if a connection already exists
     const existingConnection = await Connections.findOne({
-      senderId: user._id,
+      senderId,
       receiverId,
     });
-    console.log(existingConnection);
 
     if (existingConnection) {
       return res.status(400).json({
@@ -32,19 +27,30 @@ const sendConnection = async (req, res) => {
 
     // Create new connection
     const newConnection = new Connections({
-      senderId: user._id,
+      senderId,
       receiverId,
-      status: "pending",
+      status: "pending", // default status for a new connection request
     });
-    console.log(newConnection);
 
     // Update sender's connections
-    user.connections.push(newConnection._id);
-    // user.pendingUsers.push(receiverId);
-    await user.save();
+    const sender = await User.findByIdAndUpdate(
+      senderId,
+      { $push: { connections: newConnection._id } },
+      { new: true }
+    );
+
+    if (!sender) {
+      return res.status(404).json({
+        message: "Sender not found!",
+      });
+    }
 
     // Update receiver's connections
-    const receiver = await User.findById(receiverId);
+    const receiver = await User.findByIdAndUpdate(
+      receiverId,
+      { $push: { connections: newConnection._id } },
+      { new: true }
+    );
 
     if (!receiver) {
       return res.status(404).json({
@@ -52,13 +58,11 @@ const sendConnection = async (req, res) => {
       });
     }
 
-    receiver.connections.push(newConnection._id); // Add new connection to receiver's connections
-    await receiver.save(); // Save receiver after updating connections
-
+    // Save the new connection
     await newConnection.save();
 
     // Send notification to the receiver
-    const notificationMessage = `${user.username} has sent you a connection request`; // Use user.username
+    const notificationMessage = `${sender.username} has sent you a connection request`;
 
     const notification = new Notification({
       type: "connectionRequest", // Notification type for connection requests
@@ -67,6 +71,7 @@ const sendConnection = async (req, res) => {
       isRead: false,
     });
 
+    // Save the notification
     const savedNotification = await notification.save();
 
     // Push notification to the receiver's notifications array
@@ -74,7 +79,7 @@ const sendConnection = async (req, res) => {
     await receiver.save();
 
     res.status(201).json({
-      message: `Connection request successfully sent from ${user.username} to ${receiver.username}`,
+      message: `Connection request successfully sent from ${sender.username} to ${receiver.username}`,
       connection: newConnection,
     });
   } catch (error) {
@@ -107,11 +112,11 @@ const showAllPendingConnections = async (req, res) => {
 };
 const changeConnectionStatus = async (req, res) => {
   try {
-    const { userId, status } = req.body;
+    const { connectionId, newStatus } = req.body;
 
-    // Check if the status is valid
+    // Check if the newStatus is valid
     const validStatuses = ["accepted", "rejected"];
-    if (!validStatuses.includes(status)) {
+    if (!validStatuses.includes(newStatus)) {
       return res.status(400).json({
         success: false,
         message: "Invalid status. Valid statuses are: accepted, rejected.",
@@ -119,12 +124,7 @@ const changeConnectionStatus = async (req, res) => {
     }
 
     // Find the connection by ID
-    const connection = await Connections.findOne({
-      $or: [
-        { senderId: req.user._id, receiverId: userId },
-        { senderId: userId, receiverId: req.user._id },
-      ],
-    });
+    const connection = await Connections.findById(connectionId);
 
     if (!connection) {
       return res.status(404).json({
@@ -135,19 +135,17 @@ const changeConnectionStatus = async (req, res) => {
 
     const { senderId, receiverId } = connection;
 
-    if (status === "rejected") {
-      console.log("hereeeeeeeeeeeeeeeeeeee");
-      
+    if (newStatus === "rejected") {
       // If rejected, delete the connection from the database
-      await Connections.findByIdAndDelete(connection._id);
+      await Connections.findByIdAndDelete(connectionId);
 
       // Remove the connection from the sender's and receiver's connections arrays
       await User.findByIdAndUpdate(senderId, {
-        $pull: { connections: connection._id },
+        $pull: { connections: connectionId },
       });
 
       await User.findByIdAndUpdate(receiverId, {
-        $pull: { connections: connection._id },
+        $pull: { connections: connectionId },
       });
 
       return res.status(200).json({
@@ -157,17 +155,17 @@ const changeConnectionStatus = async (req, res) => {
     } else {
       // For other statuses (accepted or pending), update the connection status
       const updatedConnection = await Connections.findByIdAndUpdate(
-        connection._id,
-        { status: status },
+        connectionId,
+        { status: newStatus },
         { new: true } // Return the updated document
       );
       // Add the sender to the receiver's connectedUsers array and vice versa
       await User.findByIdAndUpdate(senderId, {
-        $addToSet: { connectedUsers: receiverId },
+        $addToSet: { connectedUsers: receiverId }, 
       });
 
       await User.findByIdAndUpdate(receiverId, {
-        $addToSet: { connectedUsers: senderId },
+        $addToSet: { connectedUsers: senderId }, 
       });
       // Send notification to the sender that the connection was accepted
       const receiver = await User.findById(receiverId);
@@ -176,7 +174,7 @@ const changeConnectionStatus = async (req, res) => {
       const notification = new Notification({
         type: "connectionRequest",
         message: notificationMessage,
-        relatedId: connection._id, // Store the connection ID in the notification
+        relatedId: connectionId, // Store the connection ID in the notification
         isRead: false,
       });
 
