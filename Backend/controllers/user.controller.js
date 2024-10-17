@@ -88,14 +88,14 @@ const getPublicProfile = async (req, res) => {
   try {
     console.log("Received request for id:", req.params.id);
     // edit it because it was not working with findOne
-    const user = req.user;
-    if (!user) {
-      return res.status(404).json({ message: "user not found" });
-    }
+    const user = await User.findById(req.params.id).select(
+      "-password -notifications"
+    );
+    if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
-  } catch (error) {
-    console.log("error in  getPublicProfile:", error);
-    res.status(500).json({ message: "server error" });
+    } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
