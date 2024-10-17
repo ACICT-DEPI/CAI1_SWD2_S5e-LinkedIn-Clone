@@ -20,8 +20,9 @@ const ProfileHeader = () => {
   const [newProfileImage, setNewProfileImage] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState("src/assets/images/card-bg.svg");
   const [newBackgroundImage, setNewBackgroundImage] = useState(null);
-  const firstEducation =user.education[0] ;
-  const firstExperience =user.experience[2] ;
+  const firstEducation =user.education[user.education.length-1] || ' ';
+  const firstExperience =user.experience[user.experience.length-1] || ' ' ;
+  
   const handleSave = async () => {
     setIsLoading(true);
     try {
@@ -158,11 +159,11 @@ const ProfileHeader = () => {
 
             <div className="flex gap-2 mt-6 cursor-pointer text-center justify-center">
               <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8" />
-              <h2 className="text-linkedinDarkGray mt-2">{firstExperience}</h2>
+              <h2 className="text-linkedinDarkGray mt-2">{firstExperience.title} </h2>
             </div>
             <div className="flex gap-2 cursor-pointer text-center justify-center">
               <img src={EducationIcon} alt="EducationIcon" className="w-8" />
-              <h2 className="text-linkedinDarkGray mt-2">{firstEducation}</h2>
+              <h2 className="text-linkedinDarkGray mt-2">{firstEducation.school}</h2>
             </div>
           </div>
         </div>
