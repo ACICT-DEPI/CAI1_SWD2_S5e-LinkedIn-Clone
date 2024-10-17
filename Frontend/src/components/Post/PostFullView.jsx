@@ -48,7 +48,7 @@ function PostFullView({ parentPost, setChange }) {
 
   useEffect(() => {
     getPostComments(setComments, 1, limit, comments, post._id, setLoading);
-  }, [commentAdded]);
+  }, [post]);
   // Function to open the PostFocus component when the image is clicked
   const handleImageClick = () => {
     setIsVisible(true);
@@ -265,11 +265,7 @@ const PostFocus = ({
           />
           {comments ? (
             comments.map((comment, index) => (
-              <Comment
-                comment={comment}
-                commentAdded={commentAdded}
-                setCommentAdded={setCommentAdded}
-              />
+              <Comment comment={comment} setPost={setPost} />
             ))
           ) : (
             <>No Comments</>

@@ -8,9 +8,9 @@ const pagination = async (data, newData, func) => {
     const uniqueNewData = newData.filter(
       (newDataLoop) =>
         !data.some(
-          (existingComment) =>
-            existingComment._id === newDataLoop._id &&
-            existingComment.content === newDataLoop.content
+          (existingData) =>
+            existingData._id === newDataLoop._id &&
+            existingData.content === newDataLoop.content
         )
     );
     if (uniqueNewData.length !== 0) {
