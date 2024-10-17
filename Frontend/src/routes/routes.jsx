@@ -16,12 +16,13 @@ import AllActivitysPage from "../pages/Profile/AllActivitysPage";
 import AnalyticsPage from '../pages/Profile/AnalyticsPage';
 import ResourcePage from '../pages/Profile/ResourcesPage';
 import MessagingPage from "../pages/Messaging/MessagingPage";
+import FollowersPage from "../pages/Profile/FollowersPage";
 
 const Home = lazy(() => import("../pages/Home"));
-const Jobs = lazy(() => import("../pages/Jobs"));
 const Networks = lazy(() => import("../pages/Networks/NetworksPage"));
 const Notifications = lazy(() => import("../pages/Notifications/NotificationsPage"));
 const Profile = lazy(() => import("../pages/Profile/Profile"));
+const SearchPage = lazy(() => import("../pages/SearchPage"));
 
 const routes = createBrowserRouter([
   {
@@ -34,7 +35,6 @@ const routes = createBrowserRouter([
         element: <Navigate to="/feed" replace />,
       },
       {
-        
         path: "feed",
         element: (
           <ProtectedRoute>
@@ -46,6 +46,16 @@ const routes = createBrowserRouter([
       },
       {
         path: "profile",
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <Profile />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "profile/:profileId",
         element: (
           <ProtectedRoute>
             <Suspense fallback={<h1>Loading...</h1>}>
@@ -115,11 +125,19 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "jobs",
+        path: "followers",
+        element: (
+          <ProtectedRoute>
+            <FollowersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "searchAll",
         element: (
           <ProtectedRoute>
             <Suspense fallback={<h1>Loading...</h1>}>
-              <Jobs />
+              <SearchPage />
             </Suspense>
           </ProtectedRoute>
         ),
@@ -152,34 +170,36 @@ const routes = createBrowserRouter([
           </RedirectAuthenticatedUser>
         ),
       },
-      {
-        path: "SignUpDetailsPage",
-        element: (
-          // <ProtectedRoute>
-              <Suspense fallback={<h1>Loading...</h1>}>
-                <SignUpDetailsPage />
-              </Suspense>
-          // </ProtectedRoute>
-        ),
-      },
-      {
-        path: "verify-email",
-        element: (
-          <EmailVerificationPage />
-        ),
-      },
     ],
   },
   {
-    path: "/forgot-password",
+    path: "/SignUpDetailsPage",
     element: (
-      <ForgotPasswordPage />
+      <ProtectedRoute>
+        <Suspense fallback={<h1>Loading...</h1>}>
+          <SignUpDetailsPage />
+        </Suspense>
+      </ProtectedRoute>
     ),
+  },
+  {
+    path: "/verify-email",
+    element: (
+      <RedirectAuthenticatedUser>
+        <EmailVerificationPage />
+      </RedirectAuthenticatedUser>
+    ),
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPasswordPage />,
   },
   {
     path: "/reset-password/:token",
     element: (
-      <ResetPasswordPage />
+      <RedirectAuthenticatedUser>
+        <ResetPasswordPage />
+      </RedirectAuthenticatedUser>
     ),
   },
   {

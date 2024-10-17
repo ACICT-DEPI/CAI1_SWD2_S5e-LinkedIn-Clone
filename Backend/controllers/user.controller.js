@@ -1,37 +1,81 @@
 const { User } = require("../models/user.model.js");
+const Posts = require("../models/post.model.js");
+const Connections = require("../models/connection.model.js");
 const { Notification } = require("../models/notification.model.js");
 const cloudinary = require("../db/cloudinary.js");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
+
 const getSuggstedConnections = async (req, res) => {
   try {
-    // Get page and limit from query parameters, default to 1 and 3 if not provided
-    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
-    const limit = parseInt(req.query.limit) || 3; // Default to limit 3 if not provided
-
-    // Calculate the number of users to skip based on the current page
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 3;
     const skip = (page - 1) * limit;
 
-    // Select the current user's connections
-    const currentUser = await User.findById(req.user._id).select("connections");
+    const currentUser = req.user;
 
-    // Find suggested users excluding the current user and their connections
-    const suggestedUsers = await User.find({
-      _id: { $ne: req.user._id, $nin: currentUser.connections },
+    // Get IDs of users in pending connections
+    const pendingConnections = await Connections.find({
+      $or: [{ senderId: currentUser._id }, { receiverId: currentUser._id }],
+      status: "pending",
+    });
+
+    const pendingUserIds = pendingConnections.map((connection) =>
+      connection.senderId.toString() === currentUser._id.toString()
+        ? connection.receiverId
+        : connection.senderId
+    );
+
+    // Find suggested users (excluding current user, connected users, and pending connections)
+    let suggestedUsers = await User.find({
+      _id: {
+        $ne: currentUser._id,
+        $nin: [...currentUser.connectedUsers, ...pendingUserIds],
+      },
     })
-      .select("name username profilePicture headline")
-      .skip(skip) // Skip the previous pages' users
-      .limit(limit); // Limit the number of suggested users returned
+      .populate({
+        path: "connections", // Populating the connections field
+        select: "senderId receiverId status", // Selecting fields related to connections
+      })
+      .select("firstName lastName username profilePicture headline connections") // Fields to return from the user
+      .skip(skip)
+      .limit(limit);
+
+    // Add connectionStatus for each suggested user
+    suggestedUsers = suggestedUsers.map((user) => {
+      // Check if the current user has a connection with the suggested user
+      const userConnection = user.connections.find(
+        (connection) =>
+          connection.senderId.toString() === currentUser._id.toString() ||
+          connection.receiverId.toString() === currentUser._id.toString()
+      );
+
+      // Convert user to plain JS object to modify it
+      user = user.toObject();
+
+      // Assign connectionStatus based on whether a connection exists
+      user.connectionStatus = userConnection
+        ? userConnection.status
+        : "connect";
+
+      // Remove the connections field from the user object
+      delete user.connections;
+
+      return user;
+    });
 
     // Get total number of suggested users for calculating total pages
     const totalSuggestedUsers = await User.countDocuments({
-      _id: { $ne: req.user._id, $nin: currentUser.connections },
+      _id: {
+        $ne: currentUser._id,
+        $nin: [...currentUser.connectedUsers, ...pendingUserIds],
+      },
     });
 
     res.status(200).json({
       suggestedUsers,
       currentPage: page,
-      totalPages: Math.ceil(totalSuggestedUsers / limit), // Total pages calculated
+      totalPages: Math.ceil(totalSuggestedUsers / limit),
       totalSuggestedUsers,
     });
   } catch (error) {
@@ -44,89 +88,20 @@ const getPublicProfile = async (req, res) => {
   try {
     console.log("Received request for id:", req.params.id);
     // edit it because it was not working with findOne
-    const user = req.user;
-    if (!user) {
-      return res.status(404).json({ message: "user not found" });
-    }
+    const user = await User.findById(req.params.id).select(
+      "-password -notifications"
+    );
+    if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
-  } catch (error) {
-    console.log("error in  getPublicProfile:", error);
-    res.status(500).json({ message: "server error" });
-  }
-};
-
-const UpdateProfile = async (req, res) => {
-  try {
-    console.log(req.params); // Debugging logs
-    console.log(req.files); // Check if files are coming through
-    console.log(req.body);
-
-    const allowedField = [
-      "firstName",
-      "lastName",
-      "username",
-      "headline",
-      "about",
-      "location",
-      "profilePicture",
-      "bannerImg",
-      "skills",
-      "experience",
-      "education",
-    ];
-    const updatedData = {};
-    for (const field of allowedField) {
-      if (req.body[field]) {
-        updatedData[field] = req.body[field];
-      }
-    }
-
-    // Handle profile picture upload
-    if (req.files && req.files.profilePicture) {
-      try {
-        const result = await cloudinary.uploader.upload(
-          req.files.profilePicture[0].path
-        );
-        updatedData.profilePicture = result.secure_url;
-      } catch (uploadError) {
-        console.log("Error uploading profile picture:", uploadError);
-        return res
-          .status(500)
-          .json({ message: "Error uploading profile picture" });
-      }
-    }
-
-    // Handle banner image upload
-    if (req.files && req.files.bannerImg) {
-      try {
-        const result = await cloudinary.uploader.upload(
-          req.files.bannerImg[0].path
-        );
-        updatedData.bannerImg = result.secure_url;
-      } catch (uploadError) {
-        console.log("Error uploading banner image:", uploadError);
-        return res
-          .status(500)
-          .json({ message: "Error uploading banner image" });
-      }
-    }
-
-    // Update the user profile
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { $set: updatedData },
-      { new: true }
-    ).select("-password"); // exclude password field
-    res.json(user);
-  } catch (error) {
-    console.log("Error in UpdateProfile:", error);
+    } catch (error) {
+    console.error("Error fetching user profile:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const user = await User.findByIdAndDelete(req.user._id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -140,18 +115,52 @@ const deleteUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     // Get page and limit from query parameters, default to 1 and null if not provided
-    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
-    const limit = parseInt(req.query.limit); // Default to undefined if not provided
-
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit);
+    let connectionStatus = "";
     // Calculate the number of users to skip based on the current page
-    const skip = limit ? (page - 1) * limit : 0; // Only calculate skip if limit is defined
+    const skip = limit ? (page - 1) * limit : 0;
+    const search = req.query.search || "";
 
-    // Fetch users with optional pagination
-    const users = await User.find()
-      .skip(skip) // Skip the previous pages' users, if limit is defined
-      .limit(limit) // Limit the number of users to be returned, or undefined for all
-      .select("name username profilePicture headline"); // Select desired fields
+    // Construct search query with case-insensitive regex for name, username, etc.
+    const query = search
+      ? {
+          $or: [
+            { username: { $regex: search, $options: "i" } },
+            { firstName: { $regex: search, $options: "i" } },
+            { lastName: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {}; // If no search term, return all users
 
+    var users = await User.find(query)
+      .skip(skip)
+      .limit(limit)
+      .select("firstName lastName username profilePicture headline")
+      .populate({
+        path: "connections",
+        select: "senderId receiverId status",
+      });
+    users = users.map((user) => {
+      // Check if the logged-in user is part of any connection (either sender or receiver)
+      const userConnection = user.connections.find(
+        (connection) =>
+          connection.senderId.toString() === req.user.id ||
+          connection.receiverId.toString() === req.user.id
+      );
+
+      // If a connection is found, set the status; otherwise, default to "connect"
+      user = user.toObject(); // Convert mongoose document to plain JS object
+      user.connectionStatus = userConnection
+        ? userConnection.status
+        : "connect";
+
+      // Remove connections field if it's not needed in the response
+      delete user.connections;
+
+      return user;
+    });
     // Get total number of users for calculating total pages
     const totalUsers = await User.countDocuments();
 
@@ -160,6 +169,7 @@ const getAllUsers = async (req, res) => {
       currentPage: page,
       totalPages: limit ? Math.ceil(totalUsers / limit) : 1, // Total pages calculated only if limit is defined
       totalUsers,
+      connectionstatus: "", //pending, accepted, notFriend,
     });
   } catch (error) {
     console.log("error in Up getAllUsers:", error);
@@ -167,19 +177,57 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-
 const getUserPosts = async (req, res) => {
   try {
-    const user = req.user;
+    let user = req.user;
+    const userId = req.body.userId;
+    if (userId && userId !== req.user._id) {
+      user = await User.findById(userId);
+    }
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json(user.posts);
+
+    // Check if user has any posts
+    if (!user.posts || !user.posts.length) {
+      return res.status(200).json({
+        message: "User has no posts",
+        totalPosts: 0,
+        currentPage: 1,
+        totalPages: 0,
+        posts: [],
+      });
+    }
+
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 posts per page
+
+    const posts = await Posts.find({ _id: { $in: user.posts } })
+
+      .populate("auther") // Example: populate the user who created the post
+      .select("-password")
+      .skip((page - 1) * limit) // Skip posts for the current page
+      .limit(limit) // Limit the number of posts per page
+      .sort({ createdAt: -1 });
+
+    // Count total posts for pagination
+    const totalPosts = user.posts.length;
+
+    // Prepare the response object
+    const response = {
+      totalPosts,
+      currentPage: page,
+      totalPages: Math.ceil(totalPosts / limit),
+      posts,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.log("error in getUserPosts :", error);
     res.status(500).json({ message: "server error" });
   }
 };
+
 const getUserComments = async (req, res) => {
   try {
     const user = req.user;
@@ -212,30 +260,96 @@ const getUserComments = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
+const UpdateProfile = async (req, res) => {
+  try {
+    const allowedFields = [
+      "firstName",
+      "lastName",
+      "username",
+      "headline",
+      "about",
+      "location",
+      "profilePicture",
+      "bannerImg",
+      "skills",
+      "experience",
+      "education",
+    ];
+    const updatedData = {};
 
+    // Validate input fields
+    allowedFields.forEach((field) => {
+      if (req.body[field]) {
+        updatedData[field] = req.body[field];
+      }
+    });
+    // Handle profile picture upload
+    if (req.files && req.files.profilePicture) {
+      try {
+        const result = await cloudinary.uploader.upload(
+          req.files.profilePicture.path
+        );
+        updatedData.profilePicture = result.secure_url;
+      } catch (uploadError) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Error uploading profile picture" });
+      }
+    }
+
+    // Handle banner image upload
+    if (req.files && req.files.bannerImg) {
+      try {
+        const result = await cloudinary.uploader.upload(
+          req.files.bannerImg.path
+        );
+        updatedData.bannerImg = result.secure_url;
+      } catch (uploadError) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Error uploading banner image" });
+      }
+    }
+
+    // Update the user profile
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updatedData },
+      { new: true }
+    ).select("-password");
+
+    res.json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 const addExperience = async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
+  try {
+    const user = req.user;
+    user.experience.push(req.body);
+    await user.save();
+    res.status(200).json({ experience: user.experience });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
   }
-
-  user.experience.push(req.body);
-  await user.save();
-  res.status(200).json(user);
 };
+
 const addSkills = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  user.skills.push(req.body);
+  // Make sure the incoming skill is an object
+  const skill = { name: req.body.name };
+  user.skills.push(skill);
   await user.save();
   res.status(200).json(user);
 };
+
 const addEducation = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -246,7 +360,7 @@ const addEducation = async (req, res) => {
 };
 
 const addSection = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -257,7 +371,8 @@ const addSection = async (req, res) => {
 };
 
 const getNotification = async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.user._id;
+  const user = req.user;
   const { page = 1, limit = 10, isRead, type } = req.query;
 
   try {
@@ -270,7 +385,9 @@ const getNotification = async (req, res) => {
       query.type = type;
     }
 
-    const notifications = await Notification.find(query)
+    const notifications = await Notification.find({
+      _id: { $in: user.notifications },
+    })
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
       .exec();
@@ -305,7 +422,7 @@ const addNotificationToUser = async (req, res) => {
     console.log("Notification saved:", savedNotification);
 
     // Find the user by ID from req.params
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }

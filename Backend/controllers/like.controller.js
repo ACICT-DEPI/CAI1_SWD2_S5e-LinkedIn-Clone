@@ -21,7 +21,7 @@ const sendNotification = async (module) => {
       relatedId: module._id,
       isRead: false,
     });
-    console.log("notification",notification);
+    console.log("notification", notification);
     const savedNotification = await notification.save();
 
     author.notifications.push(savedNotification._id);
@@ -34,7 +34,9 @@ const sendNotification = async (module) => {
 
 const addLike = async (req, res) => {
   try {
-    const { typeId, userId, type } = req.body;
+    const { typeId, type } = req.body;
+    const userId = req.user._id;
+
     // Check if the newStatus is valid
     const validTypes = ["post", "comment"];
     let module;
@@ -63,9 +65,9 @@ const addLike = async (req, res) => {
         );
       } else {
         return res.status(400).json({
-          message:"You can't like the same comment more than one time!",
-          status:"bad request"
-        })
+          message: "You can't like the same comment more than one time!",
+          status: "bad request",
+        });
       }
     } else if (type === "post") {
       // Fetch the post document
@@ -119,11 +121,15 @@ const addLike = async (req, res) => {
 
 const deleteLike = async (req, res) => {
   try {
-    const { userId, typeId, type } = req.body;
+    const { typeId, type } = req.body;
+    const userId = req.userId;
+
+
     if (!typeId || !userId) {
-      return res
-        .status(400)
-        .json({ message: "Comment ID and User ID are required." });
+      return res.status(400).json({
+        message: "Comment ID and User ID are required.",
+        
+      });
     }
     const validTypes = ["post", "comment"];
     let module;

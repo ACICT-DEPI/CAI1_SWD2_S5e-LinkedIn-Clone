@@ -1,18 +1,18 @@
 import React from "react";
 import Section from "./Section";
 
-function UserInfoCart() {
-  return (
-    <Section>
+function UserInfoCart({ user }) {
+  return user ? (
+    <Section className="w-[100%]">
       {/* user photos */}
       <div className="relative  mb-5 fixed">
         <img
-          src="https://picsum.photos/1000/1000"
+          src={user.bannerImg}
           alt=""
           className="h-[100px] w-[100%] object-cover "
         />
         <img
-          src="https://picsum.photos/1000/1000"
+          src={user.profilePicture}
           alt=""
           className="h-[80px] w-[80px] rounded-full absolute top-12 border-2 left-1/2 -translate-x-1/2 cursor-pointer"
         />
@@ -20,19 +20,19 @@ function UserInfoCart() {
       {/* user name and title*/}
       <div className="py-6 text-center">
         <p className="hover:underline hover:text-linkedinBlue  cursor-pointer">
-          Mohamed Essam Elramah
+          {user.firstName} {user.lastName}
         </p>
-        <p className="text-linkedinGray">
-          Software Engineer | Frontend Developer
-        </p>
+        <p className="text-linkedinGray">{user.headline}</p>
       </div>
       <div className="border-t-2 w-full flex justify-between p-3">
         <p>Followers</p>
         <p className="text-linkedinBlue hover:underline cursor-pointer">
-          1,089
+          {user.connectedUsers.length}
         </p>
       </div>
     </Section>
+  ) : (
+    <>loading</>
   );
 }
 

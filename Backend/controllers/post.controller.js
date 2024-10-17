@@ -3,6 +3,8 @@ const Tag = require("../models/tag.model.js");
 const { User } = require("../models/user.model.js");
 const { Notification } = require("../models/notification.model.js");
 const Connections = require("../models/connection.model.js");
+const cloudinary = require("../db/cloudinary.js");
+
 const findMyAcceptedConnectionsIds = async (user) => {
   try {
     let acceptedUsers = [];
@@ -63,33 +65,49 @@ const getFeedPosts = async (req, res) => {
     const skip = limit ? (page - 1) * limit : 0; // Calculate the number of posts to skip only if limit is provided
 
     // Case 1: If the user has no connections, fetch posts based on their interests (tags)
-    if (!user.connections || user.connections.length === 0) {
-      posts = await Posts.find({
-        $or: [{ auther: { $in: user._id } }, { tags: { $in: tagIds } }],
-      })
-        .populate("auther", "name username profilePicture headline")
-        .populate("comments.user", "name profilePicture")
-        .sort({ createdAt: -1 }) // Sort by time (most recent first)
-        .skip(skip) // Skip the calculated number of posts
-        .limit(limit); // Limit the number of posts returned, or null for all
-    }
-    // Case 2: If the user has connections, fetch posts from both connections and by their interests
-    else {
-      const userConnections = await findMyAcceptedConnectionsIds(user);
-      console.log(userConnections);
+    // Get connections' posts
+    posts = await Posts.find({
+      auther: { $in: user.connections }, // Fetch posts from connections
+    })
+      .populate(
+        "auther",
+        "name firstName lastName username profilePicture headline"
+      )
+      .populate("comments.user", "name profilePicture")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
-      posts = await Posts.find({
-        $or: [
-          { auther: { $in: [...userConnections, user._id] } },
-          { tags: { $in: tagIds } },
-        ],
-      })
-        .populate("auther", "name username profilePicture headline")
-        .populate("comments.user", "name profilePicture")
-        .sort({ createdAt: -1 }) // First sort by time
-        .skip(skip) // Skip the calculated number of posts
-        .limit(limit); // Limit the number of posts returned, or null for all
-    }
+    // Get user's own posts
+    let userPosts = await Posts.find({
+      auther: user._id, // Fetch user's own posts
+    })
+      .populate("auther", "firstName lastName username headline profilePicture")
+      .populate("comments.user", "name profilePicture")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Combine both connections' posts and user posts
+    let combinedPosts = [...posts, ...userPosts];
+
+    // Fetch the rest of the posts excluding connections and user
+    const excludedAuthorIds = [...user.connections, user._id];
+    let restOfPosts = await Posts.find({
+      auther: { $nin: excludedAuthorIds }, // Exclude connections and user's posts
+    })
+      .populate("auther", "firstName lastName username headline profilePicture")
+      .populate("comments.user", "name profilePicture")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Combine all posts
+    combinedPosts = [...combinedPosts, ...restOfPosts];
+
+    // Sort all posts by createdAt
+    combinedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    posts = combinedPosts;
 
     if (!posts || posts.length === 0) {
       return res.status(404).json({
@@ -104,41 +122,55 @@ const getFeedPosts = async (req, res) => {
   }
 };
 
-
 const createPost = async (req, res) => {
   try {
     const { content, imgs, videos } = req.body;
     let newPost;
+    let imgsList = [];
     const user = req.user;
     console.log(user);
-
+    if (!user) {
+      res.status(404).json({
+        message: "user not found !",
+      });
+    }
     if (imgs && videos) {
       newPost = new Posts({
         // auther: req.user._id, // Fix typo (use -> req.user)
         auther: user._id,
         content,
-        media: {
-          images: imgs, // Fix typo: images -> imgs
-          videos: videos,
-        },
+        images: imgsList, // Fix typo: images -> imgs
+        videos: videos,
       });
     } else if (imgs) {
+      try {
+        const uploadResults = await Promise.all(
+          imgs.map(async (img) => {
+            const result = await cloudinary.uploader.upload(img);
+            return result.secure_url; // Collect secure URLs
+          })
+        );
+        imgsList.push(...uploadResults);
+      } catch (uploadError) {
+        return res.status(500).json({
+          success: false,
+          message: "Error uploading profile picture",
+          imgs: imgs,
+          imgsList: imgsList,
+        });
+      }
       newPost = new Posts({
         auther: req.user._id, // Fix typo (use -> req.user)
         content,
-        media: {
-          images: imgs, // Fix typo: imags -> imgs
-          videos: [],
-        },
+        images: imgsList, // Fix typo: imags -> imgs
+        videos: [],
       });
     } else if (videos) {
       newPost = new Posts({
         auther: req.user._id, // Fix typo (use -> req.user)
         content,
-        media: {
-          images: [],
-          videos: videos,
-        },
+        images: imgsList,
+        videos: videos,
       });
     } else {
       newPost = new Posts({
@@ -174,10 +206,13 @@ const createPost = async (req, res) => {
     // Wait for all notifications to be processed
     await Promise.all(notifications);
 
-    res.status(201).json(newPost);
+    res.status(201).json({ data: newPost, imgs: imgs, imgsList: imgsList });
   } catch (error) {
     console.error("Error creating post:", error);
-    res.status(500).json({ error: "Failed to create post" });
+    res.status(500).json({
+      error: "Failed to create post",
+      content: `new ${req.body.content}`,
+    });
   }
 };
 
@@ -185,7 +220,10 @@ const getPostById = async (req, res) => {
   try {
     const postId = req.params.id;
     const post = await Posts.findById(postId)
-      .populate("auther", "name username profilePicture headline")
+      .populate(
+        "auther",
+        "name firstName lastName username profilePicture headline"
+      )
       .populate("comments.user", "name profilePicture username headline");
 
     if (!post) {
@@ -237,7 +275,7 @@ const getAllPosts = async (req, res) => {
 
     // Fetch posts with pagination, populating the required fields (e.g., 'auther', 'comments')
     const posts = await Posts.find()
-      .populate("auther", "username") // Populate the author field with username
+      .populate("auther", "firstName lastName username headline profilePicture") // Populate the author field with username
       .populate("tags") // Populate tags if needed
       .skip(skip) // Skip the previous pages' posts
       .limit(limit) // Limit the number of posts to be returned, or null for all
@@ -257,7 +295,6 @@ const getAllPosts = async (req, res) => {
     res.status(500).json({ error: "Server error while fetching posts" });
   }
 };
-
 
 const getAllComments = async (req, res) => {
   try {
@@ -280,7 +317,7 @@ const getAllComments = async (req, res) => {
         },
         populate: {
           path: "userId",
-          select: "username profilePicture",
+          select: "firstName lastName username headline profilePicture",
         },
         select: "-postId -__v",
       })
@@ -308,19 +345,25 @@ const getAllComments = async (req, res) => {
   }
 };
 
-
 const sharePost = async (req, res) => {
   try {
+    const { postId } = req.body;
     const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
     const post = await Posts.findByIdAndUpdate(
       req.body.postId,
-      { $addToSet: { share: user._id } },
+      { $addToSet: { shares: user._id } },
       { new: true }
     );
-
+    await User.findByIdAndUpdate(
+      user._id,
+      {
+        $addToSet: { posts: postId },
+      },
+      { new: true }
+    );
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -334,7 +377,7 @@ const sharePost = async (req, res) => {
     });
     console.log(notification);
     const savedNotification = await notification.save();
-    const author = await User.findById(post.auther); 
+    const author = await User.findById(post.auther);
     if (!author) {
       return res.status(404).json({ message: "Author not found" });
     }

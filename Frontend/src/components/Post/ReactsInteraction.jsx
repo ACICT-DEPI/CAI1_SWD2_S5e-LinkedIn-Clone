@@ -1,41 +1,77 @@
-import React from 'react'
-import Button from '../common/Button'
-import commentIcon from "../../assets/images/comment-icon.svg";
+import React, { useEffect, useState } from "react";
+import Button from "../common/Button";
+import shareIcon from "../../assets/images/share-icon.svg";
 import likeIcon from "../../assets/images/like-icon.svg";
+import { useAuthStore } from "../../store/authStore";
+import axios from "axios";
+import { addLike, deleteLike, sharePost } from "../../utils/postApi";
+import LikeIcon from "../Icons/LikeIcon";
 
-function ReactsInteraction() {
+const handelCommentClicked = (post) => {
+
+};
+
+const handelShareClicked = (post) => {
+  sharePost(post.auther, post._id);
+};
+
+function ReactsInteraction({ post, setChange }) {
+  const { user } = useAuthStore();
+  const [isLike, setIsLike] = useState(false);
+
+  // Check if the user has already liked the post
+  useEffect(() => {
+    const checkLike = () => {
+      return post.likes.includes(user._id);
+    };
+    setIsLike(checkLike());
+  }, []);
+
+  // Like handler
+  const handleLikeClick = () => {
+    if (!isLike) {
+      addLike(post._id, "post");
+      setIsLike(true);
+      setChange("add like");
+    } else {
+      deleteLike(post._id, "post");
+      setIsLike(false);
+      setChange("delete like");
+    }
+  };
+
   return (
     <div className="flex justify-around py-4 flex-wrap">
       {/* Like */}
       <Button
         label={"Like"}
-        icon={<img src={likeIcon} />}
-        onClick={() => console.log("Like button clicked")}
+        icon={<LikeIcon fill={isLike ? "#005582" : "black"} />}
+        onClick={handleLikeClick}
         styleType="outline"
       />
-      {/* comment */}
-      <Button
+      {/* Comment */}
+      {/* <Button
         label={"Comment"}
-        icon={<img src={commentIcon} />}
+        icon={<img src={commentIcon} alt="comment" />}
         onClick={() => console.log("Comment button clicked")}
         styleType="outline"
-      />
+      /> */}
+      {/* Repost */}
       <Button
-        label={"Repost"}
-        icon={<img src={commentIcon} />}
-        onClick={() => console.log("Repost button clicked")}
+        label={"Share"}
+        icon={<img src={shareIcon} alt="repost" />}
+        onClick={() => handelShareClicked(post)}
         styleType="outline"
       />
-      <Button
+      {/* Send */}
+      {/* <Button
         label={"Send"}
-        icon={<img src={commentIcon} />}
+        icon={<img src={commentIcon} alt="send" />}
         onClick={() => console.log("Send button clicked")}
         styleType="outline"
-      />
-      {/* repost */}
-      {/* send */}
+      /> */}
     </div>
   );
 }
 
-export default ReactsInteraction
+export default ReactsInteraction;

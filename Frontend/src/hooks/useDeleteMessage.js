@@ -10,7 +10,9 @@ const useDeleteMessage = () => {
   const deleteMessage = async (messageId) => {
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/api/messages/delete/${messageId}`);
+      await axios.delete(
+        `http://localhost:5000/api/messages/delete/${messageId}`
+      );
 
       const updatedMessages = messages.filter((msg) => msg._id !== messageId);
       setMessages(updatedMessages);
