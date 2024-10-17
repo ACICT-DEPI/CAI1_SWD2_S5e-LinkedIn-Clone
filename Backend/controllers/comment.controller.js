@@ -59,7 +59,7 @@ const addComment = async (req, res) => {
     );
     //send notification to auther
     const notification = new Notification({
-      type: "comment",
+      type: "posts:comments",
       message: `${user.username} commented on your post`,
       relatedId: post._id,
       isRead: false,

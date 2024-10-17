@@ -16,7 +16,7 @@ const sendNotification = async (module) => {
       author.notifications = [];
     }
     const notification = new Notification({
-      type: "like",
+      type: "posts:like",
       message: `${author.username} liked your {post}`,
       relatedId: module._id,
       isRead: false,

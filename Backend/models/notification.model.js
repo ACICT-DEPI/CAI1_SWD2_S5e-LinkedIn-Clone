@@ -4,12 +4,14 @@ const notificationSchema = new mongoose.Schema({
   type: {
     type: String,
     enum: [
+      "all",
       "connectionRequest",
       "message",
-      "like",
-      "comment",
-      "jobAlert",
-      "post",
+      "posts:reposts",
+      "posts:likes",
+      "posts:comments",
+      "posts:all",
+      "mentions",
     ], // Example types
     required: true,
   },
@@ -19,7 +21,7 @@ const notificationSchema = new mongoose.Schema({
   },
   relatedId: {
     type: mongoose.Schema.Types.ObjectId,
-    refPath: "type", 
+    ref: "Posts",
   },
   isRead: {
     type: Boolean,

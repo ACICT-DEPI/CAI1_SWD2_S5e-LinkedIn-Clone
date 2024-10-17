@@ -1,16 +1,33 @@
 const { Notification } = require("../models/notification.model.js");
+const { User } = require("../models/user.model.js");
 const getAllNotification = async (req, res) => {
   try {
-    const notifications = await Notification.find();
+    const { notificationType } = req.query;
 
-    const page = parseInt(req.query.page) || 1; // Default to page 1
-    const limit = parseInt(req.query.limit) || notifications.length; // Default to send all notifications
+    const userNotificationIds = req.user.notifications;
 
-    // Calculate the start and end indices for pagination
+    let query = { _id: { $in: userNotificationIds } };
+
+    if (notificationType && notificationType !== "all") {
+      query.type = notificationType;
+    }
+
+    const notifications = await Notification.find(query).populate({
+      path: "relatedId",
+      select: "content auther",
+      populate: {
+        path: "auther", // This should match the reference key in your postSchema
+        select: "username firstName lastName profilePicture", // Select the fields you need from the User model
+      },
+    });
+    console.log(notifications);
+
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || notifications.length; 
+
+    // Pagination logic
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-
-    // Paginate the notifications
     const paginatedNotifications = notifications.slice(startIndex, endIndex);
 
     // Prepare the response object
@@ -20,13 +37,17 @@ const getAllNotification = async (req, res) => {
       totalPages: Math.ceil(notifications.length / limit),
       notifications: paginatedNotifications,
     };
+    console.log("RESPONSEEEEE");
+    console.log(response);
 
+    // Send the response
     res.status(200).json(response);
   } catch (error) {
     console.log("Error in getAllNotifications:", error);
     res.status(500).json({ message: error.message });
   }
 };
+
 const getNotificationById = async (req, res) => {
   try {
     console.log(req.params.id);
@@ -57,8 +78,35 @@ const changeNotificationStatus = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
+
+const deleteNotification = async (req, res) => {
+  try {
+    const user = req.user;
+    const notificationId = req.params.id;
+
+    if (!notificationId) {
+      return res.status(400).json({ message: "Notification ID is required" });
+    }
+
+    // Remove the notification from the Notification collection
+    await Notification.findByIdAndDelete(notificationId);
+
+    // Remove the notification ID from the user's notifications array
+    await User.findByIdAndUpdate(
+      user._id,
+      { $pull: { notifications: notificationId } },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Notification deleted successfully" });
+  } catch (error) {
+    console.log("error in  deleteNotification:", error);
+    res.status(500).json({ message: "server error" });
+  }
+};
 module.exports = {
   getNotificationById,
   getAllNotification,
   changeNotificationStatus,
+  deleteNotification,
 };
