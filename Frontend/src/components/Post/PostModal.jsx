@@ -27,18 +27,34 @@ const PostModal = ({ showModal, handleClick, handleAddPost, isOwnProfile }) => {
     };
     reader.readAsDataURL(image);
   };
-
+  const switchAssetArea = (area) => {
+    setShareImage(null);
+    setVideoLink(""); // تأكد من مسح الرابط عند التبديل
+    setAssetArea(area);
+  };
+  const handleChangeVideo = (e) => {
+    const video = e.target.files[0];
+    if (!video || !video.type.startsWith("video/")) {
+      alert(`not a video, the file is a ${typeof video}`);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setVideoLink(reader.result); // قم بتعيين الفيديو المرفوع
+    };
+    reader.readAsDataURL(video);
+  };
   const handlePostArticles = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(""); // Clear previous error
-    console.log("shareImage", shareImage);
-
+    setError("");
+  
     const newPost = {
-      imgs: shareImage ? [shareImage] : [], // Wrap single image in an array
-      videos: videoLink,
+      imgs: shareImage ? [shareImage] : [],
+      videos: videoLink ? [videoLink] : [], // تأكد من إرسال الفيديو كصفيف
       content: editorText,
     };
+  
 
     try {
       const formData = new FormData();
@@ -78,11 +94,7 @@ const PostModal = ({ showModal, handleClick, handleAddPost, isOwnProfile }) => {
     }
   };
 
-  const switchAssetArea = (area) => {
-    setShareImage(null);
-    setVideoLink("");
-    setAssetArea(area);
-  };
+
 
   const reset = (e) => {
     setEditorText("");
@@ -196,6 +208,11 @@ const PostModal = ({ showModal, handleClick, handleAddPost, isOwnProfile }) => {
                 ) : assetArea === "media" ? (
                   <>
                     <input
+                      type="file"
+                      accept="video/*" // هذا يسمح برفع ملفات الفيديو فقط
+                      onChange={handleChangeVideo} // دالة لمعالجة رفع الفيديو
+                    />
+                    <input
                       style={{
                         width: "100%",
                         height: "30px",
@@ -204,7 +221,7 @@ const PostModal = ({ showModal, handleClick, handleAddPost, isOwnProfile }) => {
                       type="text"
                       value={videoLink}
                       onChange={(e) => setVideoLink(e.target.value)}
-                      placeholder="Please input a video link"
+                      placeholder="Please input a video link or upload a video"
                     />
                     {videoLink && <ReactPlayer width="100%" url={videoLink} />}
                   </>

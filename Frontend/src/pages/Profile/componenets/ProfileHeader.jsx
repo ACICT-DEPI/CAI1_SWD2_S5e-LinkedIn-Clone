@@ -198,7 +198,7 @@ const ProfileHeader = ({ isOwnProfile }) => {
             )}
             <div className="flex gap-2 mt-6 cursor-pointer text-center justify-center">
               <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8" />
-              <p className="text-sm text-linkedinGray">
+              <p className="text-sm text-linkedinGray mt-1">
                 {firstExperience.title
                   ? firstExperience.title
                   : "No Experience added"}
@@ -228,6 +228,7 @@ const ProfileHeader = ({ isOwnProfile }) => {
               className="w-99 h-10 text-linkedinBlue font-bold text-sm  md:text-base"
             />
             <Button
+                onClick={() => setIsEditing(!isEditing)}
               label="More"
               styleType="default"
               className="w-53 h-10 font-bold"
