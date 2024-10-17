@@ -158,3 +158,12 @@ export const deletePost = async (postId, func) => {
     console.error("Error fetching post:", error); // Handle errors if any
   }
 };
+
+export const deleteShare = async (postId, func) => {
+  try {
+    const response = await axios.delete(`${base_url}/posts/share/${postId}`);
+    func((prevComments) => prevComments.filter((c) => c._id !== postId));
+  } catch (error) {
+    console.error("Error fetching post:", error); // Handle errors if any
+  }
+};

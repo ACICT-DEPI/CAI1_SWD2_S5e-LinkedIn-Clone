@@ -252,8 +252,35 @@ const deletePost = async (req, res) => {
         .status(403)
         .json({ message: "You are not authorized to delete this post" });
     }
+    const sharedUsers = post.shares;
 
     await Posts.findByIdAndDelete(postId);
+    await User.updateMany(
+      { _id: { $in: sharedUsers } }, // Find all users in the shares list
+      { $pull: { posts: postId } } // Remove the postId from their posts array
+    );
+    user.posts = user.posts.filter((post) => post != postId);
+    await user.save();
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.log("Error in delete post controller", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+const deleteShare = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const postId = req.params.id;
+    const post = await Posts.findById(postId);
+    const user = req.user;
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    await Posts.findByIdAndUpdate(
+      postId,
+      { $pull: { shares: userId } },
+      { new: true }
+    );
 
     user.posts = user.posts.filter((post) => post != postId);
     await user.save();
@@ -263,7 +290,6 @@ const deletePost = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 const getAllPosts = async (req, res) => {
   try {
     // Get page and limit from query parameters, default to 1 and null if not provided
@@ -406,6 +432,7 @@ module.exports = {
   createPost,
   getPostById,
   deletePost,
+  deleteShare,
   getAllPosts,
   getAllComments,
   sharePost,

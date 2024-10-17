@@ -9,7 +9,7 @@ import LargeText from "../common/LargeText";
 import deleteIcon from "../../assets/images/delete.svg";
 
 import axios from "axios";
-import { deletePost, getPostComments } from "../../utils/postApi";
+import { deletePost, deleteShare, getPostComments } from "../../utils/postApi";
 import { useAuthStore } from "../../store/authStore";
 import Swal from "sweetalert2";
 function PostFullView({ parentPost, setPosts }) {
@@ -74,10 +74,12 @@ function PostFullView({ parentPost, setPosts }) {
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        deletePost(post._id, setPosts);
-        setPosts((prevPosts) =>
-          prevPosts.filter((p) => p._id !== post._id)
-        )
+        if (checkIsShare()) {
+          deleteShare(post._id, setPosts);
+        } else {
+          deletePost(post._id, setPosts);
+        }
+        setPosts((prevPosts) => prevPosts.filter((p) => p._id !== post._id))
           .then(() => {
             // Update your state or handle UI changes after deletion
             setCommentAdded((prev) => prev - 1); // If you need to refresh comments
@@ -103,10 +105,12 @@ function PostFullView({ parentPost, setPosts }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+  const checkIsShare = () => {
+    return post.shares.includes(user._id);
+  };
   return (
     <div className="bg-gray-100 p-3 rounded my-2 relative">
-      {user._id === post.auther._id ? (
+      {user._id === post.auther._id || checkIsShare() ? (
         <button
           className="absolute right-0 top-0 m-2 hover:bg-red-500 p-3 rounded-full duration-300"
           onClick={handleDeletePost}
