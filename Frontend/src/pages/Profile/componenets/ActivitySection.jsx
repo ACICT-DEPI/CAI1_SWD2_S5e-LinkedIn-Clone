@@ -78,7 +78,9 @@ function ActivitySection({ isOwnProfile }) {
               <PostShortView key={index} post={post} />
             ))
           ) : (
-            <>...loading</>
+            <div className="flex justify-center">
+              <span className="loading loading-spinner mx-auto text"></span>
+            </div>
           )}
         </div>
       ) : (

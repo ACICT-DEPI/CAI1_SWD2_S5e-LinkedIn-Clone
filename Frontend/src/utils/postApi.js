@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const base_url = "http://localhost:5000/api";
+export const base_url = "http://localhost:5000/api";
 
 const pagination = async (data, newData, func) => {
   let updatedData = [];
@@ -71,14 +71,15 @@ export const getFeedPosts = async (
     console.error("Error fetching feed posts:", error); // Handle errors if any
   }
 };
-export const getUserPosts = async (func, pageParam, limit = 10, posts = [], userId = "") => {
+export const getUserPosts = async (func, pageParam, limit = 10, posts = [], userId = "",isLoading = ()=>{}) => {
   try {
     console.log(userId);
-    
+    isLoading(true);
     const res = await axios.get(
       `${base_url}/users/posts/${userId}?page=${pageParam}&limit=${limit}`
     );
     console.log(res);
+    isLoading(false);
     
 
     // Ensure `posts` is an array and append new data to it
