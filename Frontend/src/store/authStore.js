@@ -111,4 +111,6 @@ updateProfile: async (updatedData) => {
     set({ isLoading: false, error: error.response?.data?.message || "Error updating profile" });
   }
 },
+
+
 }));

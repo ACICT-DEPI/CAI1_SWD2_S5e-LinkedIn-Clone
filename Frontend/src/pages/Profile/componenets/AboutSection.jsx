@@ -4,20 +4,25 @@ import Button from "../../../components/common/Button";
 import EditIcon from "../../../components/Icons/editIcon";
 import LargeText from "../../../components/common/LargeText";
 import { useAuthStore } from "../../../store/authStore";
+import { useViewProfile } from "../../../store/useViewProfile";
 
-function AboutSection() {
+function AboutSection({ isOwnProfile }) {
   const { user, updateProfile } = useAuthStore();
+  const { viewedUser } = useViewProfile();
   const [about, setAbout] = useState(""); // Store the about text
   const [tempAbout, setTempAbout] = useState(""); // Store the temporary input value
   const [btnClick, setBtnClick] = useState(false); // Track edit state
   const [isLoading, setIsLoading] = useState(false); // Track save status
 
   useEffect(() => {
-    if (user && user.about) {
-      setAbout(user.about); // Initialize with user data
-      setTempAbout(user.about); // Sync temp input value
+    if (isOwnProfile && user) {
+      setAbout(user.about || "");
+      setTempAbout(user.about || ""); 
+    } else if (viewedUser) {
+      setAbout(viewedUser.about || "");
+      setTempAbout(viewedUser.about || "");
     }
-  }, [user]);
+  }, [user, viewedUser, isOwnProfile]);
   
   const handleSave = async () => {
     setIsLoading(true); // Indicate loading state
@@ -34,12 +39,13 @@ function AboutSection() {
   };
 
   return (
-    <Section>
+        <Section>
       <div className="relative py-4">
-        {/* Edit Button */}
-        {!btnClick && about ? (
+        {/* Show Edit Button if it's the user's own profile */}
+        {isOwnProfile && !btnClick && about ? (
           <div className="absolute right-0 top-0">
-            <Button className="border-none"
+            <Button
+              className="border-none"
               icon={<EditIcon fill="white" />}
               onClick={() => setBtnClick(true)} // Enable edit mode
             />
@@ -48,9 +54,12 @@ function AboutSection() {
 
         <p className="font-bold text-2xl pb-2">About</p>
 
-        {/* About Text or Add Button */}
-        {about === "" && !btnClick ? (
-          <Button label={"Add Brief about yourself"} onClick={() => setBtnClick(true)} />
+        {/* Show About Text or Add Button */}
+        {about === "" && !btnClick && isOwnProfile ? (
+          <Button
+            label={"Add Brief about yourself"}
+            onClick={() => setBtnClick(true)}
+          />
         ) : about.length > 100 ? (
           <LargeText description={about} style="" />
         ) : (
