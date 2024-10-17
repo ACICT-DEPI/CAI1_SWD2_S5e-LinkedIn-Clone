@@ -137,7 +137,7 @@ function PostFullView({ parentPost, setChange }) {
             className="rounded-xl my-3 object-cover"
           />
         ))}
-        <div className="absolute bottom-5 right-5 bg-[rgba(255,255,255,0.6)] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute bottom-5 right-5 bg-[rgba(255,255,255,0.6)] p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-black">
           {post.images.length}
         </div>
       </div>
