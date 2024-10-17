@@ -1,51 +1,32 @@
 const { User } = require("../models/user.model.js");
-const Posts = require("../models/post.model.js");
-const Connections = require("../models/connection.model.js");
 const { Notification } = require("../models/notification.model.js");
 const cloudinary = require("../db/cloudinary.js");
 const multer = require("multer");
+const Posts = require("../models/post.model.js");
 const upload = multer({ dest: "uploads/" });
-
 const getSuggstedConnections = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 3;
+    // Get page and limit from query parameters, default to 1 and 3 if not provided
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+    const limit = parseInt(req.query.limit) || 3; // Default to limit 3 if not provided
+
+    // Calculate the number of users to skip based on the current page
     const skip = (page - 1) * limit;
 
-    const currentUser = req.user;
+    // Select the current user's connections
+    const currentUser = await User.findById(req.user._id).select("connections");
 
-    // Get IDs of users in pending connections
-    const pendingConnections = await Connections.find({
-      $or: [{ senderId: currentUser._id }, { receiverId: currentUser._id }],
-      status: "pending", // Adjust the status to match your implementation
-    });
-
-    const pendingUserIds = pendingConnections.map((connection) =>
-      connection.senderId === currentUser._id
-        ? connection.receiverId
-        : connection.senderId
-    );
-
+    // Find suggested users excluding the current user and their connections
     const suggestedUsers = await User.find({
-      _id: {
-        $ne: currentUser._id,
-        $nin: [...currentUser.connectedUsers, ...pendingUserIds],
-      },
+      _id: { $ne: req.user._id, $nin: currentUser.connections },
     })
-      .populate({
-        path: "connectedUsers", // Populating connections of suggested users
-        select: "firstName lastName profilePicture headline", // Selecting fields to return
-      })
-      .select("name username profilePicture headline") // Fields to return from the user itself
-      .skip(skip)
-      .limit(limit);
+      .select("name username profilePicture headline")
+      .skip(skip) // Skip the previous pages' users
+      .limit(limit); // Limit the number of suggested users returned
 
     // Get total number of suggested users for calculating total pages
     const totalSuggestedUsers = await User.countDocuments({
-      _id: {
-        $ne: currentUser._id,
-        $nin: [...currentUser.connectedUsers, ...pendingUserIds], // Exclude connected and pending users
-      },
+      _id: { $ne: req.user._id, $nin: currentUser.connections },
     });
 
     res.status(200).json({
@@ -75,71 +56,7 @@ const getPublicProfile = async (req, res) => {
   }
 };
 
-const UpdateProfile = async (req, res) => {
-  try {
 
-    const allowedField = [
-      "firstName",
-      "lastName",
-      "username",
-      "headline",
-      "about",
-      "location",
-      "profilePicture",
-      "bannerImg",
-      "skills",
-      "experience",
-      "education",
-    ];
-    const updatedData = {};
-    for (const field of allowedField) {
-      if (req.body[field]) {
-        updatedData[field] = req.body[field];
-      }
-    }
-
-    // Handle profile picture upload
-    if (req.files && req.files.profilePicture) {
-      try {
-        const result = await cloudinary.uploader.upload(
-          req.files.profilePicture[0].path
-        );
-        updatedData.profilePicture = result.secure_url;
-      } catch (uploadError) {
-        console.log("Error uploading profile picture:", uploadError);
-        return res
-          .status(500)
-          .json({ message: "Error uploading profile picture" });
-      }
-    }
-
-    // Handle banner image upload
-    if (req.files && req.files.bannerImg) {
-      try {
-        const result = await cloudinary.uploader.upload(
-          req.files.bannerImg[0].path
-        );
-        updatedData.bannerImg = result.secure_url;
-      } catch (uploadError) {
-        console.log("Error uploading banner image:", uploadError);
-        return res
-          .status(500)
-          .json({ message: "Error uploading banner image" });
-      }
-    }
-
-    // Update the user profile
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { $set: updatedData },
-      { new: true }
-    ).select("-password"); // exclude password field
-    res.json(user);
-  } catch (error) {
-    console.log("Error in UpdateProfile:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
 
 const deleteUser = async (req, res) => {
   try {
@@ -184,6 +101,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+
 const getUserPosts = async (req, res) => {
   try {
     const user = req.user;
@@ -206,7 +124,6 @@ const getUserPosts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10; // Default to 10 posts per page
 
     const posts = await Posts.find({ _id: { $in: user.posts } })
-
       .populate("auther") // Example: populate the user who created the post
       .select("-password")
       .skip((page - 1) * limit) // Skip posts for the current page
@@ -229,7 +146,6 @@ const getUserPosts = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
-
 const getUserComments = async (req, res) => {
   try {
     const user = req.user;
@@ -260,6 +176,71 @@ const getUserComments = async (req, res) => {
   } catch (error) {
     console.log("error in getUserComments :", error);
     res.status(500).json({ message: "server error" });
+  }
+};
+
+const UpdateProfile = async (req, res) => {
+  try {
+    const allowedFields = [
+      "firstName",
+      "lastName",
+      "username",
+      "headline",
+      "about",
+      "location",
+      "profilePicture",
+      "bannerImg",
+      "skills",
+      "experience",
+      "education",
+    ];
+    const updatedData = {};
+
+    // Validate input fields
+    allowedFields.forEach((field) => {
+      if (req.body[field]) {
+        updatedData[field] = req.body[field];
+      }
+    });
+
+    // Handle profile picture upload
+    if (req.files && req.files.profilePicture) {
+      try {
+        const result = await cloudinary.uploader.upload(
+          req.files.profilePicture.path
+        );
+        updatedData.profilePicture = result.secure_url;
+      } catch (uploadError) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Error uploading profile picture" });
+      }
+    }
+
+    // Handle banner image upload
+    if (req.files && req.files.bannerImg) {
+      try {
+        const result = await cloudinary.uploader.upload(
+          req.files.bannerImg.path
+        );
+        updatedData.bannerImg = result.secure_url;
+      } catch (uploadError) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Error uploading banner image" });
+      }
+    }
+
+    // Update the user profile
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updatedData },
+      { new: true }
+    ).select("-password");
+
+    res.json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -313,6 +294,7 @@ const addSection = async (req, res) => {
 };
 
 const getNotification = async (req, res) => {
+
   const userId = req.user._id;
   const user = req.user;
   const { page = 1, limit = 10, isRead, type } = req.query;
@@ -327,9 +309,7 @@ const getNotification = async (req, res) => {
       query.type = type;
     }
 
-    const notifications = await Notification.find({
-      _id: { $in: user.notifications },
-    })
+    const notifications = await Notification.find({ _id: { $in: user.notifications } })
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
       .exec();
