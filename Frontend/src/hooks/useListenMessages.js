@@ -11,7 +11,24 @@ const useListenMessages = () => {
 
 			setMessages([...messages, newMessage]);
 		});
-		return () => socket?.off("newMessage");
+
+    socket?.on("messageEdited", (editedMessage) => {
+      const updatedMessages = messages.map((msg) =>
+        msg._id === editedMessage._id ? editedMessage : msg
+      );
+      setMessages(updatedMessages);
+    });
+
+    socket?.on("messageDeleted", (messageId) => {
+      const filteredMessages = messages.filter((msg) => msg._id !== messageId);
+      setMessages(filteredMessages);
+    });
+
+		return () => {
+      socket?.off("newMessage");
+      socket?.off("messageEdited");
+      socket?.off("messageDeleted");
+    };
 	}, [socket, setMessages, messages]);
 };
 export default useListenMessages;

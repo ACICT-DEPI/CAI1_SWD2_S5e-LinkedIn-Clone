@@ -21,9 +21,7 @@ const SearchPage = () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/users`, {
           params: {
-            search: searchTerm,
-            page,
-            limit,
+            search: searchTerm
           },
         });
 
@@ -86,9 +84,9 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="mt-20">
+    <div className="pt-20 pb-4 bg-linkedinLightGray min-h-screen">
       <Section>
-        <h1>Search Results</h1>
+        <h1 className="underline">Search Results</h1>
         {searchTerm && <p>Showing results for: {searchTerm}</p>}
         {suggestedUsers &&
           suggestedUsers.map((user) => (
@@ -104,9 +102,10 @@ const SearchPage = () => {
                 <div className="flex-grow">
                   <span className="font-semibold text-black">
                     <Link to={`/profile/${user._id}`}>
-                      {user.firstName ? `${user.firstName} ${user.lastName}` : user.username}
+                      {user.firstName
+                        ? `${user.firstName} ${user.lastName}`
+                        : user.username}
                     </Link>
-                    
                   </span>
                   <div className="text-gray-500">{user.headline}</div>
                 </div>
@@ -135,7 +134,6 @@ const SearchPage = () => {
                   }`}
                   onClick={() => sendConnectionRequest(user._id)} // Pass user._id here
                 />
-
               </div>
             </li>
           ))}

@@ -36,7 +36,10 @@ function SignUpPage() {
         <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-lg">
           <form onSubmit={handleSignUp} className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-linkedinsecondGray">
+              <label
+                htmlFor="username"
+                className="block text-linkedinsecondGray"
+              >
                 Username
               </label>
               <input
@@ -62,7 +65,10 @@ function SignUpPage() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-linkedinsecondGray">
+              <label
+                htmlFor="password"
+                className="block text-linkedinsecondGray"
+              >
                 Password (6+ characters)
               </label>
               <input
@@ -74,9 +80,21 @@ function SignUpPage() {
                 required
               />
             </div>
-            {error && <p className='text-red-500 font-semibold mt-2'>{error}</p>}
-            <Button label="Agree & Join" styleType="primary" className="w-full"
-            disabled={isLoading}/>
+            {error && (
+              <p className="text-red-500 font-semibold mt-2">{error}</p>
+            )}
+            <Button
+              label={
+                isLoading ? (
+                  <div className="loading loading-spinner"></div>
+                ) : (
+                  "Agree & Join"
+                )
+              }
+              styleType="primary"
+              className="w-full"
+              disabled={isLoading}
+            />
 
             <div className="flex items-center my-4">
               <div className="flex-grow border-t border-gray-300"></div>
@@ -93,13 +111,18 @@ function SignUpPage() {
 
             <Button
               label="Continue with Microsoft"
-              icon={<img src={Microsoft_logo} alt="Microsoft" className="w-5 h-5" />}
+              icon={
+                <img src={Microsoft_logo} alt="Microsoft" className="w-5 h-5" />
+              }
               styleType="default"
               className="w-full flex items-center justify-center space-x-2"
             />
             <p className="text-sm text-linkedinsecondGray text-center">
-              Already on LinkedIn?{' '}
-              <Link to="/login" className="text-linkedinBlue hover:text-linkedinDarkBlue hover:underline">
+              Already on LinkedIn?{" "}
+              <Link
+                to="/login"
+                className="text-linkedinBlue hover:text-linkedinDarkBlue hover:underline"
+              >
                 Sign in
               </Link>
             </p>

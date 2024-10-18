@@ -35,7 +35,6 @@ const getSuggstedConnections = async (req, res) => {
     })
       .populate({
         path: "connections", // Populating the connections field
-        select: "senderId receiverId status", // Selecting fields related to connections
       })
       .select("firstName lastName username profilePicture headline connections") // Fields to return from the user
       .skip(skip)
@@ -90,7 +89,7 @@ const getPublicProfile = async (req, res) => {
     // edit it because it was not working with findOne
     const user = await User.findById(req.params.id).select(
       "-password -notifications"
-    );
+    ).populate({path:"connections"});
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (error) {

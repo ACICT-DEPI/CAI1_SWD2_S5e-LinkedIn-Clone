@@ -42,19 +42,21 @@ const NotificationList = ({ filter }) => {
     getNotificationWithType();
   }, [filter]);
 
-  const openNotification = () => {};
+const openNotification=()=>{
 
-  return (
-    <div className="border flex flex-col flex-wrap justify-start bg-linkedinWhite rounded-lg mt-4">
-      {notifications.map((notification) => (
-        <GenericNotification
-          key={notification._id}
-          notification={notification}
-          onDelete={handleDeleteNotification}
-        />
-      ))}
-    </div>
-  );
+}
+
+return (
+  <div className="border flex flex-col flex-wrap justify-start bg-linkedinWhite rounded-lg mt-4">
+    {notifications.map((notification) => (
+      <GenericNotification
+        key={notification._id}
+        notification={notification}
+        onDelete={handleDeleteNotification}
+      />
+    ))}
+  </div>
+);
 };
 
 export default NotificationList;
