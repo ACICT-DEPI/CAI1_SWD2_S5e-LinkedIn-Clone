@@ -31,7 +31,7 @@ block content
                     li.text-gray-600
                         span.font-bold= exp.title
                         span.text-gray-500= ' at ' + exp.company
-                        p.text-gray-500= exp.startDate.toLocaleDateString() + ' - ' + (exp.endDate ? exp.endDate.toLocaleDateString() : 'Present')
+                        //- p.text-gray-500= exp.startDate.toLocaleDateString() + ' - ' + (exp.endDate ? exp.endDate.toLocaleDateString() : 'Present')
                         p.text-gray-600= exp.description
         else
             p.text-gray-500 No experience added.
@@ -44,7 +44,7 @@ block content
                     li.text-gray-600
                         span.font-bold= edu.school
                         span.text-gray-500= ' - ' + edu.fieldOfStudy
-                        p.text-gray-500= edu.startDate.toLocaleDateString() + ' - ' + (edu.endDate ? edu.endDate.toLocaleDateString() : 'Present')
+                        //- p.text-gray-500= edu.startDate.toLocaleDateString() + ' - ' + (edu.endDate ? edu.endDate.toLocaleDateString() : 'Present')
                         p.text-gray-600= edu.description
         else
             p.text-gray-500 No education added.

@@ -90,16 +90,16 @@ const Rightside = () => {
                 <img
                   src={user.profilePicture ? user.profilePicture : userIcon}
                   alt={user.username}
-                  className="w-10 h-10 rounded-full"
+                  className="w-10 h-10 min-w-[50px] min-h-[50px] rounded-full"
                 />
               </a>
               <div className="flex flex-col gap-0">
                 <Link to={`/profile/${user._id}`}>
                   <span className="font-semibold text-black">
-                    {user.username}
+                    {`${user.firstName} ${user.lastName}`}
                   </span>
                 </Link>
-                
+
                 <div className="text-gray-500">{user.headline}</div>
                 <Button
                   label={

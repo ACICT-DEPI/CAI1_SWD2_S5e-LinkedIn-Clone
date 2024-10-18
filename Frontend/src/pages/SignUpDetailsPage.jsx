@@ -15,7 +15,7 @@ function SignUpDetailsPage() {
     updateProfile({ firstName, lastName });
     setFirstName(firstName);
     setLastName(lastName);
-    navigate('/profile');
+    navigate("/verify-email");
     toast.success("Your Name Enterd Successfully");
     toast.success("Welcome to Linkedin!");
   };

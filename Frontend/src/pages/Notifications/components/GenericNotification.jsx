@@ -35,11 +35,11 @@ const GenericNotification = ({ key, notification, onDelete }) => {
         </div>
         <div>
           <div className="text-gray-800">
-            {notification.relatedId && (
+            {/* {notification.relatedId && (
               <span className="font-semibold">
                 {`${notification.relatedId.auther.firstName} ${notification.relatedId.auther.lastName} `}
               </span>
-            )}
+            )} */}
             <span>{notification.message} </span>
             {notification.type.includes("post") && (
               <div className="mx-auto w-[100%] cursor-default border-linkedin-darkhover-gray bg-linkedin-lighthover-blue rounded-xl shadow-xs border-2 my-2 overflow-hidden">

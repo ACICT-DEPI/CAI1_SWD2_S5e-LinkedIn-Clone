@@ -14,7 +14,9 @@ module.exports.verifyTokenAndUserCheck = async(req, res, next) => {
 		req.isAdmin = decoded.isAdmin;
 
     // Check if the user exists
-		const user = await User.findById(req.userId).select("-password");
+		const user = await User.findById(req.userId)
+      .select("-password")
+      .populate({path:"connectedUsers",select:"firstName lastName userName profilePicture headline"});
 		if (!user) {
 			return res.status(400).json({ success: false, message: "User not found" });
 		}
