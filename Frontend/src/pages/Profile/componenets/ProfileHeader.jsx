@@ -25,7 +25,6 @@ const ProfileHeader = ({ isOwnProfile }) => {
   const [newProfileImage, setNewProfileImage] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState(defaultBG);
   const [newBackgroundImage, setNewBackgroundImage] = useState(null);
-
   const [connectionStatus, setConnectionStatus] = useState();
   useEffect(() => {
     const data = isOwnProfile ? user : viewedUser;
