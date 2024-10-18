@@ -12,14 +12,16 @@ const getAllNotification = async (req, res) => {
       query.type = notificationType;
     }
 
-    const notifications = await Notification.find(query).populate({
-      path: "relatedId",
-      select: "content auther",
-      populate: {
-        path: "auther", // This should match the reference key in your postSchema
-        select: "username firstName lastName profilePicture", // Select the fields you need from the User model
-      },
-    });
+    const notifications = await Notification.find(query)
+      .populate({
+        path: "relatedId",
+        select: "content auther",
+        populate: {
+          path: "auther", // This should match the reference key in your postSchema
+          select: "username firstName lastName profilePicture", // Select the fields you need from the User model
+        },
+      })
+      .sort({ createdAt: -1 });
     console.log(notifications);
 
     const page = parseInt(req.query.page) || 1;

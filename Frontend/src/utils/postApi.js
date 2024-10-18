@@ -168,3 +168,18 @@ export const deleteShare = async (postId, func) => {
     console.error("Error fetching post:", error); // Handle errors if any
   }
 };
+
+export const getPostByID = async (postId, func, setLoading) => {
+  try {
+    setLoading(true); 
+    const res = await axios.get(`${base_url}/posts/${postId}`);
+    console.log(res);
+    // Ensure `posts` is an array and append new data to it
+    const newPosts = res.data;
+    func(newPosts);
+    setLoading(false);
+    return newPosts;
+  } catch (error) {
+    console.error("Error fetching feed posts:", error); // Handle errors if any
+  }
+};

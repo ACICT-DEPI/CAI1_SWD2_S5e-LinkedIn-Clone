@@ -10,7 +10,7 @@ const GenericNotification = ({ key, notification, onDelete }) => {
     if (notification.type == "connectionRequest") {
       navigate(`/networks`);
     } else if (notification.type.includes("post")) {
-      navigate(`/feed`);
+      navigate(`/posts/${notification.relatedId?notification.relatedId._id:""}`);
     }
   };
   return (
@@ -43,7 +43,7 @@ const GenericNotification = ({ key, notification, onDelete }) => {
             {notification.type.includes("post") && (
               <div className="mx-auto w-[100%] cursor-default border-linkedin-darkhover-gray bg-linkedin-lighthover-blue rounded-xl shadow-xs border-2 my-2 overflow-hidden">
                 <div className="line-clamp-2 max-w-xs p-1 text-linkedinGray">
-                  {notification.relatedId.content}
+                  {notification.relatedId?notification.relatedId.content:""}
                 </div>
               </div>
             )}
