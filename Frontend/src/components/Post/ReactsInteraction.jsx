@@ -7,6 +7,7 @@ import axios from "axios";
 import { addLike, deleteLike, sharePost } from "../../utils/postApi";
 import LikeIcon from "../Icons/LikeIcon";
 import Swal from "sweetalert2";
+import { BiLike, BiSolidLike } from "react-icons/bi";
 
 const handelCommentClicked = (post) => {};
 
@@ -82,10 +83,22 @@ function ReactsInteraction({ post, setPost }) {
     <div className="flex justify-around py-4 flex-wrap">
       {/* Like */}
       <Button
-        label={"Like"}
-        icon={<LikeIcon fill={isLike ? "#005582" : "black"} />}
+        label={isLike ? "Liked" : "Like"}
+        className={
+          isLike
+            ? "text-linkedinBlue border-linkedinSecondBlue"
+            : ""
+        }
+        icon={
+          !isLike ? (
+            <BiLike className="text-2xl " />
+          ) : (
+            <BiSolidLike className="text-2xl text-linkedinBlue" />
+          )
+          // <LikeIcon fill={"black"} />
+        }
         onClick={handleLikeClick}
-        styleType="outline"
+        // styleType="outline"
       />
       {/* Comment */}
       {/* <Button

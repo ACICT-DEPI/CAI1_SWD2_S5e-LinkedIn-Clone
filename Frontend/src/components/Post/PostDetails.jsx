@@ -22,6 +22,7 @@ function PostDetails() {
   const [post, setPost] = useState();
   let description = "";
   const { user } = useAuthStore();
+  const [commentAdded,setCommentAdded] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [comments, setComments] = useState([]);
   const [page, setPage] = useState(1);
