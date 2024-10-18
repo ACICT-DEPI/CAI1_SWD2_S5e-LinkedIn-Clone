@@ -88,7 +88,7 @@ const PostModal = ({ showModal, handleClick, handleAddPost, isOwnProfile }) => {
       reset(e);
     } catch (error) {
       console.error("Error while posting:", error);
-      setError("There was an error submitting your post.");
+      // setError("There was an error submitting your post.");
     } finally {
       setLoading(false);
     }

@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("./middleware/logger");
 const cors = require("cors");
 const { notFound, errorHanlder } = require("./middleware/errors");
+const compression = require("compression");
 
 require("dotenv").config();
 
@@ -25,44 +26,34 @@ const path = require("path");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(`${__dirname}/public`));
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  express.json({
-    limit: "50mb",
-  })
-);
+app.use(express.json({ limit: "50mb" }));
 app.set("view engine", "pug");
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+// Enable CORS
+app.use(cors({ origin: "*", credentials: true })); // يمكنك تعديل النطاقات المسموح بها حسب الحاجة
+app.use(compression()); // ضغط الاستجابة
 
 // Apply Middlewares
-app.use(express.json());
 app.use(cookieParser());
 app.use(logger);
 
-//Routes
+// Routes
 app.use("/api/auth", authRoutes);
-
 app.use("/api/users", userRoutes);
-
 app.use("/api/posts", postRoutes);
-
 app.use("/api/comments", commentRoutes);
-
 app.use("/api/notification", notificationRoutes);
-
 app.use("/api/connections", connectionRoutes);
-
 app.use("/api/likes", likeRoutes);
-
 app.use("/api/messages", messageRoute);
-
-app.use("/api/Conversations", conversationRoute);
-
+app.use("/api/conversations", conversationRoute);
 app.use("/api/admin", adminRoutes);
 
+// Error Handling
 app.use(notFound);
 app.use(errorHanlder);
 
+// Start Server
 const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => {
   connectDB();

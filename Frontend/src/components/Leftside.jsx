@@ -64,7 +64,7 @@ const Leftside = () => {
 };
 
 const Container = styled.div`
-  width: 25%;
+  width: 20%;
 
   @media (max-width: 1000px) {
     width: 100%;
