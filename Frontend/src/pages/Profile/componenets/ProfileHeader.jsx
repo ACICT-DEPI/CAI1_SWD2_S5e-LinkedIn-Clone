@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import "../../../assets/style/profile.css";
 import Button from "../../../components/common/Button";
 import { useAuthStore } from "../../../store/authStore";
 import EditIcon from "../../../components/Icons/editIcon";
-import ExperienceIcon from '../../../assets/images/ExperienceIcon.svg';
-import EducationIcon from '../../../assets/images/EducationIcon.svg';
-import defaultImage from '../../../assets/images/user.svg';
+import ExperienceIcon from "../../../assets/images/ExperienceIcon.svg";
+import EducationIcon from "../../../assets/images/EducationIcon.svg";
+import defaultImage from "../../../assets/images/user.svg";
 import defaultBG from "../../../assets/images/card-bg.svg";
 import { useViewProfile } from "../../../store/useViewProfile";
+import { IoHourglassOutline, IoPersonAdd } from "react-icons/io5";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
-const ProfileHeader = ({isOwnProfile}) => {
+const ProfileHeader = ({ isOwnProfile }) => {
   const { user, updateProfile } = useAuthStore();
   const { viewedUser } = useViewProfile();
   const [profileData, setProfileData] = useState({});
@@ -23,7 +26,24 @@ const ProfileHeader = ({isOwnProfile}) => {
   const [backgroundImage, setBackgroundImage] = useState(defaultBG);
   const [newBackgroundImage, setNewBackgroundImage] = useState(null);
 
+  const [connectionStatus, setConnectionStatus] = useState();
   useEffect(() => {
+    // const getUserConnection = async () => {
+    //   console.log(viewedUser);
+    //   viewedUser.connections.some((i) => {
+    //     console.log("user", user._id);
+    //     console.log("viewr", viewedUser._id);
+
+    //     if (i.receiverId === user._id || i.senderId === user._id) {
+    //       console.log("in loop");
+
+    //       console.log(i);
+
+    //       return i.status;
+    //     }
+    //   });
+    //   return "connect";
+    // };
     const data = isOwnProfile ? user : viewedUser;
     if (data) {
       setProfileData(data);
@@ -31,12 +51,17 @@ const ProfileHeader = ({isOwnProfile}) => {
       setLastName(data.lastName);
       setHeadline(data.headline);
       setProfileImage(data.profilePicture || defaultImage);
+      // getUserConnection();
+      // console.log("test");
+      // console.log(t);
+      // if(t=="rejected")
+      // setConnectionStatus(getUserConnection());
     }
   }, [user, viewedUser, isOwnProfile]);
 
   const firstEducation = profileData.education?.slice(-1)[0] || {};
   const firstExperience = profileData.experience?.slice(-1)[0] || {};
-  
+
   const handleSave = async () => {
     setIsLoading(true);
     try {
@@ -46,7 +71,7 @@ const ProfileHeader = ({isOwnProfile}) => {
         headline,
         profilePicture: newProfileImage || profileImage,
         backgroundImage: newBackgroundImage || backgroundImage,
-      }); 
+      });
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -59,8 +84,8 @@ const ProfileHeader = ({isOwnProfile}) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      console.log("file",reader);
-      
+      console.log("file", reader);
+
       reader.onloadend = () => {
         setNewProfileImage(reader.result);
         setProfileImage(reader.result);
@@ -81,6 +106,46 @@ const ProfileHeader = ({isOwnProfile}) => {
     }
   };
 
+  // const sendConnectionRequest = async (userId) => {
+  //   try {
+  //     console.log("onclick", userId);
+
+  //     const status = connectionStatus;
+  //        console.log(status);
+  //     if (status == "connect") {
+  //       console.log("gowa connect");
+
+  //       // Send a connection request
+  //       const response = await axios.post(
+  //         "http://localhost:5000/api/connections",
+  //         {
+  //           receiverId: userId,
+  //         }
+  //       );
+  //       console.log(" request :", response);
+  //       console.log("Connection request sent:", response.data);
+
+  //       // Update the connection status to "pending"
+  //       setConnectionStatus("pending");
+  //     } else if (status === "pending") {
+  //       console.log("gowa pending");
+
+  //       const response = await axios.post(
+  //         "http://localhost:5000/api/connections/status",
+  //         {
+  //           userId,
+  //           status: "rejected",
+  //         }
+  //       );
+
+  //       console.log("Status changed back to Connect:", response.data);
+  //       setConnectionStatus("connect");
+  //     }
+
+  //   } catch (error) {
+  //     console.error("Error sending connection request:", error);
+  //   }
+  // };
   return (
     <>
       <main className="bg-white rounded-lg w-1/2 mx-auto">
@@ -120,7 +185,11 @@ const ProfileHeader = ({isOwnProfile}) => {
                 onChange={handleImageChange}
                 className="mt-2"
               />
-              <img src={profileImage} alt="Profile Preview" className="w-20 h-20 mt-2" />
+              <img
+                src={profileImage}
+                alt="Profile Preview"
+                className="w-20 h-20 mt-2"
+              />
             </div>
 
             <div className="flex flex-col mb-4">
@@ -131,10 +200,18 @@ const ProfileHeader = ({isOwnProfile}) => {
                 onChange={handleBackgroundChange}
                 className="mt-2"
               />
-              <img src={backgroundImage} alt="Background Preview" className="w-20 h-20 mt-2" />
+              <img
+                src={backgroundImage}
+                alt="Background Preview"
+                className="w-20 h-20 mt-2"
+              />
             </div>
 
-            <Button label={isLoading ? "Saving..." : "Save"} onClick={handleSave} disabled={isLoading} />
+            <Button
+              label={isLoading ? "Saving..." : "Save"}
+              onClick={handleSave}
+              disabled={isLoading}
+            />
           </div>
         )}
 
@@ -150,39 +227,69 @@ const ProfileHeader = ({isOwnProfile}) => {
         <div className="flex items-center justify-between m-auto p-3">
           <div className="intro">
             {!isEditing ? (
-              <div>
-                <span className="intro-name">
-                  {profileData.firstName} {profileData.lastName}
-                </span>
-                <span>{" ("}{profileData.username}{")"}</span>
-                <div className="intro-desc">
-                  <p>{profileData.headline}</p>
+              <div className="flex items-center w-full gap-4">
+                <div>
+                  <span className="intro-name">
+                    {profileData.firstName} {profileData.lastName}
+                  </span>
+                  <span>
+                    {" ("}
+                    {profileData.username}
+                    {")"}
+                  </span>
+                  <div className="intro-desc">
+                    <p>{profileData.headline}</p>
+                  </div>
                 </div>
+                {/* {!isOwnProfile && (
+                  <Button
+                    label={
+                      connectionStatus === "pending" ? "pending" : "connect"
+                    }
+                    icon={
+                      connectionStatus === "pending" ? (
+                        <IoHourglassOutline />
+                      ) : (
+                        <IoPersonAdd />
+                      )
+                    }
+                    styleType={
+                      connectionStatus === "pending" ? "default" : "outline"
+                    }
+                    className={`w-1/4 mx-auto my-5 py-2 px-2 flex-shrink-0 ${
+                      connectionStatus === "accepted" ? "hidden" : "block"
+                    }`}
+                    onClick={() => sendConnectionRequest(viewedUser._id)} // Pass user._id here
+                  />
+                )} */}
               </div>
             ) : null}
           </div>
 
           <div className="flex items-start gap-5 flex-col relative py-8 px-4">
             {isOwnProfile && (
-                <div className="absolute right-0 top-0 cursor-pointer">
-                  <Button
-                    className="border-none"
-                    icon={<EditIcon fill="white" />}
-                    onClick={() => setIsEditing(!isEditing)}
-                  />
-                </div>
-              )}
+              <div className="absolute right-0 top-0 cursor-pointer">
+                <Button
+                  className="border-none"
+                  icon={<EditIcon fill="white" />}
+                  onClick={() => setIsEditing(!isEditing)}
+                />
+              </div>
+            )}
             <div className="flex gap-2 mt-6 cursor-pointer text-center justify-center">
               <img src={ExperienceIcon} alt="ExperienceIcon" className="w-8" />
-              <p className= 'text-sm text-linkedinGray'>
-                {firstExperience.title ? firstExperience.title : "No Experience added"}
+              <p className="text-sm text-linkedinGray">
+                {firstExperience.title
+                  ? firstExperience.title
+                  : "No Experience added"}
               </p>
-                
             </div>
             <div className="flex gap-2 cursor-pointer text-center justify-center">
               <img src={EducationIcon} alt="EducationIcon" className="w-8" />
               <p className="text-sm text-linkedinGray mt-2">
-                {firstEducation.school ? firstEducation.school : "No Education added"}
+                {firstEducation.school
+                  ? firstEducation.school
+                  : "No Education added"}
               </p>
             </div>
           </div>
@@ -190,10 +297,22 @@ const ProfileHeader = ({isOwnProfile}) => {
 
         {isOwnProfile && (
           <div className="flex gap-2">
-          <Button label="Open to" styleType="primary" className="w-53 h-9 font-bold " />
-          <Button label="Add Profile section" styleType="default" className="w-99 h-9 text-linkedinBlue font-bold" />
-          <Button label="More" styleType="default" className="w-53 h-9 font-bold" />
-        </div>
+            <Button
+              label="Open to"
+              styleType="primary"
+              className="w-53 h-9 font-bold "
+            />
+            <Button
+              label="Add Profile section"
+              styleType="default"
+              className="w-99 h-9 text-linkedinBlue font-bold"
+            />
+            <Button
+              label="More"
+              styleType="default"
+              className="w-53 h-9 font-bold"
+            />
+          </div>
         )}
       </main>
     </>
