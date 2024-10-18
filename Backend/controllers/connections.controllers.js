@@ -5,8 +5,8 @@ const sendConnection = async (req, res) => {
   try {
     const { receiverId } = req.body;
     const user = req.user;
-    console.log(receiverId);
-    console.log(user.id);
+    // console.log(receiverId);
+    // console.log(user.id);
 
     // Validate request body
     if (!user || !receiverId) {
@@ -15,6 +15,8 @@ const sendConnection = async (req, res) => {
       });
     }
     const receiver = await User.findById(receiverId);
+    console.log(receiver);
+    console.log(user);
 
     if (!receiver) {
       return res.status(404).json({

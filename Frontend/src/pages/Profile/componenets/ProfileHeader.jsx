@@ -28,36 +28,59 @@ const ProfileHeader = ({ isOwnProfile }) => {
 
   const [connectionStatus, setConnectionStatus] = useState();
   useEffect(() => {
-    // const getUserConnection = async () => {
-    //   console.log(viewedUser);
-    //   viewedUser.connections.some((i) => {
-    //     console.log("user", user._id);
-    //     console.log("viewr", viewedUser._id);
-
-    //     if (i.receiverId === user._id || i.senderId === user._id) {
-    //       console.log("in loop");
-
-    //       console.log(i);
-
-    //       return i.status;
-    //     }
-    //   });
-    //   return "connect";
-    // };
     const data = isOwnProfile ? user : viewedUser;
+    if (viewedUser) {
+      let statusUpdated = false;
+      viewedUser.connections.forEach((connection) => {
+        if (
+          connection.receiverId === user._id ||
+          connection.senderId === user._id
+        ) {
+          console.log(connection);
+          setConnectionStatus(connection.status);
+          statusUpdated = true;
+        }
+      });
+      if (!statusUpdated) {
+        setConnectionStatus("connect");
+      }
+    }
     if (data) {
       setProfileData(data);
       setFirstName(data.firstName);
       setLastName(data.lastName);
       setHeadline(data.headline);
       setProfileImage(data.profilePicture || defaultImage);
-      // getUserConnection();
-      // console.log("test");
-      // console.log(t);
-      // if(t=="rejected")
-      // setConnectionStatus(getUserConnection());
     }
   }, [user, viewedUser, isOwnProfile]);
+
+  const sendConnectionRequest = async () => {
+    try {
+      const status = connectionStatus;
+      if (status == "connect") {
+        // Send a connection request
+        const response = await axios.post(
+          "http://localhost:5000/api/connections",
+          {
+            receiverId: viewedUser._id,
+          }
+        );
+
+        setConnectionStatus("pending");
+      } else if (status === "pending") {
+        const response = await axios.post(
+          "http://localhost:5000/api/connections/status",
+          {
+            userId: viewedUser._id,
+            status: "rejected",
+          }
+        );
+        setConnectionStatus("connect");
+      }
+    } catch (error) {
+      console.error("Error sending connection request:", error);
+    }
+  };
 
   const firstEducation = profileData.education?.slice(-1)[0] || {};
   const firstExperience = profileData.experience?.slice(-1)[0] || {};
@@ -106,46 +129,6 @@ const ProfileHeader = ({ isOwnProfile }) => {
     }
   };
 
-  // const sendConnectionRequest = async (userId) => {
-  //   try {
-  //     console.log("onclick", userId);
-
-  //     const status = connectionStatus;
-  //        console.log(status);
-  //     if (status == "connect") {
-  //       console.log("gowa connect");
-
-  //       // Send a connection request
-  //       const response = await axios.post(
-  //         "http://localhost:5000/api/connections",
-  //         {
-  //           receiverId: userId,
-  //         }
-  //       );
-  //       console.log(" request :", response);
-  //       console.log("Connection request sent:", response.data);
-
-  //       // Update the connection status to "pending"
-  //       setConnectionStatus("pending");
-  //     } else if (status === "pending") {
-  //       console.log("gowa pending");
-
-  //       const response = await axios.post(
-  //         "http://localhost:5000/api/connections/status",
-  //         {
-  //           userId,
-  //           status: "rejected",
-  //         }
-  //       );
-
-  //       console.log("Status changed back to Connect:", response.data);
-  //       setConnectionStatus("connect");
-  //     }
-
-  //   } catch (error) {
-  //     console.error("Error sending connection request:", error);
-  //   }
-  // };
   return (
     <>
       <main className="bg-white rounded-lg w-1/2 mx-auto">
@@ -241,7 +224,7 @@ const ProfileHeader = ({ isOwnProfile }) => {
                     <p>{profileData.headline}</p>
                   </div>
                 </div>
-                {/* {!isOwnProfile && (
+                {!isOwnProfile && (
                   <Button
                     label={
                       connectionStatus === "pending" ? "pending" : "connect"
@@ -259,9 +242,9 @@ const ProfileHeader = ({ isOwnProfile }) => {
                     className={`w-1/4 mx-auto my-5 py-2 px-2 flex-shrink-0 ${
                       connectionStatus === "accepted" ? "hidden" : "block"
                     }`}
-                    onClick={() => sendConnectionRequest(viewedUser._id)} // Pass user._id here
+                    onClick={() => sendConnectionRequest()}
                   />
-                )} */}
+                )}
               </div>
             ) : null}
           </div>
