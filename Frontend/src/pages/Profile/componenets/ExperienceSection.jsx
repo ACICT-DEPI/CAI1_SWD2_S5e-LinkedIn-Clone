@@ -88,9 +88,6 @@ const ExperienceSection = ({isOwnProfile}) => {
         formData
       );
       
-        "exp data",
-        response.data.experience[response.data.experience.length - 1]
-      );
       setExperience([
         ...experience,
         response.data.experience[response.data.experience.length - 1],
