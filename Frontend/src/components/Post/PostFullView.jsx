@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import Section from "../common/section";
+import Section from "../common/Section";
 import Reacts from "./Reacts";
 import ReactsInteraction from "./ReactsInteraction";
 import AddComment from "./AddComment";
@@ -109,7 +109,7 @@ function PostFullView({ parentPost, setPosts }) {
     return post.shares.includes(user._id);
   };
   return (
-    <div className="bg-gray-100 p-3 rounded my-2 relative">
+    <div className="bg-white p-3 rounded my-2 relative">
       {user._id === post.auther._id || checkIsShare() ? (
         <button
           className="absolute right-0 top-0 m-2 hover:bg-red-500 p-3 rounded-full duration-300"

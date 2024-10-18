@@ -25,6 +25,7 @@ const ProfileHeader = ({ isOwnProfile }) => {
   const [newBackgroundImage, setNewBackgroundImage] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState();
+
   useEffect(() => {
     const data = isOwnProfile ? user : viewedUser;
     if (viewedUser) {
@@ -49,6 +50,8 @@ const ProfileHeader = ({ isOwnProfile }) => {
       setLastName(data.lastName);
       setHeadline(data.headline);
       setProfileImage(data.profilePicture || defaultImage);
+      setBackgroundImage(data.bannerImg || defaultBG);
+
     }
   }, [user, viewedUser, isOwnProfile]);
 
@@ -64,6 +67,7 @@ const ProfileHeader = ({ isOwnProfile }) => {
         headline,
         profilePicture: newProfileImage || profileImage,
         backgroundImage: newBackgroundImage || backgroundImage,
+        bannerImg: newBackgroundImage || backgroundImage,
       });
       setShowEditModal(false);
     } catch (error) {

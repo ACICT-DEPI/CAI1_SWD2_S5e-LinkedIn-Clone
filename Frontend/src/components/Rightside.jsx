@@ -147,8 +147,8 @@ const Rightside = () => {
 };
 
 const Container = styled.div`
-  grid-area: rightside;
-  @media (max-width: 1200px) {
+  width: 20%;
+  @media (max-width: 1300px) {
     display: none;
   }
 `;
