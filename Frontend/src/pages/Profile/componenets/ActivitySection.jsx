@@ -25,7 +25,7 @@ function ActivitySection({isOwnProfile}) {
     navigate("/profile/allactivity"); // Navigate to followers page
   };
   return (
-    <div className="bg-white rounded-lg mt-3 w-1/2 mx-auto">
+    <Section>
       <div className="flex gap-2 justify-between">
         <div className="my-5">
           <h2 className="text-lg font-semibold px-5 text-linkedinDarkGray">
@@ -101,7 +101,7 @@ function ActivitySection({isOwnProfile}) {
           <FaArrowRight />
         </div>
       </button>
-    </div>
+    </Section>
   );
 }
 

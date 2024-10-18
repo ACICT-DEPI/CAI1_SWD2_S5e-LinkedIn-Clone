@@ -83,13 +83,21 @@ const ProfileHeader = ({isOwnProfile}) => {
 
   return (
     <>
-      <main className="bg-white rounded-lg w-1/2 mx-auto">
+      <main className="bg-white rounded-lg w-4/5 md:w-1/2 mx-auto">
         <div className="hero">
           <div className="hero-banner cursor-pointer">
-            <img src={backgroundImage} alt="Background" />
+            <img
+              src={backgroundImage}
+              alt="Background"
+              className="w-full h-auto object-cover"
+            />
           </div>
-          <div className="hero-avatar cursor-pointer">
-            <img src={profileImage} alt="Profile" />
+          <div className="hero-avatar cursor-pointer flex sm:justify-center sm:align-middle">
+            <img
+              src={profileImage}
+              alt="Profile"
+              className="w-full h-auto object-cover"
+            />
           </div>
         </div>
 
@@ -142,21 +150,22 @@ const ProfileHeader = ({isOwnProfile}) => {
         </div>
 
         {isOwnProfile && (
-          <div className="flex gap-2">
+          <div className="flex flex-col md:flex-row gap-2 w-full ">
             <Button
               label="Open to"
               styleType="primary"
-              className="w-53 h-9 font-bold "
+              className="font-bold w-full md:w-1/6"
             />
             <Button
               label="Add Profile section"
               styleType="default"
-              className="w-99 h-9 text-linkedinBlue font-bold"
+              className="w-full text-linkedinBlue font-bold md:w-2/6 "
             />
             <Button
               label="More"
               styleType="default"
-              className="w-53 h-9 font-bold"
+              className="font-bold w-full md:w-1/6"
+              onClick={() => setShowEditModal(true)}
             />
           </div>
         )}

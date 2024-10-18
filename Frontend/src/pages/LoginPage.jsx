@@ -31,10 +31,8 @@ const LoginPage = () => {
       </nav>
       <main className="flex-grow flex flex-col justify-center items-center space-y-6">
         <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-lg">
-          <h1 className="text-4xl font-bold text-gray-800">
-            Sign In
-          </h1>
-          <p className='text-linkedinsecondGray my-2'>
+          <h1 className="text-4xl font-bold text-gray-800">Sign In</h1>
+          <p className="text-linkedinsecondGray my-2">
             Stay updated on your professional world.
           </p>
 
@@ -53,7 +51,10 @@ const LoginPage = () => {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-linkedinsecondGray">
+              <label
+                htmlFor="password"
+                className="block text-linkedinsecondGray"
+              >
                 Password (6+ characters)
               </label>
               <input
@@ -65,14 +66,28 @@ const LoginPage = () => {
                 required
               />
             </div>
-            
+
             {/* Forgot Password */}
-            <Link to={'/forgot-password'} className="font-medium text-linkedinBlue hover:underline cursor-pointer">
+            <Link
+              to={"/forgot-password"}
+              className="font-medium text-linkedinBlue hover:underline cursor-pointer"
+            >
               Forgot Password?
             </Link>
 
             {error && <p className="text-red-500 text-xs">{error}</p>}
-            <Button label="Sign In" styleType="primary" className="w-full"  disabled={isLoading}/>
+            <Button
+              label={
+                isLoading ? (
+                  <div className="loading loading-spinner"></div>
+                ) : (
+                  "Sign In"
+                )
+              }
+              styleType="primary"
+              className="w-full"
+              disabled={isLoading}
+            />
 
             <div className="flex items-center my-4">
               <div className="flex-grow border-t border-gray-300"></div>
@@ -82,16 +97,19 @@ const LoginPage = () => {
 
             <div className="text-xs">
               <p>
-                By clicking Continue to join or sign in, you agree to LinkedIn's{' '}
+                By clicking Continue to join or sign in, you agree to LinkedIn's{" "}
                 <a href="#" className="text-linkedinBlue hover:underline">
                   User Agreement
-                </a>,{' '}
+                </a>
+                ,{" "}
                 <a href="#" className="text-linkedinBlue hover:underline">
                   Privacy Policy
-                </a>, and{' '}
+                </a>
+                , and{" "}
                 <a href="#" className="text-linkedinBlue hover:underline">
                   Cookie Policy
-                </a>.
+                </a>
+                .
               </p>
             </div>
 
@@ -103,7 +121,9 @@ const LoginPage = () => {
             />
             <Button
               label="Continue with Microsoft"
-              icon={<img src={Microsoft_logo} alt="Microsoft" className="w-5 h-5" />}
+              icon={
+                <img src={Microsoft_logo} alt="Microsoft" className="w-5 h-5" />
+              }
               styleType="default"
               className="w-full flex items-center justify-center space-x-2"
             />
@@ -111,7 +131,7 @@ const LoginPage = () => {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              New to LinkedIn?{' '}
+              New to LinkedIn?{" "}
               <Link to="/signup" className="text-linkedinBlue hover:underline">
                 Join now
               </Link>
