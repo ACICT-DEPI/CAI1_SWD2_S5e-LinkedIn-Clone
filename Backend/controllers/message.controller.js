@@ -76,6 +76,7 @@ const editMessage = async (req, res) => {
   try {
     const { messageId } = req.params;
     const { message: newContent } = req.body;
+    // const { id: receiverId } = req.params;
 
     const updatedMessage = await Message.findByIdAndUpdate(
       messageId,
@@ -88,7 +89,11 @@ const editMessage = async (req, res) => {
     }
 
     // Emit updated message via socket
-    io.emit("messageUpdated", updatedMessage);
+    // io.emit("messageUpdated", updatedMessage);
+    const receiverSocketId = getReceiverSocketId(updatedMessage.receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("messageEdited", updatedMessage);
+    }
 
     res.status(200).json(updatedMessage);
   } catch (error) {
@@ -101,6 +106,7 @@ const editMessage = async (req, res) => {
 const deleteMessage = async (req, res) => {
   try {
     const { messageId } = req.params;
+    // const { id: receiverId } = req.params;
 
     const deletedMessage = await Message.findByIdAndDelete(messageId);
 
@@ -115,7 +121,11 @@ const deleteMessage = async (req, res) => {
     );
 
     // Emit deletion via socket
-    io.emit("messageDeleted", messageId);
+    // io.emit("messageDeleted", messageId);
+    const receiverSocketId = getReceiverSocketId(deletedMessage.receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("messageDeleted", messageId);
+    }
 
     res.status(200).json({ message: "Message deleted successfully" });
   } catch (error) {
