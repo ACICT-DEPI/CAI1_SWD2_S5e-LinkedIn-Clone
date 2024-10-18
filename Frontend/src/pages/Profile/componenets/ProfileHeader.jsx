@@ -8,6 +8,7 @@ import EducationIcon from '../../../assets/images/EducationIcon.svg';
 import defaultImage from '../../../assets/images/user.svg';
 import defaultBG from "../../../assets/images/card-bg.svg";
 import { useViewProfile } from "../../../store/useViewProfile";
+import Section from "../../../components/common/Section";
 
 const ProfileHeader = ({isOwnProfile}) => {
   const { user, updateProfile } = useAuthStore();
@@ -83,7 +84,7 @@ const ProfileHeader = ({isOwnProfile}) => {
 
   return (
     <>
-      <main className="bg-white rounded-lg w-4/5 md:w-1/2 mx-auto">
+      <Section>
         <div className="hero">
           <div className="hero-banner cursor-pointer">
             <img
@@ -255,7 +256,7 @@ const ProfileHeader = ({isOwnProfile}) => {
             </div>
           </div>
         )}
-      </main>
+      </Section>
     </>
   );
 };
