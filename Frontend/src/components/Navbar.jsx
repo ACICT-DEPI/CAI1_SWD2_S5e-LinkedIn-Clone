@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link,useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import homeIcon from "../assets/images/nav/home-logo.svg";
 import feedIcon from "../assets/images/nav/nav-home.svg";
-import jobsIcon from "../assets/images/nav/nav-jobs.svg";
 import messagingIcon from "../assets/images/nav/nav-messaging.svg";
 import networkIcon from "../assets/images/nav/nav-network.svg";
 import notificationsIcon from "../assets/images/nav/nav-notifications.svg";
@@ -10,22 +9,29 @@ import userIcon from "../assets/images/nav/user.svg";
 import searchIcon from "../assets/images/nav/search-icon.svg";
 import ellipsisIcon from "../assets/images/ellipsis.svg";
 import { useAuthStore } from "../store/authStore";
+import SearchBar from "./SearchBar";
+import axios from "axios";
 
 //global
 const icons = [
   { src: feedIcon, alt: "feed", label: "Home" },
   { src: networkIcon, alt: "networks", label: "My Networks" },
-  { src: jobsIcon, alt: "jobs", label: "Jobs" },
   { src: messagingIcon, alt: "messaging", label: "Messaging" },
   { src: notificationsIcon, alt: "notifications", label: "Notifications" },
 ];
 
 export default function Navbar() {
   //states
+  const { logout, user } = useAuthStore();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [visibleIcons, setVisibleIcons] = useState(icons.length);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [isSearchBarVisible, setIsSearchBarVisible] = useState(true);
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024); // lg breakpoint
 
   //ref
   const navbarRef = useRef(null);
@@ -34,21 +40,24 @@ export default function Navbar() {
   const dropdownItemsRef = useRef([]); // Ref for dropdown items
 
   //use effects
+
+  //updateVisibleIcons
   useEffect(() => {
     updateVisibleIcons();
     window.addEventListener("resize", updateVisibleIcons);
     return () => window.removeEventListener("resize", updateVisibleIcons);
   }, []);
-  
+
+  //handle click outside a dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (navbarRef.current && !navbarRef.current.contains(event.target)) {
         setIsSearchFocused(false);
       }
-      const isClickInsideDropdownItems = dropdownItemsRef.current.some(item =>
-        item && item.contains(event.target)
+      const isClickInsideDropdownItems = dropdownItemsRef.current.some(
+        (item) => item && item.contains(event.target)
       );
-      
+
       if (isClickInsideDropdownItems) {
         // If the click is inside dropdown items, do not close the menu
         return;
@@ -66,46 +75,122 @@ export default function Navbar() {
         setDropdownOpen(false);
       }
     };
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [navbarRef, userDropdown, ellipsesDropdown]);
-  
-  
-    //handle
-    const toggleDropdown = () => {
-      setDropdownOpen(!isDropdownOpen);
-    };
-  
-    const toggleUserMenu = () => {
-      setIsUserMenuOpen(!isUserMenuOpen);
-    };
-  
-    const updateVisibleIcons = () => {
-      const width = window.innerWidth;
-      if (width >= 1024) {
-        setVisibleIcons(icons.length);
-      } else if (width >= 768) {
-        setVisibleIcons(icons.length - 1);
-      } else if (width >= 500) {
-        setVisibleIcons(icons.length - 2);
-      } else if (width >= 200) {
-        setVisibleIcons(icons.length - 3);
-      } else {
-        setVisibleIcons(icons.length - 4);
+
+  // Fetch initial suggested users
+  useEffect(() => {
+    // Fetch suggested users when the component mounts
+    const fetchSuggestedUsers = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/users/suggestions",
+          {
+            params: { page: 1, limit: 5 },
+          }
+        );
+        setSuggestedUsers(response.data.suggestedUsers);
+      } catch (error) {
+        console.error("Error fetching suggested users:", error);
       }
     };
-    
-    const { logout } = useAuthStore();
-    const handleLogout = async (e) => {
-    e.preventDefault(); 
+
+    fetchSuggestedUsers();
+  }, []);
+
+  // Fetch search results from backend when search term changes
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      const page = 1;
+      const limit = 10;
+
+      if (searchTerm === "") {
+        setFilteredUsers(suggestedUsers);
+      } else {
+        try {
+          const response = await axios.get(`http://localhost:5000/api/users`, {
+            params: {
+              search: searchTerm,
+              page,
+              limit,
+            },
+          });
+
+          const { users } = response.data;
+          setFilteredUsers(users);
+        } catch (error) {
+          console.error("Error fetching search results", error);
+        }
+      }
+    };
+
+    fetchSearchResults();
+  }, [searchTerm, suggestedUsers]);
+
+  // Add event listener for screen resize
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+
+    // Run handleResize on component mount to set initial state
+    handleResize();
+
+    // Cleanup listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  //handle
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
+  };
+
+  const updateVisibleIcons = () => {
+    const width = window.innerWidth;
+    if (width >= 1024) {
+      setVisibleIcons(icons.length);
+    } else if (width >= 768) {
+      setVisibleIcons(icons.length - 1);
+    } else if (width >= 500) {
+      setVisibleIcons(icons.length - 2);
+    } else if (width >= 200) {
+      setVisibleIcons(icons.length - 3);
+    } else {
+      setVisibleIcons(icons.length - 4);
+    }
+  };
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
     try {
-      await logout(); 
+      await logout();
       navigate("/home");
     } catch (error) {
       console.error("Logout failed", error);
+    }
+  };
+
+  const handleOnSearchIconClick = () => {
+    setIsSearchFocused(true);
+    setIsSearchBarVisible(true);
+  };
+
+  // Function to handle screen resize
+  const handleResize = () => {
+    const isLarge = window.innerWidth >= 1024;
+    setIsLargeScreen(isLarge);
+    if (isLarge) {
+      setIsSearchBarVisible(true); // Set search bar visibility to false on large screens
+    } else {
+      setIsSearchBarVisible(false); // Set search bar visibility to false on large screens
     }
   };
 
@@ -116,7 +201,7 @@ export default function Navbar() {
       className="fixed top-0 left-0 right-0 flex justify-center items-center h-16 bg-white shadow max-w-full content-center  px-4 sm:px-6 lg:px-8 z-50"
     >
       {/* logo */}
-      <Link to="home" className="flex-shrink-0">
+      <Link to="/feed" className="flex-shrink-0">
         <img src={homeIcon} alt="logo" />
       </Link>
 
@@ -124,9 +209,9 @@ export default function Navbar() {
         {/* Search Icon on Small Screens */}
         <div
           className={` cursor-pointer flex flex-col items-center hover:bg-gray-200 text-gray-500 hover:text-black ml-2 px-3 py-2 rounded-md text-xs font-medium lg:hidden ${
-            isSearchFocused ? "hidden" : "block"
+            isSearchBarVisible ? "hidden" : "block"
           }`}
-          onClick={() => setIsSearchFocused(true)}
+          onClick={handleOnSearchIconClick}
         >
           <img
             src={searchIcon}
@@ -136,36 +221,10 @@ export default function Navbar() {
           <span className="hidden sm:inline">search</span>
         </div>
 
-        {/* Search Bar on Large Screens */}
-        <div className="relative hidden lg:flex flex-grow ">
-          <input
-            type="text"
-            placeholder="Search"
-            className="border border-gray-300 rounded-md px-3 py-1.5 pl-10 mr-4 w-32 lg:w-48 transition-width duration-300 ease-in-out focus:w-72"
-          />
-          <img
-            src={searchIcon}
-            alt="search icon"
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-          />
-        </div>
-
-        {/* Search Bar on Small Screens */}
-        {isSearchFocused && (
-          <div className="relative lg:hidden flex">
-            <input
-              type="text"
-              placeholder="Search"
-              className="border border-gray-300 rounded-md px-3 py-1.5 pl-10"
-            />
-            <img
-              src={searchIcon}
-              alt="search icon"
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-            />
-          </div>
+        {/* Search Bar */}
+        {isSearchBarVisible && (
+          <SearchBar onSearch={setSearchTerm} filteredUsers={filteredUsers} />
         )}
-
         {/* Main Icons (Hidden when search is active on small screens) */}
         {!isSearchFocused && (
           <>
@@ -186,11 +245,19 @@ export default function Navbar() {
                 className="flex flex-col items-center text-gray-500 hover:text-black px-3 py-2 rounded-md text-xs font-medium cursor-pointer"
                 ref={userDropdown}
               >
-                <img
-                  src={userIcon}
-                  alt="user icon"
-                  className="rounded-full h-5 w-5"
-                />
+                {user ? (
+                  <img
+                    src={user.profilePicture ? user.profilePicture : userIcon}
+                    alt="user icon"
+                    className="rounded-full h-5 w-5"
+                  />
+                ) : (
+                  <img
+                    src={ userIcon}
+                    alt="user icon"
+                    className="rounded-full h-5 w-5"
+                  />
+                )}
                 <div className="flex items-center">
                   <span className="hidden sm:inline">Me</span>
                   <svg
@@ -220,7 +287,7 @@ export default function Navbar() {
                       to="/home"
                       ref={(el) => (dropdownItemsRef.current[2] = el)} // Save reference to first item
                       className="items-center hover:bg-gray-200 px-3 py-2 rounded-md whitespace-nowrap"
-                      onClick={handleLogout} 
+                      onClick={handleLogout}
                     >
                       Sign Out
                     </Link>

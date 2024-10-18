@@ -49,7 +49,7 @@ const Message = ({ message }) => {
             type="text"
             value={newContent}
             onChange={(e) => setNewContent(e.target.value)}
-            className="w-full bg-transparent border-b border-white"
+            className="w-full bg-transparent border-b border-white text-black"
             onKeyDown={(e) => e.key === "Enter" && handleSave()} // Save on Enter key
           />
         ) : (

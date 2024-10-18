@@ -9,6 +9,6 @@ router.get("/:id", verifyTokenAndUserCheck, getMessages);
             //receiver_Id
 router.post("/send/:id", verifyTokenAndUserCheck, sendMessage);
 
-router.put("/edit/:messageId", verifyTokenAndUserCheck, editMessage); // Edit message
-router.delete("/delete/:messageId", verifyTokenAndUserCheck, deleteMessage); // Delete message
+router.put("/edit/:messageId", verifyTokenAndUserCheck, editMessage); 
+router.delete("/delete/:messageId", verifyTokenAndUserCheck, deleteMessage);
 module.exports = router;

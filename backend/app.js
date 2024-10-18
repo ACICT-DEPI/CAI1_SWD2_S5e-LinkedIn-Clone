@@ -25,7 +25,11 @@ const path = require("path");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(`${__dirname}/public`));
 app.use(express.urlencoded({ extended: true }));
-
+app.use(
+  express.json({
+    limit: "100mb",
+  })
+);
 app.set("view engine", "pug");
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
@@ -44,7 +48,7 @@ app.use("/api/posts", postRoutes);
 
 app.use("/api/comments", commentRoutes);
 
-app.use("/api/notification", notificationRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use("/api/connections", connectionRoutes);
 
@@ -59,7 +63,7 @@ app.use("/api/admin", adminRoutes);
 app.use(notFound);
 app.use(errorHanlder);
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   connectDB();
   console.log("Server is running on port", PORT);

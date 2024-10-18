@@ -5,10 +5,10 @@
 - [Doc](https://docs.google.com/document/d/1gwz5A2mod_O4o18sR-xuqEAteF1NftavCIQgFqthcFw/edit?tab=t.0)
   
 ## Contributors
-- [Mohamed Essam Elramah](https://www.linkedin.com/in/mohamedelramah/)
-- [Haneen Akram](https://www.linkedin.com/in/haneen-akram/)
-- [Amera Saad](https://www.linkedin.com/in/amera-abdelaziz-a7a466229/)
-- [Karim Akl](https://www.linkedin.com/in/karim-akl-front-end/)
+- [Mohamed Essam Elramah](https://www.linkedin.com/in/mohamed-essam-elramah)
+- [Haneen Akram](https://www.linkedin.com/in/haneen-akram)
+- [Amera Saad](https://www.linkedin.com/in/amera-saad)
+- [Karim Akl](https://www.linkedin.com/in/karim-akl)
   
 
 ## Project Overview
@@ -208,4 +208,3 @@
 - Job section.
 - Integration with external APIs (LinkedIn, Google Jobs).
 - Integration with AI models.
-

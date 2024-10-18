@@ -1,21 +1,23 @@
 import React from "react";
 import { extractTime, extractTimeDuration } from "../../utils/extractTime";
+import { Link } from "react-router-dom";
+import userIcon from "../../assets/images/user.svg";
 
 function PostUserInfo({ post }) {
-  console.log(post);
-
   return post ? (
     <div className="flex items-center gap-2">
       <img
-        src={post.auther.profilePicture}
+        src={post.auther.profilePicture ? post.auther.profilePicture : userIcon}
         alt=""
         className="w-[50px] h-[50px] rounded-full"
       />
       <div>
         <div className="cursor-pointer">
           <div className="flex gap-2">
-            <p className="text-bold text-black hover:text-linkedinBlue hover:underline">
-              {post.auther.firstName} {post.auther.lastName}
+            <p className="font-semibold text-black hover:text-linkedinBlue hover:underline">
+              <Link to={`/profile/${post.auther._id}`}>
+                {post.auther.firstName} {post.auther.lastName}
+              </Link>
             </p>
             <p className=" text-linkedinGray">&#x2022; 1st</p>
           </div>

@@ -1,40 +1,77 @@
-import React, { useState } from 'react';
-import Button from '../../../components/common/Button';
-
+import React, { useEffect, useState } from "react";
+import Button from "../../../components/common/Button";
+import axios from "axios";
+import { useAuthStore } from "../../../store/authStore.js";
+import { Link } from "react-router-dom";
 const Invitations = () => {
-  // Sample fake invitations data
-  const [invitations, setInvitations] = useState([
-    {
-      id: 1,
-      name: 'Mostafa Shaheen',
-      title: 'CS Grad | Junior Penetration Tester | Trainee @ NTI',
-      connections: '85 others',
-      imageUrl: 'https://via.placeholder.com/40',
-    },
-    {
-      id: 2,
-      name: 'Mahmoud Roka',
-      title: '--',
-      connections: '39 others',
-      imageUrl: 'https://via.placeholder.com/40',
-    },
-    {
-      id: 3,
-      name: 'Mohamed Ali',
-      title: 'Mathematician',
-      connections: '107 others',
-      imageUrl: 'https://via.placeholder.com/40',
-    },
-  ]);
+  const [invitations, setInvitations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuthStore();
+  const loggeduser = user;
+  
 
+  //Hooks
+
+  //requested users
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`http://localhost:5000/api/users`);
+        const { users } = response.data;
+        
+        const filteredUsers = users.filter((user) => {
+          
+          
+          return user.connections.some(
+            (connection) =>
+              connection.receiverId === loggeduser._id &&
+              connection.status === "pending"
+          );
+        });
+        
+        setInvitations(filteredUsers);
+      } catch (error) {
+        console.error("Error fetching search results", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [loggeduser]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   // Handle Ignore button
-  const handleIgnore = (id) => {
-    setInvitations(invitations.filter(invite => invite.id !== id));
+  const handleIgnore = async (id) => {
+    try {
+      await axios.post("http://localhost:5000/api/connections/status", {
+        userId: id,
+        status: "rejected",
+      });
+
+      setInvitations(invitations.filter((invite) => invite._id !== id));
+
+      
+    } catch (error) {
+      console.error("Error accepting connection:", error);
+    }
   };
 
   // Handle Accept button
-  const handleAccept = (id) => {
-    setInvitations(invitations.filter(invite => invite.id !== id));
+  const handleAccept = async (id) => {
+    try {
+      await axios.post("http://localhost:5000/api/connections/status", {
+        userId: id,
+        status: "accepted",
+      });
+
+      setInvitations(invitations.filter((invite) => invite._id !== id));
+    } catch (error) {
+      console.error("Error accepting connection:", error);
+    }
   };
 
   return (
@@ -45,18 +82,38 @@ const Invitations = () => {
         <p className="text-linkedinDarkGray mt-2">No pending invitations</p>
       ) : (
         invitations.map((invite) => (
-          <div key={invite.id} className="flex justify-between items-center my-4">
+          <div
+            key={invite._id}
+            className="flex justify-between items-center my-4"
+          >
             <div className="flex items-center gap-3">
-              <img src={invite.imageUrl} alt={invite.name} className="w-10 h-10 rounded-full" />
+              <img
+                src={
+                  invite.profilePicture
+                    ? invite.profilePicture
+                    : "src/assets/images/user.svg"
+                }
+                alt={invite.username}
+                className="w-10 h-10 rounded-full"
+              />
               <div>
-                <h4 className="font-semibold text-linkedinDarkGray">{invite.name}</h4>
-                <p className="text-sm text-linkedinGray">{invite.title}</p>
-                <p className="text-xs text-linkedinGray">Connected with {invite.connections}</p>
+                <h4 className="font-semibold text-linkedinDarkGray">
+                  <Link to={`/profile/${invite._id}`}>
+                  {invite.firstName
+                    ? `${invite.firstName} ${invite.lastName}`
+                    : invite.username}
+                  </Link>
+                  
+                </h4>
+                <p className="text-sm text-linkedinGray">{invite.headline}</p>
+                {/* <p className="text-xs text-linkedinGray">
+                  Connected with {invite.connections}
+                </p> */}
               </div>
             </div>
             <div className="flex gap-4">
               <button
-                onClick={() => handleIgnore(invite.id)}
+                onClick={() => handleIgnore(invite._id)}
                 className=" text-linkedinDarkGray"
               >
                 Ignore
@@ -64,9 +121,9 @@ const Invitations = () => {
               <Button
                 label="Accept"
                 styleType="outline"
-                onClick={() => handleAccept(invite.id)}
+                onClick={() => handleAccept(invite._id)}
                 className=" w-3/4 mx-auto my-5 py-0.5 "
-                />
+              />
             </div>
           </div>
         ))

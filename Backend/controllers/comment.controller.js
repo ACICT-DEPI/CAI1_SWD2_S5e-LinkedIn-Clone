@@ -59,12 +59,12 @@ const addComment = async (req, res) => {
     );
     //send notification to auther
     const notification = new Notification({
-      type: "comment",
+      type: "posts:comments",
       message: `${user.username} commented on your post`,
       relatedId: post._id,
       isRead: false,
     });
-    console.log(notification);
+    
     const savedNotification = await notification.save();
     const author = await User.findById(post.auther);
     if (!author) {
@@ -91,10 +91,9 @@ const addComment = async (req, res) => {
 const editComment = async (req, res) => {
   try {
     const commentId = req.params.id;
-    const { imgs, videos, comment, userId } = req.body;
-
+    const { imgs, videos, comment } = req.body;
     // Find the post and user (ensure these functions return the post and user)
-    const user = await findUser(userId);
+    const user = req.user;
 
     const existingComment = await findComment(commentId);
 
@@ -143,7 +142,7 @@ const editComment = async (req, res) => {
 const deleteComment = async (req, res) => {
   try {
     const commentId = req.params.id;
-
+    const userId = req.user._id
     // Find the comment to delete
     const commentToDelete = await Comments.findById(commentId).populate(
       "replies"
@@ -152,6 +151,7 @@ const deleteComment = async (req, res) => {
     if (!commentToDelete) {
       return res.status(404).json({ message: "Comment not found" });
     }
+    const postId = commentToDelete.postId;
 
     // Recursively delete all replies
     const repliesToDelete = commentToDelete.replies; // Get all replies to the comment
@@ -162,8 +162,19 @@ const deleteComment = async (req, res) => {
     }
 
     // Now delete the original comment
+    
+    
+    await Posts.findByIdAndUpdate(
+      postId,
+      { $pull: { comments: commentId } },
+      { new: true }
+    );
+    await User.findByIdAndUpdate(
+      userId,
+      { $pull: { comments: commentId } }, 
+      { new: true }
+    );
     const deletedComment = await Comments.findByIdAndDelete(commentId);
-
     if (!deletedComment) {
       return res.status(404).json({ message: "Comment not found" });
     }
@@ -173,11 +184,9 @@ const deleteComment = async (req, res) => {
       .json({ message: "Comment and its replies deleted successfully" });
   } catch (error) {
     console.error("Error deleting comment and replies:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error",error:error });
   }
 };
-
-
 
 const addReply = async (req, res) => {
   try {
@@ -301,7 +310,6 @@ const getAllComments = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve comments" });
   }
 };
-
 
 const getCommentById = async (req, res) => {
   try {

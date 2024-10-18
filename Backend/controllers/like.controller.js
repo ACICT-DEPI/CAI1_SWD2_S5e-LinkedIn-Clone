@@ -6,7 +6,7 @@ const { User } = require("../models/user.model");
 const sendNotification = async (module) => {
   //   send notification to auther
   try {
-    // console.log(module);
+    // 
 
     const author = await User.findById(module.auther);
     if (!author) {
@@ -16,27 +16,27 @@ const sendNotification = async (module) => {
       author.notifications = [];
     }
     const notification = new Notification({
-      type: "like",
-      message: `${author.username} liked your {post}`,
+      type: "posts:likes",
+      message: `${author.username} liked your post`,
       relatedId: module._id,
       isRead: false,
     });
-    console.log("notification",notification);
+    
     const savedNotification = await notification.save();
 
     author.notifications.push(savedNotification._id);
     // Save the author's notifications
     await author.save();
   } catch (error) {
-    console.log(error);
+    
   }
 };
 
 const addLike = async (req, res) => {
   try {
-    const { typeId,  type } = req.body;
+    const { typeId, type } = req.body;
     const userId = req.user._id;
-    
+
     // Check if the newStatus is valid
     const validTypes = ["post", "comment"];
     let module;
@@ -65,9 +65,9 @@ const addLike = async (req, res) => {
         );
       } else {
         return res.status(400).json({
-          message:"You can't like the same comment more than one time!",
-          status:"bad request"
-        })
+          message: "You can't like the same comment more than one time!",
+          status: "bad request",
+        });
       }
     } else if (type === "post") {
       // Fetch the post document
@@ -97,7 +97,7 @@ const addLike = async (req, res) => {
     //   relatedId: post._id,
     //   isRead: false,
     // });
-    // console.log(notification);
+    // 
     // const savedNotification = await notification.save();
     // const author = await User.findById(post.auther);
     // if (!author) {
@@ -121,11 +121,15 @@ const addLike = async (req, res) => {
 
 const deleteLike = async (req, res) => {
   try {
-    const { userId, typeId, type } = req.body;
+    const { typeId, type } = req.body;
+    const userId = req.userId;
+
+
     if (!typeId || !userId) {
-      return res
-        .status(400)
-        .json({ message: "Comment ID and User ID are required." });
+      return res.status(400).json({
+        message: "Comment ID and User ID are required.",
+        
+      });
     }
     const validTypes = ["post", "comment"];
     let module;

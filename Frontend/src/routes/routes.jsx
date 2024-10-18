@@ -17,12 +17,13 @@ import AnalyticsPage from '../pages/Profile/AnalyticsPage';
 import ResourcePage from '../pages/Profile/ResourcesPage';
 import MessagingPage from "../pages/Messaging/MessagingPage";
 import FollowersPage from "../pages/Profile/FollowersPage";
+import PostDetails from "../components/Post/PostDetails";
 
 const Home = lazy(() => import("../pages/Home"));
-const Jobs = lazy(() => import("../pages/Jobs"));
 const Networks = lazy(() => import("../pages/Networks/NetworksPage"));
 const Notifications = lazy(() => import("../pages/Notifications/NotificationsPage"));
 const Profile = lazy(() => import("../pages/Profile/Profile"));
+const SearchPage = lazy(() => import("../pages/SearchPage"));
 
 const routes = createBrowserRouter([
   {
@@ -35,7 +36,6 @@ const routes = createBrowserRouter([
         element: <Navigate to="/feed" replace />,
       },
       {
-        
         path: "feed",
         element: (
           <ProtectedRoute>
@@ -66,11 +66,21 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "profile/allActivity",
+        path: "profile/allActivity/:id",
         element: (
           <ProtectedRoute>
             <Suspense fallback={<h1>Loading...</h1>}>
               <AllActivitysPage />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "posts/:id",
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <PostDetails />
             </Suspense>
           </ProtectedRoute>
         ),
@@ -126,20 +136,20 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "jobs",
+        path: "followers",
         element: (
           <ProtectedRoute>
-            <Suspense fallback={<h1>Loading...</h1>}>
-              <Jobs />
-            </Suspense>
+            <FollowersPage />
           </ProtectedRoute>
         ),
       },
       {
-        path: "followers",
+        path: "searchAll",
         element: (
           <ProtectedRoute>
-              <FollowersPage />
+            <Suspense fallback={<h1>Loading...</h1>}>
+              <SearchPage />
+            </Suspense>
           </ProtectedRoute>
         ),
       },
@@ -174,29 +184,26 @@ const routes = createBrowserRouter([
     ],
   },
   {
-      path: "/SignUpDetailsPage",
-      element: (
-        <ProtectedRoute>
-            <Suspense fallback={<h1>Loading...</h1>}>
-              <SignUpDetailsPage />
-            </Suspense>
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: "/verify-email",
-      element: (
-        <RedirectAuthenticatedUser>
-          <EmailVerificationPage />
-        </RedirectAuthenticatedUser>
-
-      ),
-    },
+    path: "/SignUpDetailsPage",
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<h1>Loading...</h1>}>
+          <SignUpDetailsPage />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/verify-email",
+    element: (
+      <RedirectAuthenticatedUser>
+        <EmailVerificationPage />
+      </RedirectAuthenticatedUser>
+    ),
+  },
   {
     path: "/forgot-password",
-    element: (
-      <ForgotPasswordPage />
-    ),
+    element: <ForgotPasswordPage />,
   },
   {
     path: "/reset-password/:token",
@@ -204,7 +211,6 @@ const routes = createBrowserRouter([
       <RedirectAuthenticatedUser>
         <ResetPasswordPage />
       </RedirectAuthenticatedUser>
-      
     ),
   },
   {
