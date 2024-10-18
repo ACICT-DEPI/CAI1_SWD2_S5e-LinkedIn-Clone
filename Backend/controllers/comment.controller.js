@@ -64,7 +64,7 @@ const addComment = async (req, res) => {
       relatedId: post._id,
       isRead: false,
     });
-    console.log(notification);
+    
     const savedNotification = await notification.save();
     const author = await User.findById(post.auther);
     if (!author) {
@@ -162,7 +162,7 @@ const deleteComment = async (req, res) => {
     }
 
     // Now delete the original comment
-    console.log(postId);
+    
     
     await Posts.findByIdAndUpdate(
       postId,

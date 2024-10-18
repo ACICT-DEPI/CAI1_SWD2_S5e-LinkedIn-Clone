@@ -35,7 +35,7 @@ const ProfileHeader = ({ isOwnProfile }) => {
           connection.receiverId === user._id ||
           connection.senderId === user._id
         ) {
-          console.log(connection);
+          
           setConnectionStatus(connection.status);
           statusUpdated = true;
         }
@@ -81,7 +81,7 @@ const ProfileHeader = ({ isOwnProfile }) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      console.log("file", reader);
+      
 
       reader.onloadend = () => {
         setNewProfileImage(reader.result);

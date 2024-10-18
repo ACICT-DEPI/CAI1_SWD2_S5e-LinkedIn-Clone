@@ -78,14 +78,14 @@ const getSuggstedConnections = async (req, res) => {
       totalSuggestedUsers,
     });
   } catch (error) {
-    console.log("error in getSuggstedConnections:", error);
+    
     res.status(500).json({ message: "server error" });
   }
 };
 
 const getPublicProfile = async (req, res) => {
   try {
-    console.log("Received request for id:", req.params.id);
+    
     // edit it because it was not working with findOne
     const user = await User.findById(req.params.id).select(
       "-password -notifications"
@@ -106,7 +106,7 @@ const deleteUser = async (req, res) => {
     }
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
-    console.log("Error in deleteUser:", error);
+    
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -170,7 +170,7 @@ const getAllUsers = async (req, res) => {
       connectionstatus: "", //pending, accepted, notFriend,
     });
   } catch (error) {
-    console.log("error in Up getAllUsers:", error);
+    
     res.status(500).json({ message: error.message });
   }
 };
@@ -221,7 +221,7 @@ const getUserPosts = async (req, res) => {
 
     res.status(200).json(response);
   } catch (error) {
-    console.log("error in getUserPosts :", error);
+    
     res.status(500).json({ message: "server error" });
   }
 };
@@ -254,7 +254,7 @@ const getUserComments = async (req, res) => {
 
     res.status(200).json(response);
   } catch (error) {
-    console.log("error in getUserComments :", error);
+    
     res.status(500).json({ message: "server error" });
   }
 };
@@ -402,7 +402,7 @@ const getNotification = async (req, res) => {
 const addNotificationToUser = async (req, res) => {
   try {
     // Log the incoming request body
-    console.log(req.body);
+    
 
     // Validate if required fields are present
     if (!req.body.type || !req.body.message) {
@@ -417,7 +417,7 @@ const addNotificationToUser = async (req, res) => {
 
     // Save the notification
     const savedNotification = await notification.save();
-    console.log("Notification saved:", savedNotification);
+    
 
     // Find the user by ID from req.params
     const user = await User.findById(req.user._id);
@@ -430,7 +430,7 @@ const addNotificationToUser = async (req, res) => {
 
     // Save the updated user with new notifications
     await user.save();
-    console.log("User updated with notification:", user);
+    
 
     // Send the response with the updated user notifications
     res.status(200).json({ success: true, notifications: user.notifications });
@@ -478,7 +478,7 @@ const getUserConnections = async (req, res) => {
       ...response,
     });
   } catch (error) {
-    console.log("Error in getUserConnections", error);
+    
     return res
       .status(500)
       .json({ message: "Error in getting user connections" });

@@ -45,7 +45,7 @@ const MainContent = () => {
 
     setProfiles(profiles.filter((profile) => profile.id !== id));
 
-      console.log("Connection accepted for user:", id);
+      
     } catch (error) {
       console.error("Error accepting connection:", error);
     }

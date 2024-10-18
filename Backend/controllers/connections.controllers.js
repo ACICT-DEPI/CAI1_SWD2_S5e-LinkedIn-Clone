@@ -5,8 +5,8 @@ const sendConnection = async (req, res) => {
   try {
     const { receiverId } = req.body;
     const user = req.user;
-    // console.log(receiverId);
-    // console.log(user.id);
+    // 
+    // 
 
     // Validate request body
     if (!user || !receiverId) {
@@ -15,8 +15,8 @@ const sendConnection = async (req, res) => {
       });
     }
     const receiver = await User.findById(receiverId);
-    console.log(receiver);
-    console.log(user);
+    
+    
 
     if (!receiver) {
       return res.status(404).json({
@@ -29,7 +29,7 @@ const sendConnection = async (req, res) => {
       senderId: user._id,
       receiverId,
     });
-    console.log(existingConnection);
+    
 
     if (existingConnection) {
       // && existingConnection.status == "pending"
@@ -63,7 +63,7 @@ const sendConnection = async (req, res) => {
       receiverId,
       status: "pending",
     });
-    console.log(newConnection);
+    
 
     // Update sender's connections
     user.connections.push(newConnection._id);
@@ -154,7 +154,7 @@ const changeConnectionStatus = async (req, res) => {
     const { senderId, receiverId } = connection;
 
     if (status === "rejected") {
-      console.log("hereeeeeeeeeeeeeeeeeeee");
+      
 
       // If rejected, delete the connection from the database
       await Connections.findByIdAndDelete(connection._id);

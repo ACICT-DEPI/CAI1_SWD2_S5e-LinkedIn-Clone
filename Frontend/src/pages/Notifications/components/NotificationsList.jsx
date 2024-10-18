@@ -8,13 +8,13 @@ const NotificationList = ({ filter }) => {
   const [isNotificationVisible, setNotificationVisible] = useState(true);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log(filter);
+  
 
   const handleDeleteNotification = async (id) => {
     const response = await axios.delete(
       `http://localhost:5000/api/notifications/${id}`
     );
-    console.log(response);
+    
 
     const updatedNotifications = notifications.filter(
       (notification) => notification._id !== id
@@ -30,7 +30,7 @@ const NotificationList = ({ filter }) => {
         const response = await axios.get(
           `http://localhost:5000/api/notifications?notificationType=${filter}`
         );
-        console.log(response.data);
+        
 
         setNotifications(response.data.notifications); // Set notifications in state
       } catch (err) {

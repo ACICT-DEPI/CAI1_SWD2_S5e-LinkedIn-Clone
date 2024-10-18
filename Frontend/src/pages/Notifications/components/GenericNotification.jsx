@@ -29,6 +29,7 @@ const GenericNotification = ({ key, notification, onDelete }) => {
               }
               alt="avatar"
               className="w-10 h-10 rounded-lg"
+              key={notification._id}
             />
           )}
         </div>

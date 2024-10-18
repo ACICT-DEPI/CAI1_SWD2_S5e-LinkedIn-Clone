@@ -84,11 +84,7 @@ function ReactsInteraction({ post, setPost }) {
       {/* Like */}
       <Button
         label={isLike ? "Liked" : "Like"}
-        className={
-          isLike
-            ? "text-linkedinBlue border-linkedinSecondBlue"
-            : ""
-        }
+        className={isLike ? "text-linkedinBlue border-linkedinSecondBlue" : ""}
         icon={
           !isLike ? (
             <BiLike className="text-2xl " />
@@ -104,7 +100,7 @@ function ReactsInteraction({ post, setPost }) {
       {/* <Button
         label={"Comment"}
         icon={<img src={commentIcon} alt="comment" />}
-        onClick={() => console.log("Comment button clicked")}
+        onClick={() => {}}
         styleType="outline"
       /> */}
       {/* Repost */}
@@ -118,7 +114,7 @@ function ReactsInteraction({ post, setPost }) {
       {/* <Button
         label={"Send"}
         icon={<img src={commentIcon} alt="send" />}
-        onClick={() => console.log("Send button clicked")}
+        onClick={() => {}}
         styleType="outline"
       /> */}
     </div>

@@ -73,12 +73,12 @@ export const getFeedPosts = async (
 };
 export const getUserPosts = async (func, pageParam, limit = 10, posts = [], userId = "",isLoading = ()=>{}) => {
   try {
-    console.log(userId);
+    
     isLoading(true);
     const res = await axios.get(
       `${base_url}/users/posts/${userId}?page=${pageParam}&limit=${limit}`
     );
-    console.log(res);
+    
     isLoading(false);
     
 
@@ -118,7 +118,7 @@ export const sharePost = async (userId, postId) => {
       userId: userId,
       postId: postId,
     });
-    console.log("share",res);
+    
   } catch (error) {
     console.error("Error fetching feed posts:", error); // Handle errors if any
   }
@@ -139,7 +139,7 @@ export const editComment = async (comment, commentID) => {
     const res = await axios.patch(`${base_url}/comments/${commentID}`, {
       comment: comment,
     });
-    console.log(res);
+    
   } catch (error) {
     console.error("Error on editing comment:", error); // Handle errors if any
   }
@@ -173,7 +173,7 @@ export const getPostByID = async (postId, func, setLoading) => {
   try {
     setLoading(true); 
     const res = await axios.get(`${base_url}/posts/${postId}`);
-    console.log(res);
+    
     // Ensure `posts` is an array and append new data to it
     const newPosts = res.data;
     func(newPosts);

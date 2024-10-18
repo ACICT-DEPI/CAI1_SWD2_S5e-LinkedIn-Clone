@@ -34,7 +34,7 @@ const PostModal = ({ showModal, handleClick, handleAddPost, isOwnProfile }) => {
     e.preventDefault();
     setLoading(true);
     setError(""); // Clear previous error
-    console.log("shareImage", shareImage);
+    
 
     const newPost = {
       imgs: shareImage ? [shareImage] : [], // Wrap single image in an array
@@ -51,8 +51,8 @@ const PostModal = ({ showModal, handleClick, handleAddPost, isOwnProfile }) => {
       if (videoLink) {
         formData.append("videos", videoLink);
       }
-      console.log("form data", formData);
-      console.log(newPost);
+      
+      
 
       const response = await axios.post(
         `http://localhost:5000/api/posts`,
@@ -63,7 +63,7 @@ const PostModal = ({ showModal, handleClick, handleAddPost, isOwnProfile }) => {
           },
         }
       );
-      console.log(response);
+      
 
       if (!response.ok) {
         throw new Error("Failed to submit post");

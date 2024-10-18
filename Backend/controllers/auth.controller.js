@@ -37,7 +37,7 @@ module.exports.signup = asyncHandler(async (req, res) => {
 
   const userAlreadyExists = await User.findOne({ email });
   const userNameAlreadyExists = await User.findOne({ username });
-  // console.log("userAlreadyExists", userAlreadyExists);
+  // 
 
   if (userAlreadyExists) {
     return res

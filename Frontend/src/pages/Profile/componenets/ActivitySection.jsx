@@ -46,12 +46,12 @@ function ActivitySection({ isOwnProfile }) {
             <>
               <Button
                 label={"Create a Post"}
-                onClick={() => console.log("Post button clicked")}
+                onClick={() => {}}
                 styleType="outline"
               />
               <Button
                 icon={<img src={editIcon} alt="Edit" />}
-                onClick={() => console.log("Edit button clicked")}
+                onClick={() => {}}
                 styleType="outline"
               />
             </>
@@ -61,14 +61,8 @@ function ActivitySection({ isOwnProfile }) {
       {/* <div className="w-1/2"></div> */}
 
       <div className="flex gap-2 py-1 pb-4 px-5">
-        <Button
-          label={"Post"}
-          onClick={() => console.log("Post button clicked")}
-        />
-        <Button
-          label={"Comments"}
-          onClick={() => console.log("Comments button clicked")}
-        />
+        <Button label={"Post"} onClick={() => {}} />
+        <Button label={"Comments"} onClick={() => {}} />
       </div>
       <hr className="py-2" />
       {select === "posts" ? (

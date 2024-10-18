@@ -11,19 +11,19 @@ const findMyAcceptedConnectionsIds = async (user) => {
     const acceptedConnections = await Promise.all(
       user.connections.map(async (connectionId) => {
         const connection = await Connections.findById(connectionId);
-        // console.log(connection);
+        // 
 
         if (!connection || connection.status !== "accepted") {
           return null;
         }
-        // console.log(connectionId);
+        // 
         const friendId =
           String(connection.senderId) !== String(user._id)
             ? connection.senderId
             : connection.receiverId;
-        console.log("sender", connection.senderId);
-        console.log("receiver", connection.receiverId);
-        console.log("user", user._id);
+        
+        
+        
 
         acceptedUsers.push(friendId);
       })
@@ -41,7 +41,7 @@ const getFeedPosts = async (req, res) => {
     let posts;
     let tagIds = [];
     const user = req.user;
-    console.log(user);
+    
 
     if (!user) {
       return res.status(404).json({
@@ -128,7 +128,7 @@ const createPost = async (req, res) => {
     let newPost;
     let imgsList = [];
     const user = req.user;
-    console.log(user);
+    
     if (!user) {
       res.status(404).json({
         message: "user not found !",
@@ -263,7 +263,7 @@ const deletePost = async (req, res) => {
     await user.save();
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
-    console.log("Error in delete post controller", error.message);
+    
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -286,7 +286,7 @@ const deleteShare = async (req, res) => {
     await user.save();
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
-    console.log("Error in delete post controller", error.message);
+    
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -401,7 +401,7 @@ const sharePost = async (req, res) => {
       relatedId: post._id,
       isRead: false,
     });
-    console.log(notification);
+    
     const savedNotification = await notification.save();
     const author = await User.findById(post.auther);
     if (!author) {
@@ -421,7 +421,7 @@ const sharePost = async (req, res) => {
       post,
     });
   } catch (error) {
-    console.log("Error sharePost", error);
+    
     return res.status(500).json({ message: "Error in share a post" });
   }
 };

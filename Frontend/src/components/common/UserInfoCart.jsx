@@ -3,7 +3,7 @@ import Section from "./Section";
 import userIcon from "../../assets/images/user.svg";
 
 function UserInfoCart({ user }) {
-  console.log(user);
+  
   
   return user ? (
     <Section className="w-[100%]">

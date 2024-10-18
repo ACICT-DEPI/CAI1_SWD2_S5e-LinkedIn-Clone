@@ -43,7 +43,7 @@ function PostDetails() {
         setLoading
       );
       if (response.length === 0) {
-        console.log("no more comments");
+        
 
         setHasMoreComments(false); // No more comments
       } else {

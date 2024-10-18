@@ -22,7 +22,7 @@ const getAllNotification = async (req, res) => {
         },
       })
       .sort({ createdAt: -1 });
-    console.log(notifications);
+    
 
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || notifications.length;
@@ -39,30 +39,30 @@ const getAllNotification = async (req, res) => {
       totalPages: Math.ceil(notifications.length / limit),
       notifications: paginatedNotifications,
     };
-    console.log("RESPONSEEEEE");
-    console.log(response);
+    
+    
 
     // Send the response
     res.status(200).json(response);
   } catch (error) {
-    console.log("Error in getAllNotifications:", error);
+    
     res.status(500).json({ message: error.message });
   }
 };
 
 const getNotificationById = async (req, res) => {
   try {
-    console.log(req.params.id);
+    
 
     const notification = await Notification.findById(req.params.id);
-    console.log(notification);
+    
 
     if (!notification) {
       return res.status(404).json({ message: "notification not found" });
     }
     res.json(notification);
   } catch (error) {
-    console.log("error in  getPublicProfile:", error);
+    
     res.status(500).json({ message: "server error" });
   }
 };
@@ -76,7 +76,7 @@ const changeNotificationStatus = async (req, res) => {
     notification.isRead = true;
     res.json(notification);
   } catch (error) {
-    console.log("error in  getPublicProfile:", error);
+    
     res.status(500).json({ message: "server error" });
   }
 };
@@ -102,7 +102,7 @@ const deleteNotification = async (req, res) => {
 
     res.status(200).json({ message: "Notification deleted successfully" });
   } catch (error) {
-    console.log("error in  deleteNotification:", error);
+    
     res.status(500).json({ message: "server error" });
   }
 };
